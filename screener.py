@@ -350,6 +350,8 @@ def foto() -> dict:
     except Exception as e:
         vivo, estado_vivo = {}, f"falla: {type(e).__name__}"
     quotes = universo()
+    # Derechos, warrants y unidades (5 letras terminadas en R/W/U en Nasdaq) no son acciones.
+    quotes = [q for q in quotes if not (len(q["symbol"]) >= 5 and q["symbol"][-1] in "RWU")]
     # float < 50 M (el float es una estimación de Yahoo)
     candidatas = []
     for qt in quotes:

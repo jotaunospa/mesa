@@ -579,7 +579,9 @@ function dibujarGrafico(slot, velas, f) {
   let pv = 0, vv = 0; const vw = data.map(c => { const tp = (c[2] + c[3] + c[4]) / 3; pv += tp * c[5]; vv += c[5]; return vv ? pv / vv : null; });
   const pmMax = pre.length ? Math.max(...pre.map(c => c[2])) : null;
   const hod = Math.max(...data.map(c => c[2])), lod = Math.min(...data.map(c => c[3]));
-  let hi = Math.max(hod, pmMax || -Infinity), lo = lod; const padP = (hi - lo) * .06 || hi * .02; hi += padP; lo -= padP;
+  // El máx. del premarket entra a la escala solo si está cerca; si no, se marca en el borde (no aplasta las velas).
+  const pmFuera = pmMax != null && pmMax > hod + (hod - lod) * .6;
+  let hi = Math.max(hod, pmMax != null && !pmFuera ? pmMax : -Infinity), lo = lod; const padP = (hi - lo) * .06 || hi * .02; hi += padP; lo -= padP;
   const W = 900, H = 340, L = 14, R = 64, T = 10, VB = 56, B = 22, PH = H - T - VB - B;
   const n = data.length, cw = (W - L - R) / n;
   const x = i => L + i * cw + cw / 2, y = p => T + (hi - p) / (hi - lo) * PH;
@@ -601,7 +603,8 @@ function dibujarGrafico(slot, velas, f) {
     ${halts.map(h => `<rect class="halt" x="${x(h.i0) - cw / 2}" y="${T}" width="${Math.max(cw, (h.i1 - h.i0) * cw)}" height="${PH}"/><text class="halt-t" x="${x(h.i0) + 2}" y="${T + 12}">PAUSA${h.dir ? (h.dir === "arriba" ? " ▲" : " ▼") : ""}</text>`).join("")}
     ${data.map((c, i) => `<rect class="vb" x="${x(i) - cw * .35}" width="${cw * .7}" y="${yv(c[5])}" height="${T + PH + 6 + VB - 8 - yv(c[5])}"/>`).join("")}
     <line class="hod" x1="${L}" x2="${W - R}" y1="${y(hod)}" y2="${y(hod)}"/><text class="lt" style="fill:var(--bad)" x="${L + 6}" y="${y(hod) - 5}">máx. ${hod < 1 ? hod.toFixed(4) : hod.toFixed(2)}</text>
-    ${pmMax ? `<line class="pmh" x1="${L}" x2="${W - R}" y1="${y(pmMax)}" y2="${y(pmMax)}"/><text class="lt" style="fill:var(--warn)" x="${W - R - 6}" y="${y(pmMax) - 5}" text-anchor="end">premarket ${pmMax < 1 ? pmMax.toFixed(4) : pmMax.toFixed(2)}</text>` : ""}
+    ${pmMax && !pmFuera ? `<line class="pmh" x1="${L}" x2="${W - R}" y1="${y(pmMax)}" y2="${y(pmMax)}"/><text class="lt" style="fill:var(--warn)" x="${W - R - 6}" y="${y(pmMax) - 5}" text-anchor="end">premarket ${pmMax < 1 ? pmMax.toFixed(4) : pmMax.toFixed(2)}</text>` : ""}
+    ${pmFuera ? `<text class="lt" style="fill:var(--warn)" x="${W - R - 6}" y="${T + 13}" text-anchor="end">▲ máx. premarket ${pmMax < 1 ? pmMax.toFixed(4) : pmMax.toFixed(2)} (fuera de escala)</text>` : ""}
     ${data.map((c, i) => { const up = c[4] >= c[1], t = y(Math.max(c[1], c[4])), b = y(Math.min(c[1], c[4]));
       return `<g class="${anim ? "candle" : ""}" style="${anim ? `animation-delay:${i * 6}ms` : ""}"><line class="wk" x1="${x(i)}" x2="${x(i)}" y1="${y(c[2])}" y2="${y(c[3])}"/><rect class="${up ? "cu" : "cd"}" x="${x(i) - Math.max(1, cw * .34)}" width="${Math.max(2, cw * .68)}" y="${t}" height="${Math.max(1, b - t)}"/></g>`; }).join("")}
     <polyline class="vwl" points="${vw.map((v, i) => v == null ? "" : `${x(i)},${y(v)}`).join(" ")}"/>

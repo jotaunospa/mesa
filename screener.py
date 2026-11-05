@@ -307,6 +307,12 @@ def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
     if v1 is not None and not v1.empty:
         mm = v1.index.hour * 60 + v1.index.minute
         pre = v1[mm < 9 * 60 + 30]
+    # El scanner del canal mide el HOD y el mínimo incluyendo el premarket (comparado el 05-11:
+    # ZNB 1,83 y FLYE 3,36 = máximos de premarket). Se guardan ambos.
+    hi_reg, lo_reg = hi, lo
+    if pre is not None and not pre.empty:
+        hi = max(x for x in (hi, float(pre["High"].max())) if x is not None)
+        lo = min(x for x in (lo, float(pre["Low"].min())) if x is not None)
 
     vwap = None
     if reg is not None and not reg.empty and reg["Volume"].sum() > 0:
@@ -342,7 +348,7 @@ def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
 
     # SSR: hoy si el mínimo cayó ≥10% bajo el cierre previo; o se arrastra de ayer.
     ssr, ssr_motivo = False, None
-    if lo and prev and lo <= prev * 0.9:
+    if lo_reg and prev and lo_reg <= prev * 0.9:   # SSR con la sesión regular
         ssr, ssr_motivo = True, "hoy: mínimo ≥10% bajo el cierre anterior"
     elif len(b["dias"]) >= 2:
         ay, anteay = b["dias"][-1], b["dias"][-2]
@@ -399,7 +405,8 @@ def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
         "volM": r(volM, 3),
         "rvol": r(vol / avgv) if vol and avgv else None,   # contra un día normal (como el scanner)
         "floatM": r(flt / 1e6, 3) if flt else None,
-        "dayHigh": r(hi, 4), "dayLow": r(lo, 4),
+        "dayHigh": r(hi, 4), "dayLow": r(lo, 4),   # con premarket, como el scanner
+        "dayHigh_regular": r(hi_reg, 4), "dayLow_regular": r(lo_reg, 4),
         "halt": en_pausa,
         "news": bool(noticias),
         "headline": noticias[0]["titulo"] if noticias else None,

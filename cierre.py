@@ -91,7 +91,7 @@ def main(fecha: str | None = None) -> None:
                     "al_aparecer": {k: f.get(k) for k in ("chg", "volM", "rvol", "rvol_hora", "floatM",
                                                           "rotaciones", "sobre_vwap_pct", "hod_dist_pct",
                                                           "surge5m", "ssr", "dil", "veto", "news",
-                                                          "en_filtro_mesa", "float_muy_bajo", "float_confianza", "pais_riesgo",
+                                                          "en_filtro_mesa", "float_muy_bajo", "float_confianza", "apto", "no_apto_por", "pais_riesgo",
                                                           "spread_pct")},
                     "resultado": res})
     (dia / "resultados.json").write_text(json.dumps({"fecha": fecha, "candidatas": out},

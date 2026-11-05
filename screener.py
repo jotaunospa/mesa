@@ -303,7 +303,7 @@ def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
     conf_float, conf_motivos = confianza_float(flt, d, b)
     if conf_float == "alta":
         unsure.remove("floatM")
-    bid, ask = inf.get("bid"), inf.get("ask")
+    bid, ask = qt.get("bid") or inf.get("bid"), qt.get("ask") or inf.get("ask")
     spread = ((ask - bid) / ((ask + bid) / 2) * 100) if bid and ask and ask > bid > 0 else None
     if spread is None:
         unsure.append("spread_pct")
@@ -363,6 +363,69 @@ def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
     }
 
 
+# ───────────────────────── dictamen automático ─────────────────────────
+# Regla profesional: lo que no se puede verificar no se opera. El sistema no le
+# pide a José revisar nada a mano: decide con criterios fijos y explica por qué.
+
+FLOAT_MIN_MESA = 1e6      # regla v1.2
+EDAD_MAX_S = 120          # precio con más de 2 min de atraso no sirve para entrar
+SPREAD_MAX = 3.0          # % ; más ancho se come la ganancia en papel y en real
+PAUSA_RECIENTE_MIN = 15   # regla v1.2: pausa reciente = veto
+
+
+def _min_desde(hhmmss: str, ahora: datetime):
+    try:
+        h, m, *_ = [int(x) for x in hhmmss.split(":")]
+        return ahora.hour * 60 + ahora.minute - (h * 60 + m)
+    except Exception:
+        return None
+
+
+def dictamen(f: dict, ahora: datetime) -> dict:
+    no, ojo = [], []
+    if f["float_confianza"] in ("baja", "sin_dato"):
+        no.append("float no verificable (" + "; ".join(f["float_motivos"]) + ")")
+    elif f["floatM"] is not None and f["floatM"] * 1e6 < FLOAT_MIN_MESA:
+        no.append(f"float {f['floatM']} M bajo el mínimo de 1 M de la Mesa")
+    if f["veto"]:
+        det = "; ".join(m for m in (f["sec"].get("dil_motivo") or []) if "VETO" in m) or "424B presentado hoy"
+        no.append(f"veto SEC: {det}")
+    if f["dil"] == "alta":
+        no.append("dilución alta según la SEC")
+    if f["halt"]:
+        no.append("en pausa ahora")
+    for h in f["halts_hoy"]:
+        m = _min_desde(h.get("reanuda") or "", ahora)
+        if m is not None and 0 <= m < PAUSA_RECIENTE_MIN:
+            no.append(f"pausa reanudada hace {m} min"); break
+    if not f["en_filtro_mesa"]:
+        no.append("fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)")
+    edad = (f.get("meta") or {}).get("edad_s")
+    if edad is None or edad > EDAD_MAX_S:
+        no.append(f"precio atrasado ({edad} s)")
+    if f["spread_pct"] is not None and f["spread_pct"] > SPREAD_MAX:
+        no.append(f"spread {f['spread_pct']}% (> {SPREAD_MAX}%)")
+    # cautelas: no bloquean, pero el sistema las muestra y las cuenta en el registro
+    if f["float_confianza"] == "media":
+        ojo.append("float con confianza media (" + "; ".join(f["float_motivos"]) + ")")
+    if f["dil"] == "media":
+        ojo.append("dilución media")
+    if f["ssr"]:
+        ojo.append("SSR activo (no se puede vender en corto a la baja)")
+    if f["pais_riesgo"]:
+        ojo.append(f"país de riesgo ({f['pais']})")
+    if f["split_reciente"]:
+        ojo.append("split en los últimos 30 días")
+    if f["spread_pct"] is None:
+        ojo.append("spread desconocido")
+    if f["rvol_hora"] is None:
+        ojo.append("rvol por hora no calculable")
+    apto = not no
+    lectura = ("APTA para evaluar con las reglas de la Mesa." if apto else
+               "NO APTA: " + no[0] + ("" if len(no) == 1 else f" (y {len(no) - 1} motivo(s) más)."))
+    return {"apto": apto, "no_apto_por": no, "cautela": ojo, "lectura": lectura}
+
+
 # ───────────────────────── temperatura ─────────────────────────
 
 def temperatura(filas: list, halts: dict) -> dict:
@@ -407,7 +470,9 @@ def foto() -> dict:
     filas, errores = [], []
     for qt in candidatas[:MAX_FILAS]:
         try:
-            filas.append(fila(qt, halts, vivo, ahora))
+            fl = fila(qt, halts, vivo, ahora)
+            fl.update(dictamen(fl, ahora))
+            filas.append(fl)
         except Exception as e:
             errores.append({"ticker": qt.get("symbol"), "error": f"{type(e).__name__}: {e}"[:200]})
     sin_float = [f["ticker"] for f in filas if f["floatM"] is None]
@@ -460,7 +525,7 @@ def resumen(snap: dict) -> str:
         lin.append(f"{f['ticker']:<6} ${f['price']:<8} {f['chg']:>7}%  vol {f['volM']}M  rvol {f['rvol']}/{f['rvol_hora']}h  "
                    f"float {f['floatM']}M[{f['float_confianza']}] rot {f['rotaciones']}  vwap {f['sobre_vwap_pct']}%  hod {f['hod_dist_pct']}%  "
                    f"surge {f['surge5m']}  ssr {f['ssr']}  dil {f['dil']}{' VETO' if f['veto'] else ''}  "
-                   f"halt {len(f['halts_hoy'])}  edad {f['meta']['edad_s']}s")
+                   f"halt {len(f['halts_hoy'])}  edad {f['meta']['edad_s']}s  → {f['lectura']}")
     for e in snap["errores"]:
         lin.append(f"ERROR {e['ticker']}: {e['error']}")
     return "\n".join(lin)

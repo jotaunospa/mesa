@@ -145,12 +145,15 @@ def confianza_float(flt, d: dict, b: dict) -> tuple[str, list]:
     motivos = []
     port = d.get("acciones_portada") or {}
     rs = [x for x in b.get("splits_12m", []) if x["ratio"] < 1]   # inversos
+    # Un split anterior a la portada SEC ya está incluido en ese conteo: no resta confianza.
+    if port.get("fecha") and not (d.get("extranjero") or d.get("estado") == "sin_cik"):
+        rs = [x for x in rs if x["fecha"] > port["fecha"]]
     if flt is None:
         return "sin_dato", ["Yahoo no informa float"]
     if d.get("extranjero") or d.get("estado") == "sin_cik":
         motivos.append("emisor extranjero o sin CIK: sin portada trimestral en la SEC")
     if rs:
-        motivos.append(f"{len(rs)} split(s) inverso(s) en 12 meses (último {rs[-1]['fecha']})")
+        motivos.append(f"{len(rs)} split(s) inverso(s) en 12 meses sin portada SEC posterior (último {rs[-1]['fecha']})")
     if port.get("valor") and flt > port["valor"] * 1.02:
         motivos.append(f"float de Yahoo mayor que las acciones de la portada SEC ({port['valor']:,} al {port['fecha']})")
     if motivos:
@@ -389,8 +392,8 @@ def foto() -> dict:
     except Exception as e:
         vivo, estado_vivo = {}, f"falla: {type(e).__name__}"
     quotes = universo()
-    # Derechos, warrants y unidades (5 letras terminadas en R/W/U en Nasdaq) no son acciones.
-    quotes = [q for q in quotes if not (len(q["symbol"]) >= 5 and q["symbol"][-1] in "RWU")]
+    # Quinta letra en Nasdaq: P preferente, R derecho, U unidad, W warrant, Z otros. No son acciones comunes.
+    quotes = [q for q in quotes if not (len(q["symbol"]) >= 5 and q["symbol"][-1] in "PRUWZ")]
     # float < 50 M (el float es una estimación de Yahoo)
     candidatas = []
     for qt in quotes:

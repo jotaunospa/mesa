@@ -1,46 +1,77 @@
-"""Diagnóstico de float: Yahoo (todas sus variantes) vs SEC vs scanner (05-11 13:43 ET)."""
-import json, sys
+"""Diagnóstico de fuentes: ¿hay una segunda fuente gratis para cruzar float, spread y precio?
+Compara Yahoo, TradingView (scanner público), Finviz y Nasdaq.com contra el scanner del canal."""
+import json, re, sys, time, urllib.request
 sys.path.insert(0, ".")
 import yfinance as yf
-from lib.sec_mesa import cliente
 
 SCANNER = {"LABT": 0.848, "AEHL": 0.677, "NTCL": 1.70, "ZNB": 4.55, "AMTX": 67.16, "FLYE": 1.56,
-           "PLCE": 8.09, "BDMD": 6.50, "MASK": 0.646, "JDZG": 4.85}
-c = cliente()
-out = []
-for tk, sc in SCANNER.items():
-    i = yf.Ticker(tk).info or {}
-    fila = {"ticker": tk, "scanner_M": sc,
-            "y_floatShares": i.get("floatShares"), "y_sharesOutstanding": i.get("sharesOutstanding"),
-            "y_impliedSharesOutstanding": i.get("impliedSharesOutstanding"),
-            "y_heldInsiders": i.get("heldPercentInsiders"), "y_heldInst": i.get("heldPercentInstitutions"),
-            "pais": i.get("country"), "y_lastSplit": [i.get("lastSplitFactor"), i.get("lastSplitDate")]}
-    try:
-        sp = yf.Ticker(tk).splits
-        fila["y_splits"] = [[str(d.date()), float(v)] for d, v in sp.tail(3).items()] if sp is not None else []
-    except Exception as e:
-        fila["y_splits"] = str(e)
-    cik = c.cik(tk)
-    fila["cik"] = cik
-    if cik:
-        st, f, _ = c._get(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{str(cik).zfill(10)}.json", "data.sec.gov")
-        if st == 200 and f:
-            ent = (((f.get("facts") or {}).get("dei") or {}).get("EntityCommonStockSharesOutstanding") or {}).get("units", {}).get("shares", [])
-            ent = sorted(ent, key=lambda e: (e.get("end", ""), e.get("filed", "")))
-            fila["sec_portadas"] = [{"fecha": e["end"], "form": e.get("form"), "filed": e.get("filed"), "acciones": e["val"]} for e in ent[-4:]]
-            pf = (((f.get("facts") or {}).get("dei") or {}).get("EntityPublicFloat") or {}).get("units", {}).get("USD", [])
-            fila["sec_public_float_usd"] = pf[-1] if pf else None
-        st, s, _ = c._get(f"https://data.sec.gov/submissions/CIK{str(cik).zfill(10)}.json", "data.sec.gov")
-        if st == 200 and s:
-            rec = s["filings"]["recent"]
-            fila["sec_ultimos"] = [[a, b] for a, b in list(zip(rec["form"], rec["filingDate"]))[:12]]
-    out.append(fila)
+           "PLCE": 8.09, "BDMD": 6.50, "MASK": 0.646, "JDZG": 4.85, "ARQ": None, "DTIL": None, "TBI": None}
+UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36",
+      "Accept": "application/json, text/html", "Accept-Language": "en-US,en;q=0.9"}
 
-def m(x): return round(x / 1e6, 3) if x else None
-print(f"{'tk':<5} {'scanner':>8} {'y_float':>8} {'y_out':>8} {'y_impl':>8} {'sec_portada (fecha,form)':>32}  pais")
-for f in out:
-    p = (f.get("sec_portadas") or [{}])[-1]
-    print(f"{f['ticker']:<5} {f['scanner_M']:>8} {str(m(f['y_floatShares'])):>8} {str(m(f['y_sharesOutstanding'])):>8} "
-          f"{str(m(f['y_impliedSharesOutstanding'])):>8} {str(m(p.get('acciones')))+' '+str(p.get('fecha'))+' '+str(p.get('form')):>32}  {f['pais']}  splits {f['y_splits']}")
+def get(url, data=None, extra=None):
+    h = dict(UA, **(extra or {}))
+    req = urllib.request.Request(url, data=data, headers=h)
+    with urllib.request.urlopen(req, timeout=20) as r:
+        return r.read().decode("utf-8", "replace")
+
+out = {"tv": {}, "finviz": {}, "nasdaq": {}, "yahoo": {}, "errores": []}
+# TradingView
+try:
+    body = json.dumps({"markets": ["america"], "symbols": {"query": {"types": []}, "tickers": []},
+                       "filter": [{"left": "name", "operation": "in_range", "right": list(SCANNER)}],
+                       "columns": ["name", "exchange", "close", "change", "volume", "float_shares_outstanding",
+                                   "total_shares_outstanding", "bid", "ask", "premarket_change", "premarket_high",
+                                   "relative_volume_10d_calc", "relative_volume_intraday|5", "update_mode", "country"],
+                       "range": [0, 50]}).encode()
+    js = json.loads(get("https://scanner.tradingview.com/america/scan", body, {"Content-Type": "application/json"}))
+    cols = ["name", "exchange", "close", "change", "volume", "float", "acciones", "bid", "ask", "pm_chg", "pm_high",
+            "rvol10d", "rvol_intra", "update_mode", "country"]
+    for row in js.get("data", []):
+        d = dict(zip(cols, row["d"])); out["tv"].setdefault(d["name"], d)
+except Exception as e:
+    out["errores"].append(f"tradingview: {type(e).__name__}: {e}")
+# Finviz y Nasdaq
+for tk in SCANNER:
+    try:
+        h = get(f"https://finviz.com/quote.ashx?t={tk}&p=d")
+        def campo(n):
+            m = re.search(re.escape(n) + r'</td>\s*<td[^>]*>(?:<[^>]+>)*([^<]+)', h)
+            return m.group(1).strip() if m else None
+        out["finviz"][tk] = {"float": campo("Shs Float"), "acciones": campo("Shs Outstand"), "short": campo("Short Float")}
+    except Exception as e:
+        out["finviz"][tk] = {"error": f"{type(e).__name__}: {e}"[:80]}
+    try:
+        js = json.loads(get(f"https://api.nasdaq.com/api/quote/{tk}/info?assetclass=stocks",
+                            extra={"Origin": "https://www.nasdaq.com", "Referer": "https://www.nasdaq.com/"}))
+        p = (js.get("data") or {}).get("primaryData") or {}
+        out["nasdaq"][tk] = {k: p.get(k) for k in ("lastSalePrice", "percentageChange", "volume", "bidPrice", "askPrice",
+                                                   "lastTradeTimestamp", "isRealTime")}
+    except Exception as e:
+        out["nasdaq"][tk] = {"error": f"{type(e).__name__}: {e}"[:80]}
+    try:
+        i = yf.Ticker(tk).info or {}
+        out["yahoo"][tk] = {"float": i.get("floatShares"), "bid": i.get("bid"), "ask": i.get("ask"),
+                            "bidSize": i.get("bidSize"), "askSize": i.get("askSize"), "precio": i.get("currentPrice")}
+    except Exception as e:
+        out["yahoo"][tk] = {"error": str(e)[:80]}
+    time.sleep(0.5)
+
+def M(x):
+    try: return round(float(x) / 1e6, 3)
+    except (TypeError, ValueError): return x
+def sp(b, a):
+    try:
+        b, a = float(str(b).replace("$", "")), float(str(a).replace("$", ""))
+        return round((a - b) / ((a + b) / 2) * 100, 2) if a > b > 0 else None
+    except Exception: return None
+
+print("errores:", out["errores"])
+print(f"{'tk':<5} {'scanner':>7} {'yahoo':>7} {'tv':>7} {'finviz':>7} | spread% yahoo / tv / nasdaq | tv update_mode")
+for tk, sc in SCANNER.items():
+    y, t, f, n = out["yahoo"].get(tk, {}), out["tv"].get(tk, {}), out["finviz"].get(tk, {}), out["nasdaq"].get(tk, {})
+    print(f"{tk:<5} {str(sc):>7} {str(M(y.get('float'))):>7} {str(M(t.get('float'))):>7} {str(f.get('float') or f.get('error')):>7} | "
+          f"{sp(y.get('bid'), y.get('ask'))} / {sp(t.get('bid'), t.get('ask'))} / {sp(n.get('bidPrice'), n.get('askPrice'))} | "
+          f"{t.get('update_mode')}  nasdaq: {n.get('lastSalePrice')} {n.get('lastTradeTimestamp')} {n.get('error','')}")
 import pathlib; pathlib.Path("resultados").mkdir(exist_ok=True)
-pathlib.Path("resultados/float_check.json").write_text(json.dumps(out, indent=1, default=str))
+pathlib.Path("resultados/fuentes.json").write_text(json.dumps(out, indent=1, default=str))

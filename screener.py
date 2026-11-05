@@ -92,7 +92,7 @@ def base_10d(tk: str) -> dict:
     (últimas sesiones, velas 5m), cierre/mínimo de cada día (para SSR) y splits."""
     if tk in _cache_base:
         return _cache_base[tk]
-    out = {"perfil": {}, "dias": [], "splits_30d": []}
+    out = {"perfil": {}, "dias": [], "splits_30d": [], "splits_12m": []}
     try:
         t = yf.Ticker(tk)
         h = solo_regular(t.history(period="15d", interval="5m", prepost=False))
@@ -119,6 +119,8 @@ def base_10d(tk: str) -> dict:
             s.index = s.index.tz_convert(NY)
             rec = s[s.index >= pd.Timestamp.now(tz=NY) - pd.Timedelta(days=30)]
             out["splits_30d"] = [{"fecha": str(i.date()), "ratio": float(v)} for i, v in rec.items()]
+            r12 = s[s.index >= pd.Timestamp.now(tz=NY) - pd.Timedelta(days=365)]
+            out["splits_12m"] = [{"fecha": str(i.date()), "ratio": float(v)} for i, v in r12.items()]
     except Exception as e:
         out["error"] = f"{type(e).__name__}: {e}"[:200]
     _cache_base[tk] = out
@@ -132,6 +134,37 @@ def dil(tk: str) -> dict:
         except Exception as e:
             _cache_dil[tk] = {"dil": None, "estado": f"error {type(e).__name__}: {e}"[:200], "dil_motivo": []}
     return _cache_dil[tk]
+
+
+def confianza_float(flt, d: dict, b: dict) -> tuple[str, list]:
+    """Diagnóstico 05-11 (10 tickers del scanner): en emisores de EE.UU. el float de
+    Yahoo coincidió EXACTO con el scanner (LABT, AMTX, FLYE, PLCE). Las diferencias
+    fueron todas emisores extranjeros con splits inversos repetidos (AEHL, NTCL, ZNB,
+    MASK, JDZG): ahí ninguna fuente gratis es confiable, y la SEC tampoco ayuda porque
+    presentan 20-F anual. Este nivel dice cuándo creerle al número."""
+    motivos = []
+    port = d.get("acciones_portada") or {}
+    rs = [x for x in b.get("splits_12m", []) if x["ratio"] < 1]   # inversos
+    if flt is None:
+        return "sin_dato", ["Yahoo no informa float"]
+    if d.get("extranjero") or d.get("estado") == "sin_cik":
+        motivos.append("emisor extranjero o sin CIK: sin portada trimestral en la SEC")
+    if rs:
+        motivos.append(f"{len(rs)} split(s) inverso(s) en 12 meses (último {rs[-1]['fecha']})")
+    if port.get("valor") and flt > port["valor"] * 1.02:
+        motivos.append(f"float de Yahoo mayor que las acciones de la portada SEC ({port['valor']:,} al {port['fecha']})")
+    if motivos:
+        return "baja", motivos
+    if not port.get("valor"):
+        return "media", ["sin acciones de portada en la SEC para contrastar"]
+    dias = (ahora_ny().date() - datetime.fromisoformat(port["fecha"]).date()).days
+    if dias > 135:
+        motivos.append(f"portada SEC de hace {dias} días")
+    if d.get("ventas_tras_portada"):
+        motivos.append(f"{d['ventas_tras_portada']} 424B después de la portada: puede haber más acciones")
+    if motivos:
+        return "media", motivos
+    return "alta", [f"EE.UU., float ≤ acciones de portada SEC ({port['valor']:,} al {port['fecha']}, {port['form']})"]
 
 
 # ───────────────────────── fuentes del día ─────────────────────────
@@ -264,6 +297,9 @@ def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
         unsure.append("news")
 
     d = dil(tk)
+    conf_float, conf_motivos = confianza_float(flt, d, b)
+    if conf_float == "alta":
+        unsure.remove("floatM")
     bid, ask = inf.get("bid"), inf.get("ask")
     spread = ((ask - bid) / ((ask + bid) / 2) * 100) if bid and ask and ask > bid > 0 else None
     if spread is None:
@@ -294,6 +330,9 @@ def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
         "actividad": r(actividad),
         "rotaciones": r(vol / flt) if vol and flt else None,
         "float_muy_bajo": bool(flt and flt < FLOAT_MUY_BAJO),
+        "float_confianza": conf_float, "float_motivos": conf_motivos,
+        "acciones_portada_sec": d.get("acciones_portada"),
+        "split_inverso_12m": [x for x in b.get("splits_12m", []) if x["ratio"] < 1],
         "hod_dist_pct": r((precio / hi - 1) * 100) if precio and hi else None,
         "vwap": r(vwap, 4),
         "sobre_vwap_pct": r((precio / vwap - 1) * 100) if precio and vwap else None,
@@ -416,7 +455,7 @@ def resumen(snap: dict) -> str:
            f"pausas {snap['fuentes']['pausas_nasdaq']} · SEC vivo {snap['fuentes']['sec_en_vivo']} · {snap['duracion_s']}s"]
     for f in snap["filas"]:
         lin.append(f"{f['ticker']:<6} ${f['price']:<8} {f['chg']:>7}%  vol {f['volM']}M  rvol {f['rvol']}/{f['rvol_hora']}h  "
-                   f"float {f['floatM']}M rot {f['rotaciones']}  vwap {f['sobre_vwap_pct']}%  hod {f['hod_dist_pct']}%  "
+                   f"float {f['floatM']}M[{f['float_confianza']}] rot {f['rotaciones']}  vwap {f['sobre_vwap_pct']}%  hod {f['hod_dist_pct']}%  "
                    f"surge {f['surge5m']}  ssr {f['ssr']}  dil {f['dil']}{' VETO' if f['veto'] else ''}  "
                    f"halt {len(f['halts_hoy'])}  edad {f['meta']['edad_s']}s")
     for e in snap["errores"]:

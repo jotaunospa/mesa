@@ -81,6 +81,21 @@ def dilucion(ticker: str, hoy: Optional[date] = None) -> Dict[str, Any]:
         if dd <= 30 and (es_venta or f in REGISTROS or f.startswith("8-K")):
             out["filings_recientes"].append({"form": f, "fecha": d, "items": it})
 
+    # Acciones en circulación de la portada más reciente (10-Q/10-K/20-F), para
+    # contrastar el float de Yahoo: el float nunca puede ser mayor que esto.
+    out["acciones_portada"] = None
+    try:
+        data_f, _ = c.hechos(cik)
+        ent = ((((data_f or {}).get("facts") or {}).get("dei") or {})
+               .get("EntityCommonStockSharesOutstanding") or {}).get("units", {}).get("shares", [])
+        if ent:
+            e = max(ent, key=lambda x: (x.get("end", ""), x.get("filed", "")))
+            out["acciones_portada"] = {"valor": e["val"], "fecha": e["end"], "form": e.get("form")}
+            out["ventas_tras_portada"] = sum(1 for f, d in zip(forms, fechas)
+                                             if d > e["end"] and (f.startswith("424B")))
+    except Exception:
+        pass
+
     # Autonomía de caja (Faro). Ojo: Faro ancla en el último ejercicio ANUAL,
     # así que la caja puede tener hasta ~12 meses. Se informa la fecha del dato.
     try:

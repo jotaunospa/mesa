@@ -568,6 +568,17 @@ def foto() -> dict:
     rancias = [qt["symbol"] for qt in candidatas
                if qt.get("regularMarketTime") and time.time() - qt["regularMarketTime"] > RANCIA_S]
     candidatas = [qt for qt in candidatas if qt["symbol"] not in rancias]
+    # Universo completo (sin tope de float), para comparar contra el scanner y deducir su criterio.
+    universo_completo = []
+    for qt in quotes:
+        sym = qt["symbol"]
+        universo_completo.append({
+            "ticker": sym, "chg": r(qt.get("regularMarketChangePercent")), "price": r(qt.get("regularMarketPrice"), 4),
+            "volM": r((qt.get("regularMarketVolume") or 0) / 1e6, 3),
+            "float_yahoo_M": r((info(sym).get("floatShares") or 0) / 1e6, 3) or None,
+            "float_tv_M": r((tv.get(sym, {}).get("float") or 0) / 1e6, 3) or None,
+            "bolsa": qt.get("fullExchangeName"), "pais": info(sym).get("country"),
+            "en_lista": sym in {q["symbol"] for q in candidatas[:MAX_FILAS]}})
     filas, errores = [], []
     for qt in candidatas[:MAX_FILAS]:
         try:
@@ -584,6 +595,7 @@ def foto() -> dict:
         "universo_yahoo": len(quotes), "con_float_bajo": len(candidatas),
         "sin_float_conocido": sin_float,
         "descartadas_rancias": rancias,
+        "universo_completo": universo_completo,
         "fuentes": {"pausas_nasdaq": estado_halts, "sec_en_vivo": estado_vivo},
         "temperatura": temperatura(filas, halts),
         "filas": filas, "errores": errores,

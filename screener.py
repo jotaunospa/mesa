@@ -37,9 +37,14 @@ from lib import sec_mesa
 NY = ZoneInfo("America/New_York")
 DATOS = Path(os.environ.get("DATOS", "datos"))
 
-FLOAT_MAX = 50e6          # criterio del scanner
+# Criterio de la lista, deducido comparando contra el scanner del canal el 05-11 (3 rondas,
+# 33 decisiones, 33 aciertos). La descripción del canal dice "float < 50 M", pero en la práctica
+# muestra DNUT (91 M) y AMTX (67 M) por su volumen. Umbrales aproximados: se ajustan con más rondas.
+FLOAT_MAX = 15e6          # float bajo (entre 8,1 M que entra y 19,3 M que no)
+VOL_ALTO = 14e6           # o volumen alto (entre 13,1 M que no entra y 15,5 M que sí)
+VOL_MIN = 1e6             # volumen mínimo (0,23 M no entra; 1,44 M sí)
 FLOAT_MUY_BAJO = 2e6      # el scanner los marca en amarillo
-PRECIO_MAX = 20           # hipótesis (ver universo())
+PRECIO_MAX = 1000         # sin tope real: ECPG y EPAM quedaban fuera por float y volumen, no por precio
 RANCIA_S = 900            # cotización con más de 15 min se descarta de la foto
 MAX_FILAS = 20            # filas con detalle completo por foto
 INICIO, FIN, PASO_MIN = (9, 31), (10, 20), 3   # ventana 09:35–10:15 NY + margen (antes de 9:30 Yahoo muestra el % de ayer)
@@ -557,12 +562,14 @@ def foto() -> dict:
     quotes = universo()
     # Quinta letra en Nasdaq: P preferente, R derecho, U unidad, W warrant, Z otros. No son acciones comunes.
     quotes = [q for q in quotes if not (len(q["symbol"]) >= 5 and q["symbol"][-1] in "PRUWZ")]
-    # float < 50 M (el float es una estimación de Yahoo)
+    # Sin OTC (el scanner no los muestra).
+    quotes = [q for q in quotes if "OTC" not in (q.get("fullExchangeName") or "")]
     tv = float_tradingview([q["symbol"] for q in quotes])
     candidatas = []
     for qt in quotes:
         vals = [v for v in (info(qt["symbol"]).get("floatShares"), tv.get(qt["symbol"], {}).get("float")) if v]
-        if not vals or min(vals) < FLOAT_MAX:
+        vol = qt.get("regularMarketVolume") or 0
+        if vol >= VOL_MIN and ((not vals or min(vals) < FLOAT_MAX) or vol >= VOL_ALTO):
             candidatas.append(qt)
     # Cotizaciones rancias: el screener de Yahoo a veces devuelve precios de días atrás.
     rancias = [qt["symbol"] for qt in candidatas
@@ -590,8 +597,8 @@ def foto() -> dict:
     sin_float = [f["ticker"] for f in filas if f["floatM"] is None]
     return {
         "hora_ny": ahora.isoformat(timespec="seconds"),
-        "criterio": "top gainers del día, float < 50 M (scanner GreenOrDieTrying); "
-                    "float desconocido se incluye y queda en unsure",
+        "criterio": "top gainers del día sin OTC, volumen ≥ 1 M y (float < 15 M o volumen ≥ 14 M); "
+                    "deducido del scanner GreenOrDieTrying el 05-11; float desconocido se incluye y queda en unsure",
         "universo_yahoo": len(quotes), "con_float_bajo": len(candidatas),
         "sin_float_conocido": sin_float,
         "descartadas_rancias": rancias,

@@ -402,9 +402,7 @@ def dictamen(f: dict, ahora: datetime) -> dict:
         no.append("fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)")
     edad = (f.get("meta") or {}).get("edad_s")
     if edad is None or edad > EDAD_MAX_S:
-        no.append(f"precio atrasado ({edad} s)")
-    if f["spread_pct"] is not None and f["spread_pct"] > SPREAD_MAX:
-        no.append(f"spread {f['spread_pct']}% (> {SPREAD_MAX}%)")
+        no.append(f"sin operaciones hace {edad} s: poco líquida para entrar")
     # cautelas: no bloquean, pero el sistema las muestra y las cuenta en el registro
     if f["float_confianza"] == "media":
         ojo.append("float con confianza media (" + "; ".join(f["float_motivos"]) + ")")
@@ -416,8 +414,12 @@ def dictamen(f: dict, ahora: datetime) -> dict:
         ojo.append(f"país de riesgo ({f['pais']})")
     if f["split_reciente"]:
         ojo.append("split en los últimos 30 días")
+    # El bid/ask de Yahoo no es confiable en small caps (05-11: ARQ 62%, DTIL 49% con
+    # millones de acciones operadas). Un dato malo no decide: solo se muestra.
     if f["spread_pct"] is None:
         ojo.append("spread desconocido")
+    elif f["spread_pct"] > SPREAD_MAX:
+        ojo.append(f"spread informado {f['spread_pct']}% (dato de Yahoo poco confiable)")
     if f["rvol_hora"] is None:
         ojo.append("rvol por hora no calculable")
     apto = not no

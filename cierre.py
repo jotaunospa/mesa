@@ -24,7 +24,7 @@ from zoneinfo import ZoneInfo
 
 import yfinance as yf
 
-from screener import DATOS, NY, publicar, r, solo_regular
+from screener import DATOS, NY, escribir_indice, publicar, r, solo_regular, velas_compactas
 
 
 def primera_aparicion(dia: Path) -> dict:
@@ -48,6 +48,9 @@ def medir(tk: str, desde_iso: str, precio0: float, carpeta_velas: Path) -> dict:
     with gzip.open(carpeta_velas / f"{tk}.json.gz", "wt") as fh:
         json.dump([[i.isoformat(), r(x.Open, 4), r(x.High, 4), r(x.Low, 4), r(x.Close, 4), int(x.Volume)]
                    for i, x in v.iterrows()], fh)
+    # Día completo para el gráfico del dashboard (mismo formato que en la ventana).
+    vv = carpeta_velas.parent / "velas_vivo"; vv.mkdir(exist_ok=True)
+    (vv / f"{tk}.json").write_text(json.dumps(velas_compactas(v), separators=(",", ":")))
     desde = datetime.fromisoformat(desde_iso)
     reg = solo_regular(v)
     tras = reg[reg.index >= desde]
@@ -102,6 +105,7 @@ def main(fecha: str | None = None) -> None:
               f"máx {res.get('max_subida_pct')}% ({res.get('hora_max')})  mín {res.get('max_caida_pct')}%  "
               f"+15 {res.get('a_15m_pct')}  +30 {res.get('a_30m_pct')}  +60 {res.get('a_60m_pct')}  "
               f"cierre {res.get('cierre_pct')}  [{res['estado']}]")
+    escribir_indice()
     publicar(f"resultados {fecha}")
 
 

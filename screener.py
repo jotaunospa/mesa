@@ -52,6 +52,7 @@ MESA_VOLM_MIN = 0.5
 _cache_info: dict = {}
 _cache_base: dict = {}
 _cache_dil: dict = {}
+_velas_vivo: dict = {}   # velas de 1 min del día por ticker, para el gráfico del dashboard
 
 
 # ───────────────────────── utilidades ─────────────────────────
@@ -298,6 +299,7 @@ def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
         v1 = yf.Ticker(tk).history(period="1d", interval="1m", prepost=True)
         if v1 is not None and not v1.empty:
             v1.index = v1.index.tz_convert(NY)
+            _velas_vivo[tk] = velas_compactas(v1)
     except Exception:
         v1 = None
     reg = solo_regular(v1) if v1 is not None else None
@@ -582,6 +584,24 @@ def foto() -> dict:
     }
 
 
+def velas_compactas(v) -> list:
+    """[hora "HH:MM", open, high, low, close, volumen] — formato del endpoint de velas."""
+    return [[i.strftime("%H:%M"), r(x.Open, 4), r(x.High, 4), r(x.Low, 4), r(x.Close, 4), int(x.Volume)]
+            for i, x in v.iterrows()]
+
+
+def escribir_indice() -> None:
+    """index.json en la raíz de los datos: el punto de entrada de los endpoints."""
+    dias = sorted(p.name for p in DATOS.glob("20??-??-??") if p.is_dir())
+    info_dias = []
+    for d in dias:
+        snaps = sorted(x.stem.replace("snap-", "") for x in (DATOS / d).glob("snap-*.json"))
+        info_dias.append({"fecha": d, "fotos": snaps, "resultados": (DATOS / d / "resultados.json").exists()})
+    (DATOS / "index.json").write_text(json.dumps({
+        "version": 1, "actualizado_ny": ahora_ny().isoformat(timespec="seconds"),
+        "ultimo_dia": dias[-1] if dias else None, "dias": info_dias}, ensure_ascii=False, indent=1))
+
+
 def guardar(snap: dict) -> Path:
     h = datetime.fromisoformat(snap["hora_ny"])
     d = DATOS / h.strftime("%Y-%m-%d")
@@ -590,6 +610,11 @@ def guardar(snap: dict) -> Path:
     txt = json.dumps(snap, ensure_ascii=False, indent=1, default=str)
     p.write_text(txt)
     (d / "ultimo.json").write_text(txt)
+    vv = d / "velas_vivo"; vv.mkdir(exist_ok=True)
+    for f in snap["filas"]:
+        if f["ticker"] in _velas_vivo:
+            (vv / f"{f['ticker']}.json").write_text(json.dumps(_velas_vivo[f["ticker"]], separators=(",", ":")))
+    escribir_indice()
     return p
 
 

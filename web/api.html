@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Endpoints del Escáner</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Figtree:wght@400;600;700&family=Martian+Mono:wght@400;500&display=swap">
+<style>
+:root{--paper:#FFF6EA;--card:#FFFDF8;--ink:#1C1A22;--text:#1C1A22;--muted:#5D5767;--soft:#EFE6D8;--butter:#FFE066}
+@media (prefers-color-scheme:dark){:root{--paper:#18161F;--card:#24212D;--ink:#07060A;--text:#F2EDF8;--muted:#B3ABC2;--soft:#2F2B3A;--butter:#F5D24F}}
+body{margin:0;background:var(--paper);color:var(--text);font:15px/1.55 Figtree,system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:28px 16px 60px;display:grid;gap:18px}
+h1{font:800 30px 'Bricolage Grotesque',sans-serif;margin:0;letter-spacing:-.02em}
+h2{font:800 19px 'Bricolage Grotesque',sans-serif;margin:0}
+.card{background:var(--card);border:2px solid var(--ink);border-radius:18px;box-shadow:4px 4px 0 var(--ink);padding:16px 18px;display:grid;gap:8px}
+code,pre{font-family:'Martian Mono',monospace;font-size:12.5px}
+pre{margin:0;background:var(--paper);border:2px dashed var(--ink);border-radius:12px;padding:12px;overflow-x:auto;white-space:pre}
+code.p{background:var(--butter);color:#1C1A22;border:1.5px solid #1C1A22;border-radius:6px;padding:1px 6px}
+p,li{margin:0}.muted{color:var(--muted)} a{color:inherit}
+</style></head><body><main>
+<p><a href="/">← Escáner</a></p>
+<h1>Endpoints del Escáner (versión 1)</h1>
+<p class="muted">JSON estático, con CORS abierto (<code>Access-Control-Allow-Origin: *</code>) y sin caché. Lo escribe solo el bot de GitHub Actions; nadie lo edita a mano. Horas en Nueva York.</p>
+<div class="card"><h2><code class="p">/index.json</code></h2><p>Punto de entrada: qué días y fotos existen.</p>
+<pre>{ "version": 1, "actualizado_ny": "2026-11-05T14:27:18-05:00", "ultimo_dia": "2026-11-05",
+  "dias": [ { "fecha": "2026-11-05", "fotos": ["0931","0934",…], "resultados": true } ] }</pre></div>
+<div class="card"><h2><code class="p">/AAAA-MM-DD/ultimo.json</code> · <code class="p">/AAAA-MM-DD/snap-HHMM.json</code></h2><p>Una foto del screener. <code>ultimo.json</code> es siempre la más reciente del día.</p>
+<pre>{ "hora_ny", "criterio", "universo_yahoo", "con_float_bajo", "temperatura": {"nivel","suben_20_float_bajo","iwm_chg","pausas_hoy_total"},
+  "fuentes": {"pausas_nasdaq","sec_en_vivo"}, "filas": [ FILA, … ], "errores": [], "duracion_s" }</pre>
+<p><b>FILA</b>: campos de la Mesa (mismo formato que el banco)</p>
+<pre>ticker, price, chg, volM, rvol, floatM, dayHigh, dayLow, halt, news, headline, dil, unsure[], meta{src:"yahoo-gratis", edad_s, bolsa}</pre>
+<p>Dictamen (lo que la Mesa debe respetar: <code>apto=false</code> ⇒ NO-GO)</p>
+<pre>apto (bool), no_apto_por[], cautela[], lectura (texto)</pre>
+<p>Extras</p>
+<pre>rvol_hora, actividad, rotaciones, float_muy_bajo, float_cruce{estado, rango_M, yahoo_M, tradingview_M, sec_portada},
+float_confianza, hod_dist_pct, vwap, sobre_vwap_pct, surge5m, velas15[[hh:mm,o,h,l,c,v]], ssr, ssr_motivo,
+short_pct_float, pais, pais_riesgo, split_reciente[], halts_hoy[{hora,codigo,reanuda,direccion}], noticias[],
+premarket{max,vol}, spread_pct, nasdaq{precio,bid,ask,hora}, precio_cuadra, sec{dil_motivo[],veto_venta,veto_quiebra,
+extranjero,runway_q,caja_periodo,filings_recientes[]}, sec_hoy[], veto, en_filtro_mesa, calc[]</pre></div>
+<div class="card"><h2><code class="p">/AAAA-MM-DD/velas_vivo/TICKER.json</code></h2><p>Velas de 1 minuto del día, con premarket. Durante la ventana llegan hasta la última foto; después del cierre, el día completo.</p>
+<pre>[ ["09:30", open, high, low, close, volumen], … ]</pre></div>
+<div class="card"><h2><code class="p">/AAAA-MM-DD/resultados.json</code></h2><p>Registro de qué pasó después con cada candidata (16:37 NY).</p>
+<pre>{ "fecha", "candidatas": [ { "ticker", "primera_hora", "precio_inicial", "apariciones", "temperatura",
+  "al_aparecer": {chg, volM, rvol, rvol_hora, floatM, rotaciones, sobre_vwap_pct, hod_dist_pct, surge5m, ssr, dil, veto,
+                  news, en_filtro_mesa, float_muy_bajo, float_confianza, float_cruce, apto, no_apto_por, pais_riesgo, spread_pct},
+  "resultado": {estado, max_subida_pct, max_caida_pct, hora_max, a_15m_pct, a_30m_pct, a_60m_pct, cierre_pct} } ] }</pre></div>
+<p class="muted">Candidatas, no recomendaciones. Si cambia un campo, sube la versión en <code>index.json</code>.</p>
+</main></body></html>

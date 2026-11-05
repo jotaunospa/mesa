@@ -1,0 +1,32 @@
+name: Publicar dashboard
+
+# Al cambiar el dashboard, lo copia a la rama datos (que sirve Vercel) sin esperar a la próxima foto.
+on:
+  push:
+    branches: [main]
+    paths: ["web/**"]
+  workflow_dispatch:
+
+concurrency:
+  group: datos-push
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      DATOS: ${{ github.workspace }}/datos
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: .github/actions-datos.sh
+      - run: python -c "import screener as s; s.escribir_indice(); s.publicar('dashboard')"

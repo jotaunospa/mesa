@@ -9,3 +9,5 @@ else
 fi
 git -C datos config user.name "mesa-bot"
 git -C datos config user.email "mesa-bot@users.noreply.github.com"
+# El dashboard vive en main/web y se publica junto a los datos (Vercel sirve la rama datos).
+cp -r web/. datos/

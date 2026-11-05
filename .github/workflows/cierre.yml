@@ -1,0 +1,38 @@
+name: Cierre (registro de resultados)
+
+# 16:37 de Nueva York en invierno (21:37 UTC) y en verano (20:37 UTC).
+# El script sale solo si el mercado todavía no cierra.
+on:
+  schedule:
+    - cron: "37 20 * * 1-5"
+    - cron: "37 21 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      forzar:
+        description: "1 = correr aunque no haya cerrado el mercado (prueba)"
+        default: ""
+
+concurrency:
+  group: cierre
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  cierre:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      DATOS: ${{ github.workspace }}/datos
+      FORZAR: ${{ inputs.forzar }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: .github/actions-datos.sh
+      - run: python cierre.py

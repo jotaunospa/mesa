@@ -1,0 +1,42 @@
+name: Ventana (fotos del screener)
+
+# Fotos cada 3 min entre 09:31 y 10:20 de Nueva York, días hábiles.
+# El cron de GitHub va en UTC y se atrasa en horas punta: hay 4 disparos de
+# respaldo que cubren horario de verano e invierno. El script sale solo si es
+# muy temprano o si la ventana ya cerró, y la concurrencia evita dos loops a la vez.
+on:
+  schedule:
+    - cron: "6 13 * * 1-5"
+    - cron: "21 13 * * 1-5"
+    - cron: "6 14 * * 1-5"
+    - cron: "21 14 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: "ventana | una_vez"
+        default: "una_vez"
+
+concurrency:
+  group: ventana
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  fotos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      GH_TOKEN: ${{ github.token }}
+      DATOS: ${{ github.workspace }}/datos
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: .github/actions-datos.sh
+      - name: Fotos
+        run: python screener.py ${{ inputs.modo || 'ventana' }}

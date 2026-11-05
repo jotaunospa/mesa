@@ -136,6 +136,38 @@ def dil(tk: str) -> dict:
     return _cache_dil[tk]
 
 
+CONCUERDA = 0.15   # dos fuentes de float "concuerdan" si difieren menos de 15%
+
+
+def float_cruzado(f_yahoo, tv: dict, d: dict, b: dict) -> dict:
+    """Cruza el float de Yahoo con el de TradingView y con la portada SEC.
+
+    confirmado : dos fuentes independientes concuerdan (±15%), o emisor de EE.UU.
+                 con float que cuadra con una portada SEC reciente (confianza_float alta)
+    en_disputa : dos fuentes difieren más de 15% → se informa el rango [mín, máx]
+    una_fuente : solo hay un número
+    sin_dato   : nadie informa float
+    El dictamen evalúa las reglas con los DOS extremos del rango: si el resultado
+    es el mismo, la disputa no importa para decidir.
+    """
+    f_tv = tv.get("float")
+    vals = [v for v in (f_yahoo, f_tv) if v]
+    nivel_sec, motivos_sec = confianza_float(f_yahoo, d, b)
+    out = {"yahoo_M": r(f_yahoo / 1e6, 3) if f_yahoo else None,
+           "tradingview_M": r(f_tv / 1e6, 3) if f_tv else None,
+           "sec_portada": d.get("acciones_portada"), "chequeo_sec": nivel_sec, "motivos_sec": motivos_sec}
+    if not vals:
+        out.update(estado="sin_dato", rango_M=None)
+    elif len(vals) == 1:
+        out.update(estado="confirmado" if nivel_sec == "alta" else "una_fuente", rango_M=[r(vals[0] / 1e6, 3)] * 2)
+    else:
+        lo, hi = min(vals), max(vals)
+        acuerdo = (hi - lo) / hi <= CONCUERDA
+        out.update(estado="confirmado" if (acuerdo or nivel_sec == "alta") else "en_disputa",
+                   rango_M=[r(lo / 1e6, 3), r(hi / 1e6, 3)])
+    return out
+
+
 def confianza_float(flt, d: dict, b: dict) -> tuple[str, list]:
     """Diagnóstico 05-11 (10 tickers del scanner): en emisores de EE.UU. el float de
     Yahoo coincidió EXACTO con el scanner (LABT, AMTX, FLYE, PLCE). Las diferencias
@@ -192,6 +224,47 @@ def pausas_nasdaq() -> tuple[dict, str]:
         return out, "ok"
     except Exception as e:
         return out, f"falla: {type(e).__name__}"
+
+
+_UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                     "Chrome/130.0 Safari/537.36", "Accept": "application/json", "Accept-Language": "en-US,en;q=0.9"}
+_cache_tv: dict = {}
+
+
+def float_tradingview(tickers: list) -> dict:
+    """Segunda fuente de float: scanner público de TradingView (otro proveedor que Yahoo).
+    Su precio viene con 15 min de atraso, así que de TradingView solo se usa el float."""
+    faltan = [t for t in tickers if t not in _cache_tv]
+    if faltan:
+        try:
+            body = json.dumps({"markets": ["america"], "symbols": {"query": {"types": []}, "tickers": []},
+                               "filter": [{"left": "name", "operation": "in_range", "right": faltan}],
+                               "columns": ["name", "float_shares_outstanding", "total_shares_outstanding"],
+                               "range": [0, 200]}).encode()
+            req = urllib.request.Request("https://scanner.tradingview.com/america/scan", data=body,
+                                         headers=dict(_UA, **{"Content-Type": "application/json"}))
+            js = json.loads(urllib.request.urlopen(req, timeout=20).read())
+            for row in js.get("data", []):
+                n, fl, tot = row["d"]
+                _cache_tv.setdefault(n, {"float": fl, "acciones": tot})
+        except Exception:
+            pass
+        for t in faltan:
+            _cache_tv.setdefault(t, {"float": None, "acciones": None})
+    return {t: _cache_tv.get(t, {}) for t in tickers}
+
+
+def cotizacion_nasdaq(tk: str) -> dict:
+    """Bid/ask y último precio desde Nasdaq.com (el bid/ask de Yahoo es basura en small caps)."""
+    try:
+        req = urllib.request.Request(f"https://api.nasdaq.com/api/quote/{tk}/info?assetclass=stocks",
+                                     headers=dict(_UA, Origin="https://www.nasdaq.com", Referer="https://www.nasdaq.com/"))
+        p = (json.loads(urllib.request.urlopen(req, timeout=15).read()).get("data") or {}).get("primaryData") or {}
+        num = lambda x: float(str(x).replace("$", "").replace(",", "")) if x not in (None, "", "N/A") else None
+        return {"precio": num(p.get("lastSalePrice")), "bid": num(p.get("bidPrice")), "ask": num(p.get("askPrice")),
+                "hora": p.get("lastTradeTimestamp")}
+    except Exception as e:
+        return {"error": type(e).__name__}
 
 
 def universo() -> list[dict]:
@@ -301,9 +374,11 @@ def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
 
     d = dil(tk)
     conf_float, conf_motivos = confianza_float(flt, d, b)
-    if conf_float == "alta":
+    fx = float_cruzado(flt, float_tradingview([tk])[tk], d, b)
+    if fx["estado"] == "confirmado":
         unsure.remove("floatM")
-    bid, ask = qt.get("bid") or inf.get("bid"), qt.get("ask") or inf.get("ask")
+    nq = cotizacion_nasdaq(tk)
+    bid, ask = nq.get("bid"), nq.get("ask")
     spread = ((ask - bid) / ((ask + bid) / 2) * 100) if bid and ask and ask > bid > 0 else None
     if spread is None:
         unsure.append("spread_pct")
@@ -334,6 +409,9 @@ def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
         "rotaciones": r(vol / flt) if vol and flt else None,
         "float_muy_bajo": bool(flt and flt < FLOAT_MUY_BAJO),
         "float_confianza": conf_float, "float_motivos": conf_motivos,
+        "float_cruce": fx,
+        "nasdaq": nq,
+        "precio_cuadra": (abs(nq["precio"] / precio - 1) <= 0.03) if nq.get("precio") and precio else None,
         "acciones_portada_sec": d.get("acciones_portada"),
         "split_inverso_12m": [x for x in b.get("splits_12m", []) if x["ratio"] < 1],
         "hod_dist_pct": r((precio / hi - 1) * 100) if precio and hi else None,
@@ -383,10 +461,21 @@ def _min_desde(hhmmss: str, ahora: datetime):
 
 def dictamen(f: dict, ahora: datetime) -> dict:
     no, ojo = [], []
-    if f["float_confianza"] in ("baja", "sin_dato"):
-        no.append("float no verificable (" + "; ".join(f["float_motivos"]) + ")")
-    elif f["floatM"] is not None and f["floatM"] * 1e6 < FLOAT_MIN_MESA:
-        no.append(f"float {f['floatM']} M bajo el mínimo de 1 M de la Mesa")
+    fx = f["float_cruce"]
+    rng = fx.get("rango_M")
+    fuentes = f"Yahoo {fx['yahoo_M']} M / TradingView {fx['tradingview_M']} M"
+    if not rng:
+        no.append("ninguna fuente informa float")
+    else:
+        bajo = [v * 1e6 < FLOAT_MIN_MESA for v in rng]
+        if all(bajo):
+            no.append(f"float bajo el mínimo de 1 M de la Mesa ({fuentes})")
+        elif any(bajo):
+            no.append(f"float en disputa y la regla de 1 M cambia según la fuente ({fuentes})")
+        elif fx["estado"] == "en_disputa":
+            ojo.append(f"float en disputa ({fuentes}), pero ambas cumplen las reglas")
+        elif fx["estado"] == "una_fuente":
+            ojo.append(f"float de una sola fuente ({fuentes}; " + "; ".join(fx["motivos_sec"]) + ")")
     if f["veto"]:
         det = "; ".join(m for m in (f["sec"].get("dil_motivo") or []) if "VETO" in m) or "424B presentado hoy"
         no.append(f"veto SEC: {det}")
@@ -403,9 +492,9 @@ def dictamen(f: dict, ahora: datetime) -> dict:
     edad = (f.get("meta") or {}).get("edad_s")
     if edad is None or edad > EDAD_MAX_S:
         no.append(f"sin operaciones hace {edad} s: poco líquida para entrar")
+    if f["spread_pct"] is not None and f["spread_pct"] > SPREAD_MAX:
+        no.append(f"spread {f['spread_pct']}% en Nasdaq (> {SPREAD_MAX}%): entrar y salir cuesta demasiado")
     # cautelas: no bloquean, pero el sistema las muestra y las cuenta en el registro
-    if f["float_confianza"] == "media":
-        ojo.append("float con confianza media (" + "; ".join(f["float_motivos"]) + ")")
     if f["dil"] == "media":
         ojo.append("dilución media")
     if f["ssr"]:
@@ -414,12 +503,12 @@ def dictamen(f: dict, ahora: datetime) -> dict:
         ojo.append(f"país de riesgo ({f['pais']})")
     if f["split_reciente"]:
         ojo.append("split en los últimos 30 días")
-    # El bid/ask de Yahoo no es confiable en small caps (05-11: ARQ 62%, DTIL 49% con
-    # millones de acciones operadas). Un dato malo no decide: solo se muestra.
+    # Spread desde Nasdaq.com. El de Yahoo es basura en small caps (05-11: ARQ 62% en
+    # Yahoo, 0,85% en Nasdaq), por eso ya no se usa.
     if f["spread_pct"] is None:
-        ojo.append("spread desconocido")
-    elif f["spread_pct"] > SPREAD_MAX:
-        ojo.append(f"spread informado {f['spread_pct']}% (dato de Yahoo poco confiable)")
+        ojo.append("spread desconocido (Nasdaq no respondió)")
+    if f.get("precio_cuadra") is False:
+        ojo.append(f"precio de Yahoo y Nasdaq difieren más de 3% (Yahoo {f['price']}, Nasdaq {f['nasdaq'].get('precio')})")
     if f["rvol_hora"] is None:
         ojo.append("rvol por hora no calculable")
     apto = not no
@@ -460,10 +549,11 @@ def foto() -> dict:
     # Quinta letra en Nasdaq: P preferente, R derecho, U unidad, W warrant, Z otros. No son acciones comunes.
     quotes = [q for q in quotes if not (len(q["symbol"]) >= 5 and q["symbol"][-1] in "PRUWZ")]
     # float < 50 M (el float es una estimación de Yahoo)
+    tv = float_tradingview([q["symbol"] for q in quotes])
     candidatas = []
     for qt in quotes:
-        flt = info(qt["symbol"]).get("floatShares")
-        if flt is None or flt < FLOAT_MAX:
+        vals = [v for v in (info(qt["symbol"]).get("floatShares"), tv.get(qt["symbol"], {}).get("float")) if v]
+        if not vals or min(vals) < FLOAT_MAX:
             candidatas.append(qt)
     # Cotizaciones rancias: el screener de Yahoo a veces devuelve precios de días atrás.
     rancias = [qt["symbol"] for qt in candidatas
@@ -525,7 +615,7 @@ def resumen(snap: dict) -> str:
            f"pausas {snap['fuentes']['pausas_nasdaq']} · SEC vivo {snap['fuentes']['sec_en_vivo']} · {snap['duracion_s']}s"]
     for f in snap["filas"]:
         lin.append(f"{f['ticker']:<6} ${f['price']:<8} {f['chg']:>7}%  vol {f['volM']}M  rvol {f['rvol']}/{f['rvol_hora']}h  "
-                   f"float {f['floatM']}M[{f['float_confianza']}] rot {f['rotaciones']}  vwap {f['sobre_vwap_pct']}%  hod {f['hod_dist_pct']}%  "
+                   f"float {f['float_cruce']['rango_M']}[{f['float_cruce']['estado']}] rot {f['rotaciones']}  vwap {f['sobre_vwap_pct']}%  hod {f['hod_dist_pct']}%  "
                    f"surge {f['surge5m']}  ssr {f['ssr']}  dil {f['dil']}{' VETO' if f['veto'] else ''}  "
                    f"halt {len(f['halts_hoy'])}  edad {f['meta']['edad_s']}s  → {f['lectura']}")
     for e in snap["errores"]:

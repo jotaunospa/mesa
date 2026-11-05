@@ -1,0 +1,67 @@
+name: Prueba YouTube (bloqueo anti-bot)
+
+# Corre a mano o al subir cambios a la prueba. Usa 3 runners a la vez (IP distintas)
+# para saber si el bloqueo es la regla o la excepción. Cada runner deja su resultado
+# en la rama resultados-prueba-N para que Claude lo lea sin credenciales extra.
+on:
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: "URLs separadas por espacio (la del scanner + una de control que esté siempre en vivo)"
+        required: true
+        default: "https://www.youtube.com/@LofiGirl/live"
+  push:
+    branches: [main]
+    paths: ["captura/prueba_youtube.py", ".github/workflows/prueba-youtube.yml"]
+
+permissions:
+  contents: write
+
+jobs:
+  prueba:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        intento: [1, 2, 3]
+    env:
+      URLS: ${{ inputs.urls || 'https://www.youtube.com/@LofiGirl/live' }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Instalar dependencias
+        run: |
+          pip install playwright yt-dlp
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb ffmpeg
+          python -m playwright install --with-deps chromium
+      - name: Correr prueba
+        working-directory: captura
+        run: xvfb-run -a python prueba_youtube.py $URLS | tee resultados_resumen.txt
+      - name: Resumen en la página del run
+        if: always()
+        run: |
+          echo "### Intento ${{ matrix.intento }}" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cat captura/resultados_resumen.txt >> "$GITHUB_STEP_SUMMARY" || echo "sin resumen" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - name: Guardar resultado en rama
+        if: always()
+        run: |
+          mkdir -p /tmp/out && cp -r captura/resultados/* /tmp/out/ 2>/dev/null || true
+          cp captura/resultados_resumen.txt /tmp/out/ 2>/dev/null || true
+          git config user.name "mesa-bot"; git config user.email "mesa-bot@users.noreply.github.com"
+          git checkout --orphan resultados-prueba-${{ matrix.intento }}
+          git rm -rf -q . ; rm -rf captura .github .gitignore
+          cp -r /tmp/out/. .
+          echo "run ${{ github.run_id }} · $(date -u +%FT%TZ)" > RUN.txt
+          git add -A && git commit -qm "resultado prueba ${{ matrix.intento }} (run ${{ github.run_id }})"
+          git push -f origin resultados-prueba-${{ matrix.intento }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: resultados-intento-${{ matrix.intento }}
+          path: captura/resultados/
+          retention-days: 14

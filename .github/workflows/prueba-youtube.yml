@@ -9,7 +9,7 @@ on:
       urls:
         description: "URLs separadas por espacio (la del scanner + una de control que esté siempre en vivo)"
         required: true
-        default: "https://www.youtube.com/@LofiGirl/live"
+        default: "https://www.youtube.com/watch?v=4t4AQ15yj1M"
   push:
     branches: [main]
     paths: ["captura/prueba_youtube.py", ".github/workflows/prueba-youtube.yml"]
@@ -26,7 +26,7 @@ jobs:
       matrix:
         intento: [1, 2, 3]
     env:
-      URLS: ${{ inputs.urls || 'https://www.youtube.com/@LofiGirl/live' }}
+      URLS: ${{ inputs.urls || 'https://www.youtube.com/watch?v=4t4AQ15yj1M' }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6

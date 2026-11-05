@@ -39,6 +39,8 @@ DATOS = Path(os.environ.get("DATOS", "datos"))
 
 FLOAT_MAX = 50e6          # criterio del scanner
 FLOAT_MUY_BAJO = 2e6      # el scanner los marca en amarillo
+PRECIO_MAX = 20           # hipótesis (ver universo())
+RANCIA_S = 900            # cotización con más de 15 min se descarta de la foto
 MAX_FILAS = 20            # filas con detalle completo por foto
 INICIO, FIN, PASO_MIN = (9, 31), (10, 20), 3   # ventana 09:35–10:15 NY + margen (antes de 9:30 Yahoo muestra el % de ayer)
 PAISES_ROJOS = {"China", "Hong Kong", "Macau", "Macao", "Taiwan", "Singapore", "Malaysia"}
@@ -159,7 +161,10 @@ def pausas_nasdaq() -> tuple[dict, str]:
 def universo() -> list[dict]:
     q = Q("and", [Q("eq", ["region", "us"]),
                   Q("gte", ["percentchange", 5]),
-                  Q("gte", ["intradayprice", 0.5]),
+                  # Sin precio mínimo: el scanner muestra acciones de $0,13 (05-11).
+                  # Tope de $20: ECPG ($122) y EPAM ($164) subían >19% y el scanner no las
+                  # mostraba (05-11). Es una HIPÓTESIS de 2 casos; revisar con más días.
+                  Q("btwn", ["intradayprice", 0.05, PRECIO_MAX]),
                   Q("gte", ["dayvolume", 100_000])])
     res = yf.screen(q, sortField="percentchange", sortAsc=False, size=100)
     return res.get("quotes", [])
@@ -351,6 +356,10 @@ def foto() -> dict:
         flt = info(qt["symbol"]).get("floatShares")
         if flt is None or flt < FLOAT_MAX:
             candidatas.append(qt)
+    # Cotizaciones rancias: el screener de Yahoo a veces devuelve precios de días atrás.
+    rancias = [qt["symbol"] for qt in candidatas
+               if qt.get("regularMarketTime") and time.time() - qt["regularMarketTime"] > RANCIA_S]
+    candidatas = [qt for qt in candidatas if qt["symbol"] not in rancias]
     filas, errores = [], []
     for qt in candidatas[:MAX_FILAS]:
         try:
@@ -364,6 +373,7 @@ def foto() -> dict:
                     "float desconocido se incluye y queda en unsure",
         "universo_yahoo": len(quotes), "con_float_bajo": len(candidatas),
         "sin_float_conocido": sin_float,
+        "descartadas_rancias": rancias,
         "fuentes": {"pausas_nasdaq": estado_halts, "sec_en_vivo": estado_vivo},
         "temperatura": temperatura(filas, halts),
         "filas": filas, "errores": errores,

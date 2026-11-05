@@ -42,7 +42,7 @@ DATOS = Path(os.environ.get("DATOS", "datos"))
 # muestra DNUT (91 M) y AMTX (67 M) por su volumen. Umbrales aproximados: se ajustan con más rondas.
 FLOAT_MAX = 15e6          # float bajo (entre 8,1 M que entra y 19,3 M que no)
 VOL_ALTO = 14e6           # o volumen alto (entre 13,1 M que no entra y 15,5 M que sí)
-VOL_MIN = 1e6             # volumen mínimo (0,23 M no entra; 1,44 M sí)
+VOL_MIN = 250e3           # volumen mínimo: HTCR con 0,232 M no entra (15:43) y con 0,269 M sí (15:48)
 FLOAT_MUY_BAJO = 2e6      # el scanner los marca en amarillo
 PRECIO_MAX = 20           # tope de precio: AEHL ($18,65) entra; APP (cientos de USD, +31%, vol 20 M) no (05-11 15:46)
 RANCIA_S = 900            # cotización con más de 15 min se descarta de la foto
@@ -594,10 +594,11 @@ def foto() -> dict:
             filas.append(fl)
         except Exception as e:
             errores.append({"ticker": qt.get("symbol"), "error": f"{type(e).__name__}: {e}"[:200]})
+    filas.sort(key=lambda f: -(f["chg"] or -1e9))   # orden del scanner: % del día al momento de la fila
     sin_float = [f["ticker"] for f in filas if f["floatM"] is None]
     return {
         "hora_ny": ahora.isoformat(timespec="seconds"),
-        "criterio": "top gainers del día sin OTC, volumen ≥ 1 M y (float < 15 M o volumen ≥ 14 M); "
+        "criterio": "top gainers del día sin OTC, precio ≤ 20 USD, volumen ≥ 250 mil y (float < 15 M o volumen ≥ 14 M); "
                     "deducido del scanner GreenOrDieTrying el 05-11; float desconocido se incluye y queda en unsure",
         "universo_yahoo": len(quotes), "con_float_bajo": len(candidatas),
         "sin_float_conocido": sin_float,

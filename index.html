@@ -188,6 +188,8 @@ svg.mini{width:100%;height:38px;display:block}
 
 /* detalle */
 .det{padding:4px 14px 18px;display:grid;gap:16px;animation:rowin .4s cubic-bezier(.16,1,.3,1) both}
+/* dentro de la tabla: paneles planos (sin sombra) para no apilar tarjetas sobre tarjetas */
+.det .card{box-shadow:none;border-width:1.5px;border-radius:14px}
 .det-g{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;align-items:start}
 @media (max-width:1000px){.det-g{grid-template-columns:minmax(0,1fr)}}
 .chartbox{padding:12px;display:grid;gap:8px}

@@ -1,0 +1,35 @@
+name: Screener gratis (prueba Yahoo + Nasdaq)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["captura/screener_gratis.py", ".github/workflows/screener-gratis.yml"]
+
+permissions:
+  contents: write
+
+jobs:
+  screener:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install yfinance
+      - name: Correr screener
+        working-directory: captura
+        run: python screener_gratis.py
+      - name: Guardar resultado en rama
+        if: always()
+        run: |
+          mkdir -p /tmp/out && cp -r captura/resultados/* /tmp/out/ 2>/dev/null || echo "sin resultados" > /tmp/out/resumen.txt
+          git config user.name "mesa-bot"; git config user.email "mesa-bot@users.noreply.github.com"
+          git checkout --orphan resultados-screener
+          git rm -rf -q . ; rm -rf captura .github .gitignore
+          cp -r /tmp/out/. .
+          echo "run ${{ github.run_id }} · $(date -u +%FT%TZ)" > RUN.txt
+          git add -A && git commit -qm "screener gratis (run ${{ github.run_id }})"
+          git push -f origin resultados-screener

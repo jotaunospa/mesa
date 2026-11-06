@@ -76,12 +76,13 @@ button{font:inherit;color:inherit}
 .theme{width:46px;height:46px;border-radius:99px;display:grid;place-items:center;cursor:pointer;background:var(--card);padding:0;transition:transform .1s,box-shadow .1s}
 .theme:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--shadow)}
 .theme svg{width:22px;height:22px}
-@media (max-width:760px){.phase{flex:1 1 100%}.clocks{flex:1 1 100%;justify-content:center}.brand b{font-size:21px}}
+@media (max-width:760px){.top .wrap{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px}.brand{grid-column:1/3;margin:0}.theme{grid-column:3;grid-row:1;justify-self:end;width:42px;height:42px}.clocks{grid-column:1}.clk{padding:0 9px}.phase{grid-column:2/4;min-width:0;padding:6px 12px}.phase small{line-height:1.25}.brand b{font-size:21px}.brand small{max-width:30ch}}
 
 /* tablero superior */
 .board{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,1fr);gap:18px;margin-block:14px 22px}
 @media (max-width:1000px){.board{grid-template-columns:minmax(0,1fr)}}
-.temp{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 16px;align-items:center;padding:14px 18px;color:var(--on-pastel)}
+.temp{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 16px;align-items:center;padding:14px 18px}
+.temp.caliente,.temp.tibia,.temp.fría{color:var(--on-pastel)}
 .temp.caliente{background:var(--peach)}.temp.tibia{background:var(--butter)}.temp.fría{background:var(--sky)}
 .temp svg{width:46px;height:86px;grid-row:span 3}
 .temp .lvl{font-family:var(--f-disp);font-weight:800;font-size:26px;letter-spacing:-.02em;text-transform:capitalize}
@@ -117,7 +118,7 @@ input[type=range]{width:100%}
 .learn>summary::before{content:"+";font-family:var(--f-num);width:22px;height:22px;border:1.5px solid var(--ink);border-radius:6px;display:inline-grid;place-items:center;font-size:13px}
 .learn[open]>summary::before{content:"−"}
 .gloss{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;padding:0 18px 18px}
-.term{padding:12px 14px;border:1.5px solid var(--ink);border-radius:14px;background:var(--paper)}
+.term{padding:12px 14px;border-radius:12px;background:var(--paper)}
 .term:nth-child(5n+1){background:var(--sky);color:var(--on-pastel)}.term:nth-child(5n+3){background:var(--mint);color:var(--on-pastel)}.term:nth-child(5n){background:var(--peach);color:var(--on-pastel)}
 .term b{font-family:var(--f-disp);font-size:15.5px;display:block}
 .term p{font-size:13px;margin-top:3px}
@@ -126,7 +127,8 @@ input[type=range]{width:100%}
 .scan{overflow:hidden}
 .scan-h{display:grid;grid-template-columns:var(--cols);gap:10px;padding:10px 14px;background:var(--soft);border-bottom:var(--bw) solid var(--ink);font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
 :root{--cols:minmax(110px,1.15fr) minmax(86px,.85fr) minmax(110px,1fr) minmax(100px,.95fr) 64px 64px minmax(110px,1.1fr) 70px 70px minmax(112px,1fr)}
-.tk-row{border-bottom:1.5px solid var(--soft);animation:rowin .5s cubic-bezier(.16,1,.3,1) both}
+.tk-row{border-bottom:1.5px solid var(--soft)}
+#rows.anim .tk-row{animation:rowin .45s cubic-bezier(.16,1,.3,1) both}
 .tk-row:last-child{border-bottom:0}
 @keyframes rowin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .tk-main{all:unset;box-sizing:border-box;display:grid;grid-template-columns:var(--cols);gap:10px;align-items:center;padding:10px 14px 4px;width:100%;cursor:pointer}
@@ -176,24 +178,29 @@ svg.mini{width:100%;height:38px;display:block}
 .sem.stop i:nth-child(1){background:#FF5B4F}
 .sem.wait i:nth-child(2){background:#FFC83D}
 .sem.ready i:nth-child(3){background:#4CD681;animation:blink 1.8s ease-in-out infinite}
-.verdict small{font-size:11.5px;color:var(--muted);line-height:1.25}
+.verdict small{font-size:11.5px;color:var(--muted);line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dcell .lab{display:none}
+.verdict small.mas{display:block;font-weight:700}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* móvil: filas como tarjetas */
 @media (max-width:900px){
   .scan-h{display:none}
-  .tk-main{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"who chg" "vol flt" "hod vw" "mini mini" "ver ver";row-gap:10px}
-  .who{grid-area:who}.chg{grid-area:chg;text-align:right}.vol{grid-area:vol}.flt{grid-area:flt}
-  .c-hod{grid-area:hod;justify-items:start}.c-vw{grid-area:vw;justify-items:end}.c-mini{grid-area:mini}.c-sq,.c-dil{display:none}.verdict{grid-area:ver}
+  .tk-main{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-areas:"who who chg chg" "vol vol flt flt" "hod vw sq dil" "mini mini mini mini" "ver ver ver ver";row-gap:10px;column-gap:8px}
+  .who{grid-area:who}.chg{grid-area:chg;text-align:right}.vol{grid-area:vol}.flt{grid-area:flt}.flt b,.flt small{text-align:right}
+  .c-hod{grid-area:hod}.c-vw{grid-area:vw}.c-sq{grid-area:sq;align-self:end}.c-dil{grid-area:dil}.c-mini{grid-area:mini}.verdict{grid-area:ver}
+  .dcell .lab{display:block;font-family:var(--f-ui);font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .verdict small{-webkit-line-clamp:3}
 }
 
 /* detalle */
 .det{padding:4px 14px 18px;display:grid;gap:16px;animation:rowin .4s cubic-bezier(.16,1,.3,1) both}
 /* dentro de la tabla: paneles planos (sin sombra) para no apilar tarjetas sobre tarjetas */
-.det .card{box-shadow:none;border-width:1.5px;border-radius:14px}
+.panel{background:var(--card);border:1.5px solid var(--ink);border-radius:14px;min-width:0}
 .det-g{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;align-items:start}
 @media (max-width:1000px){.det-g{grid-template-columns:minmax(0,1fr)}}
 .chartbox{padding:12px;display:grid;gap:8px}
+@media (min-width:1001px){.chartbox{position:sticky;top:12px}}
 .chartbox .sec-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 12px}
 svg.chart{display:block;width:100%;height:auto;touch-action:pan-y}
 .chart .bg{fill:var(--chartbg);stroke:var(--ink);stroke-width:1.5}
@@ -217,7 +224,7 @@ svg.chart{display:block;width:100%;height:auto;touch-action:pan-y}
 .legend i{display:inline-block;width:16px;height:3px;border-radius:2px}
 .tip{font-family:var(--f-num);font-size:12px;min-height:18px;color:var(--muted)}
 .facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 14px;padding:14px 16px}
-@media (max-width:520px){.facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.facts{grid-template-columns:repeat(2,minmax(0,1fr));padding:12px 4px}.facts b{font-size:12px;white-space:nowrap}}
 .facts div{display:grid;gap:1px;min-width:0}
 .facts small{font-size:11.5px;color:var(--muted);font-weight:600}
 .facts b{font-family:var(--f-num);font-weight:500;font-size:13.5px}
@@ -248,6 +255,8 @@ svg.chart{display:block;width:100%;height:auto;touch-action:pan-y}
 .scroll{overflow-x:auto}
 .mx{display:inline-block;height:8px;border-radius:4px;vertical-align:middle;margin-left:6px;border:1px solid var(--ink)}
 
+.sk{height:58px;margin:10px 14px;border-radius:12px;background:linear-gradient(90deg,var(--soft) 30%,color-mix(in srgb,var(--soft) 40%,var(--card)) 50%,var(--soft) 70%);background-size:300% 100%;animation:sk 1.4s ease-in-out infinite}
+@keyframes sk{from{background-position:100% 0}to{background-position:0 0}}
 .empty{padding:28px 22px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center}
 .empty svg{width:60px;height:60px}
 footer{margin-top:28px;font-size:12.5px;color:var(--muted);display:grid;gap:6px}
@@ -311,7 +320,7 @@ footer code{font-family:var(--f-num);font-size:11.5px}
   <details class="card learn">
     <summary>¿Cómo se lee este escáner?</summary>
     <div class="gloss">
-      <div class="term"><b>La lista</b><p>Las acciones que más suben hoy con float bajo 50 M, el mismo criterio del scanner de GreenOrDieTrying. Que esté en la lista no significa que sea buena: significa que se está moviendo.</p></div>
+      <div class="term"><b>La lista</b><p>Las acciones que más suben hoy, con el criterio deducido del scanner de GreenOrDieTrying: precio hasta 50 USD, volumen de al menos 30 K y float bajo 18 M (o volumen sobre 14 M). Fuera de bolsa (OTC) no entra. Que esté en la lista no significa que sea buena: significa que se está moviendo.</p></div>
       <div class="term"><b>Apta / No apta</b><p>El dictamen automático. "No apta" significa que un dato no se pudo verificar o que rompe una regla de la Mesa (dilución, pausa, spread, liquidez). Lo que no se puede verificar no se opera. "Apta" solo significa que vale la pena evaluarla con tus reglas.</p></div>
       <div class="term"><b>RVOL y barras de señal</b><p>Cuánto más volumen que lo normal trae. Las barras se encienden a 1×, 2×, 5×, 10× y 20×. Usamos el rvol por hora del día: compara contra lo que suele operar a esta misma hora.</p></div>
       <div class="term"><b>Float y rotaciones</b><p>Float: acciones disponibles para operar. Rotaciones: cuántas veces se operó el float entero hoy. Rotar varias veces significa que la demanda supera por mucho a la oferta. El número lleva color de advertencia cuando dos fuentes no concuerdan.</p></div>
@@ -319,14 +328,14 @@ footer code{font-family:var(--f-num);font-size:11.5px}
       <div class="term"><b>Dial VWAP</b><p>VWAP es el precio promedio ponderado por volumen del día: el "precio justo" que pagó la mayoría. Aguja a la derecha (verde): cotiza sobre el VWAP. A la izquierda (rojo): bajo el VWAP.</p></div>
       <div class="term"><b>Últimos 15 min</b><p>Quince velas de un minuto. Verde: cerró más arriba de lo que abrió. Rosado: más abajo. Abre la fila para ver el día completo.</p></div>
       <div class="term"><b>SSR</b><p>Short Sale Restriction: se activa cuando una acción cae 10% bajo el cierre anterior. Ese día y el siguiente nadie puede vender en corto a la baja.</p></div>
-      <div class="term"><b>Dilución</b><p>Riesgo de que la empresa emita más acciones, leído directo de la SEC: ventas recientes (424B), registros S-1/S-3 y caja. Si emite, el precio suele sufrir.</p></div>
-      <div class="term"><b>Temperatura</b><p>Cuántas acciones de float bajo suben más de 20% hoy. Con el día frío, el momentum casi nunca funciona; es la primera pregunta antes de mirar una acción.</p></div>
+      <div class="term"><b>Dilución</b><p>Riesgo de que la empresa emita más acciones, leído directo de la SEC con 7 factores: caja para menos de 4 trimestres, shelf S-3/F-3 vigente, venta de acciones en 6 meses, warrants grandes, convertibles, aviso de la bolsa (8-K 3.01) y split inverso en 12 meses. Alta: caja corta y 2 factores o más. Una venta (424B, 8-K 3.02) en los últimos 10 días o una quiebra (8-K 1.03) es veto directo.</p></div>
+      <div class="term"><b>Temperatura</b><p>Cuántas acciones de la lista suben 20% o más hoy: 5 o más es caliente, 2 a 4 tibia, 1 o ninguna fría. Esos cortes son provisionales hasta calibrarlos con los resultados. Es la primera pregunta antes de mirar una acción.</p></div>
     </div>
   </details>
 
   <section class="card scan" id="scan" aria-live="polite">
     <div class="scan-h"><span>Acción</span><span>Cambio</span><span>Volumen · RVOL</span><span>Float · rot.</span><span>HOD</span><span>VWAP</span><span>Últimos 15 min</span><span>Short</span><span>Dilución</span><span>Dictamen</span></div>
-    <div id="rows"></div>
+    <div id="rows" aria-busy="true"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
   </section>
 
   <section class="card res" id="res" hidden>
@@ -438,6 +447,7 @@ function mini(v15) {
     return `<line class="w" x1="${x}" x2="${x}" y1="${y(c[2])}" y2="${y(c[3])}"/><rect class="${up ? "u" : "d"}" x="${x - bw * .32}" width="${bw * .64}" y="${t}" height="${Math.max(1, b - t)}"/>`;
   }).join("")}</svg>`;
 }
+const ESTADO_FLOAT = {confirmado: "confirmado por dos fuentes", en_disputa: "en disputa entre fuentes", una_fuente: "una sola fuente", sin_dato: "sin dato"};
 function semClase(f) { return f.apto ? "ready" : "stop"; }
 
 /* ── lectura en palabras (determinista; nunca dice si va a subir) ── */
@@ -465,7 +475,7 @@ function render() {
   const t = s.temperatura || {}, tl = t.nivel || "—";
   $("#temp").className = "card temp " + tl;
   $("#t-lvl").textContent = tl;
-  $("#t-sub").innerHTML = `${t.suben_20_float_bajo ?? "—"} acciones suben ≥ 20% · IWM ${pct(t.iwm_chg, 2)} · ${t.pausas_hoy_total ?? "—"} pausas hoy`;
+  $("#t-sub").innerHTML = `${t.suben_20_float_bajo ?? "—"} de la lista suben 20% o más · IWM ${pct(t.iwm_chg, 2)} · ${t.pausas_hoy_total ?? "—"} pausas hoy<br><span style="opacity:.8">Cortes provisionales</span>`;
   const h = tl === "caliente" ? 52 : tl === "tibia" ? 32 : 14;
   const m = $("#merc"); m.setAttribute("y", 62 - h); m.setAttribute("height", h + 8);
   // conteo
@@ -480,7 +490,11 @@ function render() {
   $("#live span").textContent = enVivo ? "en vivo" : "historial";
 
   const filas = s.filas.filter(f => S.filtro === "todas" || (S.filtro === "aptas" ? f.apto : !f.apto));
-  box.innerHTML = filas.map((f, i) => fila(f, i)).join("") || `<div class="empty"><div></div><p class="muted">Nada con este filtro.</p></div>`;
+  const clave = S.dia + "/" + S.fotos[S.i] + "/" + S.filtro;
+  box.classList.toggle("anim", clave !== S.clave); S.clave = clave; box.removeAttribute("aria-busy");
+  $("#foto").setAttribute("aria-valuetext", `Foto de las ${hh} NY, ${S.i + 1} de ${S.fotos.length}`);
+  const vacio = S.filtro === "aptas" ? "Ninguna acción pasó todos los filtros en esta foto. Prueba con otra foto o mira por qué quedaron fuera en «No aptas»." : "Todas las acciones de esta foto son aptas.";
+  box.innerHTML = filas.map((f, i) => fila(f, i)).join("") || `<div class="empty"><svg aria-hidden="true"><use href="#papelito"/></svg><p class="muted">${vacio}</p></div>`;
   box.querySelectorAll(".tk-main").forEach(b => b.onclick = () => toggle(b.dataset.tk));
   S.abiertos.forEach(tk => abrir(tk));
   renderRes();
@@ -488,7 +502,9 @@ function render() {
 
 function fila(f, i) {
   const fx = f.float_cruce || {}, rng = fx.rango_M;
-  const fl = !rng ? "—" : rng[0] === rng[1] ? fmt(rng[0], rng[0] < 10 ? 2 : 1) + " M" : `${fmt(rng[0], rng[0] < 10 ? 2 : 1)}–${fmt(rng[1], rng[1] < 10 ? 2 : 1)} M`;
+  const fM = v => fmt(v, v < 10 ? 2 : 1), fl = !rng ? "—" : fM(rng[0]) === fM(rng[1]) ? fM(rng[0]) + " M" : `${fM(rng[0])}–${fM(rng[1])} M`;
+  const motivo = f.apto ? (f.cautela || []).length ? (f.cautela.length + " cautela" + (f.cautela.length > 1 ? "s" : "")) : "sin cautelas" : (f.no_apto_por || [])[0] || "";
+  const motivoLargo = f.apto ? (f.cautela || []).join(" · ") : (f.no_apto_por || []).join(" · ");
   const hodV = f.dayHigh && f.dayLow && f.dayHigh > f.dayLow ? (f.price - f.dayLow) / (f.dayHigh - f.dayLow) : null;
   const vwV = f.sobre_vwap_pct == null ? null : .5 + Math.max(-10, Math.min(10, f.sobre_vwap_pct)) / 20;
   const dilV = {baja: .17, media: .5, alta: .83}[f.dil];
@@ -504,13 +520,13 @@ function fila(f, i) {
       <span class="who"><span class="t"><span class="sem ${semClase(f)}"><i></i><i></i><i></i></span><span class="tk${f.float_muy_bajo ? " lowf" : ""}">${f.ticker}</span></span><span class="chips">${chips.join("")}</span></span>
       <span class="chg"><b class="${f.chg >= 0 ? "pos" : "neg"}">${pct(f.chg)}</b><small>${px(f.price)}</small></span>
       <span class="vol"><b>${vol(f.volM)}</b>${senal(f.rvol_hora ?? f.rvol)}</span>
-      <span class="flt"><b class="${fx.estado === "en_disputa" ? "disp" : ""}" title="${esc(fx.estado || "")}">${fl}</b><span class="rot"><i style="width:${Math.min(100, (f.rotaciones || 0) * 100)}%"></i></span><small>ROT ${f.rotaciones == null ? "—" : fmt(f.rotaciones, f.rotaciones >= 10 ? 0 : 1) + "×"}</small></span>
-      <span class="dcell c-hod">${dial(hodV, "hod", f.hod_dist_pct != null && f.hod_dist_pct > -2)}<small>${f.hod_dist_pct == null ? "—" : pct(f.hod_dist_pct)}</small></span>
-      <span class="dcell c-vw">${dial(vwV, "vwap", f.sobre_vwap_pct != null && Math.abs(f.sobre_vwap_pct) < .5)}<small>${f.sobre_vwap_pct == null ? "—" : pct(f.sobre_vwap_pct)}</small></span>
+      <span class="flt"><b class="${fx.estado === "en_disputa" ? "disp" : ""}" title="${esc(ESTADO_FLOAT[fx.estado] || "")}">${fl}</b><span class="rot"><i style="width:${Math.min(100, (f.rotaciones || 0) * 100)}%"></i></span><small>ROT ${f.rotaciones == null ? "—" : fmt(f.rotaciones, f.rotaciones >= 10 ? 0 : 1) + "×"}</small></span>
+      <span class="dcell c-hod"><small class="lab">HOD</small>${dial(hodV, "hod", f.hod_dist_pct != null && f.hod_dist_pct > -2)}<small>${f.hod_dist_pct == null ? "—" : pct(f.hod_dist_pct)}</small></span>
+      <span class="dcell c-vw"><small class="lab">VWAP</small>${dial(vwV, "vwap", f.sobre_vwap_pct != null && Math.abs(f.sobre_vwap_pct) < .5)}<small>${f.sobre_vwap_pct == null ? "—" : pct(f.sobre_vwap_pct)}</small></span>
       <span class="c-mini">${mini(f.velas15)}</span>
-      <span class="dcell c-sq"><small style="font-size:12px;color:var(--text)">${f.short_pct_float == null ? "—" : fmt(f.short_pct_float, 1) + "%"}</small><small>short</small></span>
-      <span class="dcell c-dil">${dial(dilV, "dil")}<small>${f.dil || "—"}</small></span>
-      <span class="verdict"><span class="vchip ${f.apto ? "ok" : "no"}">${f.apto ? "APTA" : "NO APTA"}</span><small>${esc(f.apto ? (f.cautela || []).length ? (f.cautela.length + " cautela" + (f.cautela.length > 1 ? "s" : "")) : "sin cautelas" : (f.no_apto_por || [])[0] || "")}</small></span>
+      <span class="dcell c-sq"><small class="lab">Short</small><small style="font-size:12px;color:var(--text)">${f.short_pct_float == null ? "—" : fmt(f.short_pct_float, 1) + "%"}</small><small>short</small></span>
+      <span class="dcell c-dil"><small class="lab">Dilución</small>${dial(dilV, "dil")}<small>${f.dil || "—"}</small></span>
+      <span class="verdict"><span class="vchip ${f.apto ? "ok" : "no"}">${f.apto ? "APTA" : "NO APTA"}</span><small title="${esc(motivoLargo)}">${esc(motivo)}</small>${!f.apto && (f.no_apto_por || []).length > 1 ? `<small class="mas">y ${f.no_apto_por.length - 1} motivo${f.no_apto_por.length > 2 ? "s" : ""} más</small>` : ""}</span>
     </button>
     ${hd}
     <div class="det" id="d-${f.ticker}" hidden></div>
@@ -535,10 +551,10 @@ function detalle(f) {
   const port = fx.sec_portada || f.acciones_portada_sec;
   const L = lecturas(f);
   const dic = f.apto
-    ? `<div class="card box ok"><h3><span class="sem ready"><i></i><i></i><i></i></span> Apta para evaluar</h3><p class="small">Pasó todos los filtros automáticos. Ahora decide la Mesa con tus reglas (perfil, setup, stop).</p>${(f.cautela || []).length ? `<ul>${f.cautela.map(c => `<li>${esc(c)}</li>`).join("")}</ul>` : ""}</div>`
-    : `<div class="card box no"><h3><span class="sem stop"><i></i><i></i><i></i></span> No apta</h3><ul>${(f.no_apto_por || []).map(c => `<li>${esc(c)}</li>`).join("")}</ul>${(f.cautela || []).length ? `<p class="small muted">Además: ${f.cautela.map(esc).join(" · ")}</p>` : ""}</div>`;
+    ? `<div class="panel box ok"><h3><span class="sem ready"><i></i><i></i><i></i></span> Apta para evaluar</h3><p class="small">Pasó todos los filtros automáticos. Ahora decide la Mesa con tus reglas (perfil, setup, stop).</p>${(f.cautela || []).length ? `<ul>${f.cautela.map(c => `<li>${esc(c)}</li>`).join("")}</ul>` : ""}</div>`
+    : `<div class="panel box no"><h3><span class="sem stop"><i></i><i></i><i></i></span> No apta</h3><ul>${(f.no_apto_por || []).map(c => `<li>${esc(c)}</li>`).join("")}</ul>${(f.cautela || []).length ? `<p class="small muted">Además: ${f.cautela.map(esc).join(" · ")}</p>` : ""}</div>`;
   return `<div class="det-g">
-    <div class="card chartbox">
+    <div class="panel chartbox">
       <div class="sec-h"><h3>${f.ticker} · velas de 1 minuto</h3>
         <div class="legend"><span><i style="background:var(--up);height:10px;width:10px;border:1.5px solid var(--stroke);border-radius:3px"></i>vela</span><span><i style="background:var(--vwap)"></i>VWAP</span><span><i style="background:var(--bad)"></i>máx. del día</span><span><i style="background:var(--warn)"></i>máx. premarket</span><span><i style="background:var(--bad);opacity:.3;height:10px"></i>pausa</span></div></div>
       <div class="chart-slot"><p class="small muted">Cargando velas…</p></div>
@@ -554,18 +570,18 @@ function detalle(f) {
     </div>
     <div class="side">
       ${dic}
-      <div class="card box"><h3>Cómo leerla</h3><ol class="read">${L.map((x, i) => `<li><span class="n">${i + 1}</span><span>${esc(x)}</span></li>`).join("") || "<li>Sin datos suficientes.</li>"}</ol><p class="small muted">Describe lo que pasó, no lo que va a pasar.</p></div>
-      <div class="card box"><h3>Float: de dónde sale</h3>
+      <div class="panel box"><h3>Cómo leerla</h3><ol class="read">${L.map((x, i) => `<li><span class="n">${i + 1}</span><span>${esc(x)}</span></li>`).join("") || "<li>Sin datos suficientes.</li>"}</ol><p class="small muted">Describe lo que pasó, no lo que va a pasar.</p></div>
+      <div class="panel box"><h3>Float: de dónde sale</h3>
         <table class="src"><tr><td>Yahoo</td><td>${fx.yahoo_M == null ? "—" : fmt(fx.yahoo_M, 3) + " M"}</td></tr><tr><td>TradingView</td><td>${fx.tradingview_M == null ? "—" : fmt(fx.tradingview_M, 3) + " M"}</td></tr>
         <tr><td>SEC portada (acciones totales)</td><td>${port && port.valor ? fmt(port.valor / 1e6, 3) + " M · " + esc(port.fecha) + " " + esc(port.form || "") : "—"}</td></tr></table>
-        <p class="small"><b>Estado:</b> ${esc({confirmado: "confirmado por dos fuentes", en_disputa: "en disputa entre fuentes", una_fuente: "una sola fuente", sin_dato: "sin dato"}[fx.estado] || "—")}${(fx.motivos_sec || []).length ? ` · <span class="muted">${fx.motivos_sec.map(esc).join("; ")}</span>` : ""}</p></div>
-      <div class="card box"><h3>SEC</h3>
+        <p class="small"><b>Estado:</b> ${esc(ESTADO_FLOAT[fx.estado] || "—")}${(fx.motivos_sec || []).length ? ` · <span class="muted">${fx.motivos_sec.map(esc).join("; ")}</span>` : ""}</p></div>
+      <div class="panel box"><h3>SEC</h3>
         <p class="small"><b>Dilución ${esc(f.dil || "—")}${sec.dil_puntaje ? ` · ${esc(sec.dil_puntaje)} factores` : ""}.</b> ${(sec.dil_factores_si || []).map(esc).join(" · ") || "Ningún factor de dilución activo."}</p>
         ${(sec.dil_motivo || []).length ? `<p class="small muted">${sec.dil_motivo.map(esc).join(" · ")}</p>` : ""}
         ${(sec.filings_recientes || []).length ? `<p class="small muted">Últimos 30 días: ${sec.filings_recientes.slice(0, 6).map(x => esc(x.form + " " + x.fecha)).join(" · ")}</p>` : ""}
         ${(f.sec_hoy || []).length ? `<p class="small"><b>Hoy en EDGAR:</b> ${f.sec_hoy.map(x => esc(x.form)).join(", ")}</p>` : ""}
         ${sec.runway_q != null ? `<p class="small muted">Autonomía de caja: ${fmt(sec.runway_q, 1)} trimestres (dato al ${esc(sec.caja_periodo || "—")}).</p>` : ""}</div>
-      ${(f.noticias || []).length ? `<div class="card box"><h3>Noticias</h3><div class="news">${f.noticias.map(n => `<p>${esc(n.titulo)}<small>${esc(n.fuente || "")} ${esc(String(n.fecha || "").slice(0, 16).replace("T", " "))}</small></p>`).join("")}</div></div>` : ""}
+      ${(f.noticias || []).length ? `<div class="panel box"><h3>Noticias</h3><div class="news">${f.noticias.map(n => `<p>${esc(n.titulo)}<small>${esc(n.fuente || "")} ${esc(String(n.fecha || "").slice(0, 16).replace("T", " "))}</small></p>`).join("")}</div></div>` : ""}
     </div>
   </div>`;
 }
@@ -579,12 +595,15 @@ function dibujarGrafico(slot, velas, f) {
   const data = reg.length ? reg : velas;
   // VWAP acumulado de la sesión regular
   let pv = 0, vv = 0; const vw = data.map(c => { const tp = (c[2] + c[3] + c[4]) / 3; pv += tp * c[5]; vv += c[5]; return vv ? pv / vv : null; });
-  const pmMax = pre.length ? Math.max(...pre.map(c => c[2])) : null;
+  // Máx. premarket: el de Nasdaq (el mismo de la ficha); si falta, el de las velas.
+  const pmMax = f.premarket && f.premarket.max ? f.premarket.max : pre.length ? Math.max(...pre.map(c => c[2])) : null;
+  const pf = p => fmt(p, p < 1 ? 4 : 2);
   const hod = Math.max(...data.map(c => c[2])), lod = Math.min(...data.map(c => c[3]));
   // El máx. del premarket entra a la escala solo si está cerca; si no, se marca en el borde (no aplasta las velas).
   const pmFuera = pmMax != null && pmMax > hod + (hod - lod) * .6;
   let hi = Math.max(hod, pmMax != null && !pmFuera ? pmMax : -Infinity), lo = lod; const padP = (hi - lo) * .06 || hi * .02; hi += padP; lo -= padP;
-  const W = 900, H = 340, L = 14, R = 64, T = 10, VB = 56, B = 22, PH = H - T - VB - B;
+  const W = Math.max(300, Math.round(slot.clientWidth || 900)), chico = W < 600;
+  const H = chico ? 300 : 340, L = 10, R = chico ? 54 : 64, T = 10, VB = chico ? 44 : 56, B = 22, PH = H - T - VB - B;
   const n = data.length, cw = (W - L - R) / n;
   const x = i => L + i * cw + cw / 2, y = p => T + (hi - p) / (hi - lo) * PH;
   // escala de volumen con tope en el percentil 95: la vela de apertura no aplasta al resto
@@ -596,17 +615,20 @@ function dibujarGrafico(slot, velas, f) {
     const i1 = h.reanuda ? data.findIndex(c => c[0] >= String(h.reanuda).slice(0, 5)) : n - 1;
     return i0 >= 0 ? {i0, i1: i1 < 0 ? n - 1 : i1, dir: h.direccion} : null;
   }).filter(Boolean);
-  const xl = []; for (let i = 0; i < n; i++) if (mm(data[i][0]) % 30 === 0) xl.push(i);
+  const paso = chico ? 60 : 30, xl = []; for (let i = 0; i < n; i++) if (mm(data[i][0]) % paso === 0) xl.push(i);
+  // pausas seguidas comparten un solo rótulo, abajo del panel de precio (arriba va el máximo)
+  let ultX = -1e9, jefe = null; halts.forEach(h => { const hx = x(h.i0); if (!jefe || hx - ultX > 70) { h.lbl = true; h.k = 1; jefe = h; ultX = hx; } else jefe.k++; });
+  const yHod = y(hod) - 5 < T + 12 ? y(hod) + 14 : y(hod) - 5;
   const anim = n <= 140;
   const svg = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfico de velas de 1 minuto de ${f.ticker}">
     <rect class="bg" x="1" y="1" width="${W - 2}" height="${H - 2}" rx="10"/>
-    ${ticks.map(p => `<line class="gl" x1="${L}" x2="${W - R}" y1="${y(p)}" y2="${y(p)}"/><text class="ax" x="${W - R + 6}" y="${y(p) + 4}">${p < 1 ? p.toFixed(4) : p.toFixed(2)}</text>`).join("")}
+    ${ticks.map(p => `<line class="gl" x1="${L}" x2="${W - R}" y1="${y(p)}" y2="${y(p)}"/><text class="ax" x="${W - R + 6}" y="${y(p) + 4}">${pf(p)}</text>`).join("")}
     ${xl.map(i => `<text class="ax" x="${x(i)}" y="${H - 7}" text-anchor="${x(i) < L + 20 ? "start" : "middle"}">${data[i][0]}</text>`).join("")}
-    ${halts.map(h => `<rect class="halt" x="${x(h.i0) - cw / 2}" y="${T}" width="${Math.max(cw, (h.i1 - h.i0) * cw)}" height="${PH}"/><text class="halt-t" x="${x(h.i0) + 2}" y="${T + 12}">PAUSA${h.dir ? (h.dir === "arriba" ? " ▲" : " ▼") : ""}</text>`).join("")}
+    ${halts.map(h => `<rect class="halt" x="${x(h.i0) - cw / 2}" y="${T}" width="${Math.max(cw, (h.i1 - h.i0) * cw)}" height="${PH}"/>${h.lbl ? `<text class="halt-t" x="${x(h.i0) + 2}" y="${T + PH - 6}">${h.k > 1 ? h.k + " PAUSAS" : "PAUSA" + (h.dir ? (h.dir === "arriba" ? " ▲" : " ▼") : "")}</text>` : ""}`).join("")}
     ${data.map((c, i) => `<rect class="vb" x="${x(i) - cw * .35}" width="${cw * .7}" y="${yv(c[5])}" height="${T + PH + 6 + VB - 8 - yv(c[5])}"/>`).join("")}
-    <line class="hod" x1="${L}" x2="${W - R}" y1="${y(hod)}" y2="${y(hod)}"/><text class="lt" style="fill:var(--bad)" x="${L + 6}" y="${y(hod) - 5}">máx. ${hod < 1 ? hod.toFixed(4) : hod.toFixed(2)}</text>
-    ${pmMax && !pmFuera ? `<line class="pmh" x1="${L}" x2="${W - R}" y1="${y(pmMax)}" y2="${y(pmMax)}"/><text class="lt" style="fill:var(--warn)" x="${W - R - 6}" y="${y(pmMax) - 5}" text-anchor="end">premarket ${pmMax < 1 ? pmMax.toFixed(4) : pmMax.toFixed(2)}</text>` : ""}
-    ${pmFuera ? `<text class="lt" style="fill:var(--warn)" x="${W - R - 6}" y="${T + 13}" text-anchor="end">▲ máx. premarket ${pmMax < 1 ? pmMax.toFixed(4) : pmMax.toFixed(2)} (fuera de escala)</text>` : ""}
+    <line class="hod" x1="${L}" x2="${W - R}" y1="${y(hod)}" y2="${y(hod)}"/><text class="lt" style="fill:var(--bad)" x="${L + 6}" y="${yHod}">máx. ${pf(hod)}</text>
+    ${pmMax && !pmFuera ? `<line class="pmh" x1="${L}" x2="${W - R}" y1="${y(pmMax)}" y2="${y(pmMax)}"/><text class="lt" style="fill:var(--warn)" x="${W - R - 6}" y="${y(pmMax) - 5}" text-anchor="end">premarket ${pf(pmMax)}</text>` : ""}
+    ${pmFuera ? `<text class="lt" style="fill:var(--warn)" x="${W - R - 6}" y="${T + 13}" text-anchor="end">▲ máx. premarket ${pf(pmMax)} (fuera de escala)</text>` : ""}
     ${data.map((c, i) => { const up = c[4] >= c[1], t = y(Math.max(c[1], c[4])), b = y(Math.min(c[1], c[4]));
       return `<g class="${anim ? "candle" : ""}" style="${anim ? `animation-delay:${i * 6}ms` : ""}"><line class="wk" x1="${x(i)}" x2="${x(i)}" y1="${y(c[2])}" y2="${y(c[3])}"/><rect class="${up ? "cu" : "cd"}" x="${x(i) - Math.max(1, cw * .34)}" width="${Math.max(2, cw * .68)}" y="${t}" height="${Math.max(1, b - t)}"/></g>`; }).join("")}
     <polyline class="vwl" points="${vw.map((v, i) => v == null ? "" : `${x(i)},${y(v)}`).join(" ")}"/>
@@ -619,12 +641,17 @@ function dibujarGrafico(slot, velas, f) {
     const pt = s.createSVGPoint(); const e = ev.touches ? ev.touches[0] : ev; pt.x = e.clientX; pt.y = e.clientY;
     const p = pt.matrixTransform(s.getScreenCTM().inverse()); const i = Math.max(0, Math.min(n - 1, Math.floor((p.x - L) / cw)));
     const c = data[i]; xh.setAttribute("x1", x(i)); xh.setAttribute("x2", x(i)); xh.style.display = "";
-    tip.textContent = `${c[0]}  A ${c[1]}  M ${c[2]}  m ${c[3]}  C ${c[4]}  Vol ${c[5].toLocaleString("es-CL")}  VWAP ${vw[i] == null ? "—" : vw[i].toFixed(c[4] < 1 ? 4 : 2)}`;
+    tip.textContent = `${c[0]}  apertura ${pf(c[1])}  máx. ${pf(c[2])}  mín. ${pf(c[3])}  cierre ${pf(c[4])}  vol. ${c[5].toLocaleString("es-CL")}  VWAP ${vw[i] == null ? "—" : pf(vw[i])}`;
   };
   s.querySelector("#hit").addEventListener("mousemove", mover);
   s.querySelector("#hit").addEventListener("touchmove", mover, {passive: true});
   s.querySelector("#hit").addEventListener("mouseleave", () => { xh.style.display = "none"; tip.textContent = ""; });
 }
+
+/* el gráfico se dibuja al ancho real: se rehace si cambia el ancho (girar el celular) */
+let anchoPrev = innerWidth, tRes;
+addEventListener("resize", () => { clearTimeout(tRes); tRes = setTimeout(() => { if (Math.abs(innerWidth - anchoPrev) < 40) return; anchoPrev = innerWidth;
+  document.querySelectorAll(".tk-row.open").forEach(r => { const f = S.snap && S.snap.filas.find(x => x.ticker === r.id.slice(2)); const cb = r.querySelector(".chart-slot"); if (f && cb && S.velas[f.ticker]) dibujarGrafico(cb, S.velas[f.ticker], f); }); }, 250); });
 
 /* ── resultados ── */
 function renderRes() {

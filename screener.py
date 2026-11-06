@@ -42,9 +42,9 @@ DATOS = Path(os.environ.get("DATOS", "datos"))
 # muestra DNUT (91 M) y AMTX (67 M) por su volumen. Umbrales aproximados: se ajustan con más rondas.
 FLOAT_MAX = 15e6          # float bajo (entre 8,1 M que entra y 19,3 M que no)
 VOL_ALTO = 14e6           # o volumen alto (entre 13,1 M que no entra y 15,5 M que sí)
-VOL_MIN = 250e3           # volumen mínimo: HTCR con 0,232 M no entra (15:43) y con 0,269 M sí (15:48)
+VOL_MIN = 25e3            # FLGT con 36,7 mil entra (06-11 09:44). HTCR con 0,232 M no entró el 05-11 15:43: probable ruido de orden en el corte
 FLOAT_MUY_BAJO = 2e6      # el scanner los marca en amarillo
-PRECIO_MAX = 20           # tope de precio: AEHL ($18,65) entra; APP (cientos de USD, +31%, vol 20 M) no (05-11 15:46)
+PRECIO_MAX = 50           # hipótesis: FLGT ($21,62) entra (06-11); APP (cientos de USD) y ECPG ($122) no
 RANCIA_S = 900            # cotización con más de 15 min se descarta de la foto
 MAX_FILAS = 20            # filas con detalle completo por foto
 INICIO, FIN, PASO_MIN = (9, 31), (10, 20), 3   # ventana 09:35–10:15 NY + margen (antes de 9:30 Yahoo muestra el % de ayer)
@@ -279,8 +279,8 @@ def universo() -> list[dict]:
                   # Sin precio mínimo: el scanner muestra acciones de $0,13 (05-11).
                   # Tope de $20: ECPG ($122) y EPAM ($164) subían >19% y el scanner no las
                   # mostraba (05-11). Es una HIPÓTESIS de 2 casos; revisar con más días.
-                  Q("btwn", ["intradayprice", 0.05, PRECIO_MAX]),
-                  Q("gte", ["dayvolume", 100_000])])
+                  Q("btwn", ["intradayprice", 0.05, 200]),
+                  Q("gte", ["dayvolume", 10_000])])
     res = yf.screen(q, sortField="percentchange", sortAsc=False, size=100)
     return res.get("quotes", [])
 
@@ -569,7 +569,8 @@ def foto() -> dict:
     for qt in quotes:
         vals = [v for v in (info(qt["symbol"]).get("floatShares"), tv.get(qt["symbol"], {}).get("float")) if v]
         vol = qt.get("regularMarketVolume") or 0
-        if vol >= VOL_MIN and ((not vals or min(vals) < FLOAT_MAX) or vol >= VOL_ALTO):
+        precio = qt.get("regularMarketPrice") or 0
+        if precio <= PRECIO_MAX and vol >= VOL_MIN and ((not vals or min(vals) < FLOAT_MAX) or vol >= VOL_ALTO):
             candidatas.append(qt)
     # Cotizaciones rancias: el screener de Yahoo a veces devuelve precios de días atrás.
     rancias = [qt["symbol"] for qt in candidatas
@@ -598,7 +599,7 @@ def foto() -> dict:
     sin_float = [f["ticker"] for f in filas if f["floatM"] is None]
     return {
         "hora_ny": ahora.isoformat(timespec="seconds"),
-        "criterio": "top gainers del día sin OTC, precio ≤ 20 USD, volumen ≥ 250 mil y (float < 15 M o volumen ≥ 14 M); "
+        "criterio": "top gainers del día sin OTC, precio ≤ 50 USD (hipótesis), volumen ≥ 25 mil y (float < 15 M o volumen ≥ 14 M); "
                     "deducido del scanner GreenOrDieTrying el 05-11; float desconocido se incluye y queda en unsure",
         "universo_yahoo": len(quotes), "con_float_bajo": len(candidatas),
         "sin_float_conocido": sin_float,

@@ -345,7 +345,8 @@ footer code{font-family:var(--f-num);font-size:11.5px}
 
   <footer>
     <p><b>Candidatas, no recomendaciones.</b> Nada aquí dice si algo va a subir. Datos: Yahoo (precio, volumen, float), TradingView (float de contraste), Nasdaq.com (bid/ask), Nasdaq Trader (pausas) y SEC EDGAR (dilución y vetos). Yahoo, TradingView y Nasdaq.com no son APIs oficiales.</p>
-    <p>Endpoints: <code>/index.json</code> · <code>/AAAA-MM-DD/ultimo.json</code> · <code>/AAAA-MM-DD/snap-HHMM.json</code> · <code>/AAAA-MM-DD/resultados.json</code> · <code>/AAAA-MM-DD/velas_vivo/TICKER.json</code> · <a href="/api.html">contrato</a></p>
+    <p>Endpoints: <code>/index.json</code> · <code>/AAAA-MM-DD/ultimo.json</code> · <code>/AAAA-MM-DD/snap-HHMM.json</code> · <code>/AAAA-MM-DD/resultados.json</code> · <code>/AAAA-MM-DD/velas_vivo/TICKER.json</code> · <code>/AAAA-MM-DD/mesa.json</code> · <a href="/api.html">contrato</a></p>
+    <p><a id="mesa-json" href="#" download>Descargar el archivo para la Mesa de este día</a> (por si la Mesa no recibió las filas sola: en la Mesa, "Cargar archivo").</p>
   </footer>
 </main>
 
@@ -488,6 +489,7 @@ function render() {
   const enVivo = S.dia === diaNY() && S.i === S.fotos.length - 1 && fase().k === "ventana";
   $("#live").className = "live" + (enVivo ? " on" : "");
   $("#live span").textContent = enVivo ? "en vivo" : "historial";
+  $("#mesa-json").href = `${S.dia}/mesa.json`; $("#mesa-json").setAttribute("download", `mesa-${S.dia}.json`);
 
   const filas = s.filas.filter(f => S.filtro === "todas" || (S.filtro === "aptas" ? f.apto : !f.apto));
   const clave = S.dia + "/" + S.fotos[S.i] + "/" + S.filtro;

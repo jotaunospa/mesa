@@ -549,7 +549,7 @@ function detalle(f) {
         <div><small>Volumen</small><b>${vol(f.volM)}</b></div><div><small>RVOL día / hora</small><b>${f.rvol == null ? "—" : fmt(f.rvol, 1) + "×"} / ${f.rvol_hora == null ? "—" : fmt(f.rvol_hora, 1) + "×"}</b></div>
         <div><small>Premarket máx. / vol.</small><b>${f.premarket ? px(f.premarket.max) + " / " + (f.premarket.vol ? vol(f.premarket.vol / 1e6) : "sin dato") : "—"}</b></div><div><small>Spread (Nasdaq)</small><b>${f.spread_pct == null ? "—" : fmt(f.spread_pct, 2) + "%"}</b></div>
         <div><small>Bid / Ask</small><b>${px(nq.bid)} / ${px(nq.ask)}</b></div><div><small>Surge 5 min</small><b>${pct(f.surge5m)}</b></div>
-        <div><small>Short / float</small><b>${f.short_pct_float == null ? "—" : fmt(f.short_pct_float, 1) + "%"}</b></div><div><small>Bolsa</small><b>${esc((f.meta || {}).bolsa || "—")}</b></div>
+        <div><small>Short / float${f.short_fecha ? " (al " + esc(f.short_fecha.slice(8, 10) + "-" + f.short_fecha.slice(5, 7)) + ")" : ""}</small><b>${f.short_pct_float == null ? "—" : fmt(f.short_pct_float, 1) + "%"}</b></div><div><small>Bolsa</small><b>${esc((f.meta || {}).bolsa || "—")}</b></div>
       </div>
     </div>
     <div class="side">
@@ -560,7 +560,8 @@ function detalle(f) {
         <tr><td>SEC portada (acciones totales)</td><td>${port && port.valor ? fmt(port.valor / 1e6, 3) + " M · " + esc(port.fecha) + " " + esc(port.form || "") : "—"}</td></tr></table>
         <p class="small"><b>Estado:</b> ${esc({confirmado: "confirmado por dos fuentes", en_disputa: "en disputa entre fuentes", una_fuente: "una sola fuente", sin_dato: "sin dato"}[fx.estado] || "—")}${(fx.motivos_sec || []).length ? ` · <span class="muted">${fx.motivos_sec.map(esc).join("; ")}</span>` : ""}</p></div>
       <div class="card box"><h3>SEC</h3>
-        <p class="small"><b>Dilución ${esc(f.dil || "—")}.</b> ${(sec.dil_motivo || []).map(esc).join(" · ") || "Sin motivos registrados."}</p>
+        <p class="small"><b>Dilución ${esc(f.dil || "—")}${sec.dil_puntaje ? ` · ${esc(sec.dil_puntaje)} factores` : ""}.</b> ${(sec.dil_factores_si || []).map(esc).join(" · ") || "Ningún factor de dilución activo."}</p>
+        ${(sec.dil_motivo || []).length ? `<p class="small muted">${sec.dil_motivo.map(esc).join(" · ")}</p>` : ""}
         ${(sec.filings_recientes || []).length ? `<p class="small muted">Últimos 30 días: ${sec.filings_recientes.slice(0, 6).map(x => esc(x.form + " " + x.fecha)).join(" · ")}</p>` : ""}
         ${(f.sec_hoy || []).length ? `<p class="small"><b>Hoy en EDGAR:</b> ${f.sec_hoy.map(x => esc(x.form)).join(", ")}</p>` : ""}
         ${sec.runway_q != null ? `<p class="small muted">Autonomía de caja: ${fmt(sec.runway_q, 1)} trimestres (dato al ${esc(sec.caja_periodo || "—")}).</p>` : ""}</div>

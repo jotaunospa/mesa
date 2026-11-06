@@ -493,7 +493,8 @@ def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
         "en_filtro_mesa": en_mesa,
         "calc": calc,
         "meta": {"src": "yahoo-gratis", "edad_s": int(time.time() - tq) if tq else None,
-                 "bolsa": qt.get("fullExchangeName")},
+                 "bolsa": qt.get("fullExchangeName"),
+                 "nombre": qt.get("longName") or qt.get("shortName")},
     }
 
 
@@ -684,6 +685,12 @@ def guardar(snap: dict) -> Path:
     for f in snap["filas"]:
         if f["ticker"] in _velas_vivo:
             (vv / f"{f['ticker']}.json").write_text(json.dumps(_velas_vivo[f["ticker"]], separators=(",", ":")))
+    # Filas traducidas para la Mesa de Papel (las copia a su base de datos una tarea programada).
+    try:
+        from lib import a_mesa
+        (d / "mesa.json").write_text(json.dumps(a_mesa.construir(snap, _velas_vivo), ensure_ascii=False, separators=(",", ":")))
+    except Exception as e:  # la Mesa nunca debe tumbar la foto
+        print(f"mesa.json no se pudo armar: {type(e).__name__}: {e}")
     escribir_indice()
     return p
 

@@ -44,7 +44,7 @@ def _dias(fecha: str, hoy: date) -> int:
     return (hoy - date.fromisoformat(fecha)).days
 
 
-def dilucion(ticker: str, hoy: Optional[date] = None) -> Dict[str, Any]:
+def dilucion(ticker: str, hoy: Optional[date] = None, splits_12m=None) -> Dict[str, Any]:
     """Nivel de dilución y vetos desde /submissions + autonomía de caja de Faro."""
     hoy = hoy or datetime.now(timezone.utc).date()
     c = cliente()
@@ -108,6 +108,16 @@ def dilucion(ticker: str, hoy: Optional[date] = None) -> Dict[str, Any]:
     except Exception as e:  # la caja es un extra; no tumba la fila
         out["dil_motivo"].append(f"caja no disponible ({type(e).__name__})")
 
+    # Dilución v2: 7 factores
+    try:
+        data_f, _ = c.hechos(cik)
+    except Exception:
+        data_f = None
+    acc = (out.get("acciones_portada") or {}).get("valor")
+    fx7 = factores_dilucion(data_f, forms, fechas, items, hoy, acc, splits_12m)
+    out["dil7"] = fx7
+    if fx7["detalle"].get("runway_q") is not None:
+        out["runway_q"], out["caja_periodo"] = fx7["detalle"]["runway_q"], fx7["detalle"].get("caja_al")
     corto = out["runway_q"] is not None and out["runway_q"] < 4
     out["veto_venta"], out["veto_quiebra"] = venta_10, quiebra
     if venta_90 or (registro_12m and corto):
@@ -162,3 +172,78 @@ def filings_en_vivo(tipos=("424B", "8-K", "S-1", "S-3", "F-1", "F-3", "6-K")) ->
             out.setdefault(tk, []).append({"form": form, "hora": upd, "titulo": titulo[:140]})
         time.sleep(0.2)
     return out
+
+# ───────────── dilución de 7 factores (v2, 06-11) ─────────────
+# El scanner del canal puntúa la dilución con 7 factores ("HIGH 7/7": nivel + cuántos factores
+# tuvieron dato). Estos son los nuestros, todos leídos de la SEC con fecha:
+FACTORES = ["caja_corta", "shelf_activo", "venta_reciente", "warrants", "convertibles",
+            "aviso_bolsa", "split_inverso"]
+
+
+def _ultimo(facts: dict, conceptos, unidad="USD", taxo="us-gaap"):
+    """Último valor reportado (por fecha de cierre) entre varios conceptos XBRL."""
+    mejor = None
+    for c in conceptos:
+        for e in (((facts.get(taxo) or {}).get(c) or {}).get("units") or {}).get(unidad, []):
+            if mejor is None or (e.get("end", ""), e.get("filed", "")) > (mejor.get("end", ""), mejor.get("filed", "")):
+                mejor = dict(e, concepto=c)
+    return mejor
+
+
+def factores_dilucion(data_f, forms, fechas, items, hoy, acciones, splits_12m=None) -> dict:
+    f = (data_f or {}).get("facts") or {}
+    out = {k: None for k in FACTORES}
+    det = {}
+    # 1) caja corta: caja del último período / quema trimestral (flujo operativo, del último 10-Q o 10-K)
+    caja = _ultimo(f, ["CashAndCashEquivalentsAtCarryingValue", "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents", "Cash"])
+    ocf = None
+    for e in sorted((((f.get("us-gaap") or {}).get("NetCashProvidedByUsedInOperatingActivities") or {}).get("units") or {}).get("USD", []),
+                    key=lambda x: (x.get("end", ""), x.get("filed", "")), reverse=True):
+        if e.get("start") and e.get("form", "").startswith(("10-Q", "10-K", "20-F")):
+            ocf = e; break
+    if caja and ocf:
+        meses = max(1, round((date.fromisoformat(ocf["end"]) - date.fromisoformat(ocf["start"])).days / 30.4))
+        quema_t = -ocf["val"] / (meses / 3)
+        if quema_t > 0:
+            runway = caja["val"] / quema_t
+            out["caja_corta"] = runway < 4
+            det["runway_q"] = round(runway, 1)
+        else:
+            out["caja_corta"] = False
+            det["runway_q"] = None
+        det["caja_al"] = caja["end"]
+    # 2..6) desde /submissions (hasta 3 años para el shelf)
+    shelf = venta = aviso = False
+    for i, (fo, d) in enumerate(zip(forms, fechas)):
+        dd = (hoy - date.fromisoformat(d)).days
+        if dd > 3 * 365:
+            break
+        it = items[i] if i < len(items) else ""
+        if fo in ("S-3", "F-3", "S-3ASR", "F-3ASR", "S-3/A", "F-3/A"):
+            shelf = True
+        if dd <= 180 and (fo.startswith("424B") or (fo.startswith("8-K") and "3.02" in (it or ""))):
+            venta = True
+        if dd <= 365 and fo.startswith("8-K") and "3.01" in (it or ""):
+            aviso = True
+    out["shelf_activo"], out["venta_reciente"], out["aviso_bolsa"] = shelf, venta, aviso
+    # 4) warrants vigentes vs acciones en circulación
+    w = _ultimo(f, ["ClassOfWarrantOrRightOutstanding"], unidad="shares")
+    if w and acciones:
+        if (hoy - date.fromisoformat(w["end"])).days <= 450:
+            out["warrants"] = w["val"] / acciones >= 0.2
+            det["warrants_pct"] = round(w["val"] / acciones * 100, 1)
+        else:
+            out["warrants"] = False
+    elif f:
+        out["warrants"] = False
+    # 5) convertibles en el balance (último año)
+    cv = _ultimo(f, ["ConvertibleNotesPayable", "ConvertibleNotesPayableCurrent", "ConvertibleDebtNoncurrent",
+                     "ConvertibleDebtCurrent", "ConvertibleDebt"])
+    if f:
+        out["convertibles"] = bool(cv and cv["val"] > 0 and (hoy - date.fromisoformat(cv["end"])).days <= 450)
+    # 7) split inverso en 12 meses (las que lo hacen suelen emitir después)
+    if splits_12m is not None:
+        out["split_inverso"] = any(x.get("ratio", 1) < 1 for x in splits_12m)
+    con_dato = [k for k in FACTORES if out[k] is not None]
+    puntaje = sum(1 for k in con_dato if out[k])
+    return {"factores": out, "puntaje": puntaje, "cobertura": len(con_dato), "detalle": det}

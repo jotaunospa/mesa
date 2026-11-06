@@ -106,6 +106,10 @@ input[type=range]{width:100%}
 .seg button{font-size:13px;font-weight:700;border:0;background:var(--card);padding:6px 13px;cursor:pointer}
 .seg button+button{border-left:var(--bw) solid var(--ink)}
 .seg button[aria-pressed="true"]{background:var(--lilac);color:var(--on-pastel)}
+.dl{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--text);text-decoration:none;border:var(--bw) solid var(--ink);border-radius:99px;padding:5px 12px;background:var(--card);box-shadow:2px 2px 0 var(--shadow);transition:transform .1s,box-shadow .1s}
+.dl:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--shadow)}
+.dl:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--shadow)}
+.dl svg{width:16px;height:16px}
 .live{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700}
 .live i{width:10px;height:10px;border-radius:50%;background:var(--muted)}
 .live.on i{background:#4CD681;animation:blink 1.6s ease-in-out infinite}
@@ -324,6 +328,7 @@ footer code{font-family:var(--f-num);font-size:11.5px}
         <div class="seg" role="group" aria-label="Filtro">
           <button data-f="todas" aria-pressed="true">Todas</button><button data-f="aptas" aria-pressed="false">Aptas</button><button data-f="no" aria-pressed="false">No aptas</button>
         </div>
+        <a class="dl" id="mesa-json" href="#" download hidden title="Archivo con la última foto de este día, para cargarlo en la Mesa con &quot;Cargar archivo&quot;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Archivo para la Mesa</a>
       </div>
     </div>
   </section>
@@ -351,7 +356,6 @@ footer code{font-family:var(--f-num);font-size:11.5px}
   <footer>
     <p><b>Candidatas, no recomendaciones.</b> Nada aquí dice si algo va a subir. Datos: Yahoo (precio, volumen, float), TradingView (float de contraste), Nasdaq.com (bid/ask), Nasdaq Trader (pausas) y SEC EDGAR (dilución y vetos). Yahoo, TradingView y Nasdaq.com no son APIs oficiales.</p>
     <p>Endpoints: <code>/index.json</code> · <code>/AAAA-MM-DD/ultimo.json</code> · <code>/AAAA-MM-DD/snap-HHMM.json</code> · <code>/AAAA-MM-DD/resultados.json</code> · <code>/AAAA-MM-DD/velas_vivo/TICKER.json</code> · <code>/AAAA-MM-DD/mesa.json</code> · <a href="/api.html">contrato</a></p>
-    <p><a id="mesa-json" href="#" download>Descargar el archivo para la Mesa de este día</a> (por si la Mesa no recibió las filas sola: en la Mesa, "Cargar archivo").</p>
   </footer>
 </main>
 
@@ -532,7 +536,7 @@ function render() {
   const enVivo = S.dia === diaNY() && S.i === S.fotos.length - 1 && fase().k === "ventana";
   $("#live").className = "live" + (enVivo ? " on" : "");
   $("#live span").textContent = enVivo ? "en vivo" : "historial";
-  $("#mesa-json").href = `${S.dia}/mesa.json`; $("#mesa-json").setAttribute("download", `mesa-${S.dia}.json`);
+  const mj = $("#mesa-json"); mj.href = `${S.dia}/mesa.json`; mj.setAttribute("download", `mesa-${S.dia}.json`); mj.hidden = S.dia < "2026-11-06";
 
   const filas = s.filas.filter(f => S.filtro === "todas" || (S.filtro === "aptas" ? f.apto : !f.apto));
   const clave = S.dia + "/" + S.fotos[S.i] + "/" + S.filtro;

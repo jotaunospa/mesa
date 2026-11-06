@@ -1,60 +1,38 @@
-"""Diagnóstico 06-11: dilución de 7 factores, short interest y RVOL por hora contra el scanner."""
-import json, sys, time, urllib.request
-from datetime import datetime
-from zoneinfo import ZoneInfo
+"""Diagnóstico 06-11: RVOL por hora con distintas bases contra el TOD RVOL del scanner."""
+import json, sys
 sys.path.insert(0, ".")
-import yfinance as yf
-import pandas as pd
-from lib import sec_mesa
-
+import yfinance as yf, pandas as pd
+from zoneinfo import ZoneInfo
 NY = ZoneInfo("America/New_York")
-# Dilución que mostró el scanner (05-11 y 06-11)
-DIL = {"LABT": "alta", "AEHL": "media", "ZNB": "alta", "BDMD": "alta", "PLCE": "media", "FLYE": "alta",
-       "JDZG": "media", "STAK": "media", "DNUT": "baja", "AMTX": "baja", "VIVK": "alta", "CIIT": "media",
-       "RAYA": "media", "CDT": "alta", "SDA": "baja", "DBGI": "alta", "VSA": "alta", "SNT": "baja",
-       "HPAI": "media", "FLGT": "baja", "ONCO": "media", "SKIN": "baja", "PSQH": "alta"}
-# Short interest del scanner (SH INT, %)
-SHORT = {"LABT": 11, "AEHL": 34, "ZNB": 4.1, "BDMD": 0.3, "PLCE": 40, "FLYE": 18, "JDZG": 14, "STAK": 11,
-         "DNUT": 20, "AMTX": 12, "VIVK": 22, "CIIT": 2.1, "RAYA": 0.3, "SDA": 1.5, "DBGI": 13, "VSA": 1.3,
-         "SNT": 0.1, "HPAI": 0.3, "FLGT": 13, "ONCO": 0.9, "SKIN": 14, "PSQH": 3.1}
-UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/130.0 Safari/537.36",
-      "Accept": "application/json", "Origin": "https://www.nasdaq.com", "Referer": "https://www.nasdaq.com/"}
-out = {"dil": [], "short": [], "rvol": [], "nasdaq_pre": {}}
+# TOD RVOL del scanner: (hora NY, valor)
+OBJ = {"VIVK": [("09:44", 82)], "CIIT": [("09:44", 3220), ("10:30", 3581)], "RAYA": [("09:44", 1338), ("10:30", 5341)],
+       "CDT": [("09:44", 0.5), ("10:30", 0.7)], "SDA": [("09:44", 98), ("10:30", 3687)], "DBGI": [("09:44", 1404)],
+       "VSA": [("09:44", 2250), ("10:30", 2373)], "SNT": [("09:44", 66)], "HPAI": [("09:44", 0.3), ("10:30", 0.4)],
+       "FLGT": [("09:44", 2.9), ("10:30", 3.6)], "SKIN": [("10:30", 6.5)], "PSQH": [("10:30", 67)]}
 lin = []
-for tk, sc in DIL.items():
-    try:
-        t = yf.Ticker(tk); inf = t.info or {}
-        sp = t.splits
-        s12 = []
-        if sp is not None and len(sp):
-            sp.index = sp.index.tz_convert(NY)
-            s12 = [{"fecha": str(i.date()), "ratio": float(v)} for i, v in sp[sp.index >= pd.Timestamp.now(tz=NY) - pd.Timedelta(days=365)].items()]
-        d = sec_mesa.dilucion(tk, splits_12m=s12)
-        f7 = d.get("dil7") or {}
-        out["dil"].append({"tk": tk, "scanner": sc, "v12": d.get("dil"), **f7, "extranjero": d.get("extranjero")})
-        lin.append(f"DIL {tk:<5} scanner={sc:<5} v1.2={d.get('dil')!s:<5} puntaje={f7.get('puntaje')}/{f7.get('cobertura')} "
-                   f"{ {k: v for k, v in (f7.get('factores') or {}).items()} } {f7.get('detalle')} ext={d.get('extranjero')}")
-        # short
-        ss = inf.get("sharesShort"); fy = inf.get("floatShares")
-        tvf = None
-        out["short"].append({"tk": tk, "scanner": SHORT.get(tk), "sharesShort": ss, "fecha": inf.get("dateShortInterest"),
-                             "yahoo_pct": inf.get("shortPercentOfFloat"), "float_yahoo": fy, "acciones": inf.get("sharesOutstanding")})
-        lin.append(f"SHORT {tk:<5} scanner={SHORT.get(tk)} yahoo%={round((inf.get('shortPercentOfFloat') or 0)*100,2)} "
-                   f"short/floatY={round(ss/fy*100,2) if ss and fy else None} short/acciones={round(ss/inf['sharesOutstanding']*100,2) if ss and inf.get('sharesOutstanding') else None} "
-                   f"sharesShort={ss} fecha={inf.get('dateShortInterest')}")
-    except Exception as e:
-        lin.append(f"ERR {tk}: {type(e).__name__}: {e}"[:200])
-    time.sleep(0.3)
-# Nasdaq premarket (formato)
-for tk in ["CIIT", "VSA", "SDA"]:
-    for tipo in ["pre"]:
-        try:
-            u = f"https://api.nasdaq.com/api/quote/{tk}/extended-trading?markettype={tipo}&assetclass=stocks&time=0"
-            js = json.loads(urllib.request.urlopen(urllib.request.Request(u, headers=UA), timeout=15).read())
-            out["nasdaq_pre"][tk] = js.get("data")
-            lin.append(f"NASDAQ-PRE {tk}: {json.dumps(js.get('data'))[:600]}")
-        except Exception as e:
-            lin.append(f"NASDAQ-PRE {tk} error {type(e).__name__}: {e}"[:200])
-import pathlib; pathlib.Path("resultados").mkdir(exist_ok=True)
-pathlib.Path("resultados/diag.json").write_text(json.dumps(out, indent=1, default=str))
+for tk, objs in OBJ.items():
+    t = yf.Ticker(tk)
+    h = t.history(period="60d", interval="5m", prepost=True)
+    if h is None or h.empty:
+        lin.append(f"{tk}: sin historia 5m"); continue
+    h.index = h.index.tz_convert(NY)
+    h = h.assign(d=h.index.date, m=h.index.hour * 60 + h.index.minute)
+    hoy = h["d"].max()
+    dias = sorted(x for x in h["d"].unique() if x < hoy)
+    avgd = (t.info or {}).get("averageVolume10days") or (t.info or {}).get("averageDailyVolume10Day")
+    for hhmm, obj in objs:
+        mm = int(hhmm[:2]) * 60 + int(hhmm[3:])
+        hoy_df = h[h["d"] == hoy]
+        num_all = hoy_df[hoy_df["m"] < mm]["Volume"].sum()
+        num_reg = hoy_df[(hoy_df["m"] >= 570) & (hoy_df["m"] < mm)]["Volume"].sum()
+        res = {}
+        for N in (5, 10, 20, 30, 50):
+            ds = dias[-N:]
+            prev = h[h["d"].isin(ds)]
+            base_all = prev[prev["m"] < mm].groupby("d")["Volume"].sum().reindex(ds, fill_value=0).mean()
+            base_reg = prev[(prev["m"] >= 570) & (prev["m"] < mm)].groupby("d")["Volume"].sum().reindex(ds, fill_value=0).mean()
+            res[f"N{N}_all"] = round(num_all / base_all, 1) if base_all else None
+            res[f"N{N}_reg"] = round(num_reg / base_reg, 1) if base_reg else None
+        lin.append(f"{tk} {hhmm} scanner={obj}  num_all={int(num_all)} num_reg={int(num_reg)} dias={len(dias)} avgVol10d={avgd}  {res}")
 print("\n".join(lin))
+import pathlib; pathlib.Path("resultados").mkdir(exist_ok=True); pathlib.Path("resultados/diag.json").write_text("{}")

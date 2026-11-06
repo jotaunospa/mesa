@@ -590,6 +590,10 @@ function detalle(f) {
 function dibujarGrafico(slot, velas, f) {
   if (!velas || !velas.length) { slot.innerHTML = `<p class="small muted">Sin velas para este día.</p>`; return; }
   const mm = h => { const [a, b] = h.split(":").map(Number); return a * 60 + b; };
+  // Solo lo que se sabía a la hora de la foto: después del cierre las velas son del día completo.
+  const corte = S.snap ? mm(S.snap.hora_ny.slice(11, 16)) : 1e9;
+  velas = velas.filter(v => mm(v[0]) < corte);
+  if (!velas.length) { slot.innerHTML = `<p class="small muted">Sin velas antes de la hora de la foto.</p>`; return; }
   const reg = velas.filter(v => mm(v[0]) >= 570 && mm(v[0]) < 960);
   const pre = velas.filter(v => mm(v[0]) < 570);
   const data = reg.length ? reg : velas;
@@ -635,7 +639,7 @@ function dibujarGrafico(slot, velas, f) {
     <line class="xh" id="xh" x1="0" x2="0" y1="${T}" y2="${T + PH + VB}" style="display:none"/>
     <rect id="hit" x="${L}" y="${T}" width="${W - L - R}" height="${PH + VB}" fill="transparent"/>
   </svg>`;
-  slot.innerHTML = svg;
+  slot.innerHTML = svg + `<p class="small muted">Velas hasta las ${esc(S.snap.hora_ny.slice(11, 16))} NY, la hora de esta foto.</p>`;
   const s = slot.querySelector("svg"), tip = slot.parentElement.querySelector(".tip"), xh = s.querySelector("#xh");
   const mover = ev => {
     const pt = s.createSVGPoint(); const e = ev.touches ? ev.touches[0] : ev; pt.x = e.clientX; pt.y = e.clientY;

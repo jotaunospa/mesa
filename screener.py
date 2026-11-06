@@ -40,9 +40,9 @@ DATOS = Path(os.environ.get("DATOS", "datos"))
 # Criterio de la lista, deducido comparando contra el scanner del canal el 05-11 (3 rondas,
 # 33 decisiones, 33 aciertos). La descripción del canal dice "float < 50 M", pero en la práctica
 # muestra DNUT (91 M) y AMTX (67 M) por su volumen. Umbrales aproximados: se ajustan con más rondas.
-FLOAT_MAX = 15e6          # float bajo (entre 8,1 M que entra y 19,3 M que no)
+FLOAT_MAX = 18e6          # float bajo: FLGT (16,7 M en el scanner) entra; INTZ (19,3–19,9 M) no
 VOL_ALTO = 14e6           # o volumen alto (entre 13,1 M que no entra y 15,5 M que sí)
-VOL_MIN = 25e3            # FLGT con 36,7 mil entra (06-11 09:44). HTCR con 0,232 M no entró el 05-11 15:43: probable ruido de orden en el corte
+VOL_MIN = 30e3            # FLGT con 36,7 mil entra; PDC con 30 mil no (06-11)
 FLOAT_MUY_BAJO = 2e6      # el scanner los marca en amarillo
 PRECIO_MAX = 50           # hipótesis: FLGT ($21,62) entra (06-11); APP (cientos de USD) y ECPG ($122) no
 RANCIA_S = 900            # cotización con más de 15 min se descarta de la foto
@@ -599,7 +599,7 @@ def foto() -> dict:
     sin_float = [f["ticker"] for f in filas if f["floatM"] is None]
     return {
         "hora_ny": ahora.isoformat(timespec="seconds"),
-        "criterio": "top gainers del día sin OTC, precio ≤ 50 USD (hipótesis), volumen ≥ 25 mil y (float < 15 M o volumen ≥ 14 M); "
+        "criterio": "top gainers del día sin OTC, precio ≤ 50 USD (hipótesis), volumen ≥ 30 mil y (float < 18 M o volumen ≥ 14 M); "
                     "deducido del scanner GreenOrDieTrying el 05-11; float desconocido se incluye y queda en unsure",
         "universo_yahoo": len(quotes), "con_float_bajo": len(candidatas),
         "sin_float_conocido": sin_float,

@@ -117,11 +117,22 @@ input[type=range]{width:100%}
 .learn>summary::-webkit-details-marker{display:none}
 .learn>summary::before{content:"+";font-family:var(--f-num);width:22px;height:22px;border:1.5px solid var(--ink);border-radius:6px;display:inline-grid;place-items:center;font-size:13px}
 .learn[open]>summary::before{content:"−"}
-.gloss{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;padding:0 18px 18px}
-.term{padding:12px 14px;border-radius:12px;background:var(--paper)}
-.term:nth-child(5n+1){background:var(--sky);color:var(--on-pastel)}.term:nth-child(5n+3){background:var(--mint);color:var(--on-pastel)}.term:nth-child(5n){background:var(--peach);color:var(--on-pastel)}
-.term b{font-family:var(--f-disp);font-size:15.5px;display:block}
-.term p{font-size:13px;margin-top:3px}
+.leg-intro{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 28px;padding:4px 18px 10px;font-size:13.5px;max-width:1100px}
+.leg-intro b{font-family:var(--f-disp)}
+.leg-note{padding:0 18px 10px}
+.leyenda{list-style:none;margin:0;padding:0 18px 18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px}
+.leyenda li{display:grid;grid-template-columns:132px minmax(0,1fr);gap:14px;align-items:start;padding:14px 0;border-top:1.5px solid var(--soft)}
+.leyenda li.ancho{grid-column:1/-1}
+.leg-ej{min-height:58px;display:grid;place-items:center;align-content:center;gap:4px;padding:8px;border-radius:12px;background:var(--soft)}
+.leg-ej .who{justify-items:center}
+.leg-ej>*,.leg-dl .who{grid-area:auto!important}
+.leg-col{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.leyenda h3{font-size:15.5px;margin:1px 0 3px}
+.leyenda p{font-size:13px;max-width:62ch}
+.leg-dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 10px;margin:8px 0 0;font-size:13px;align-items:center}
+.leg-dl dt{justify-self:start}.leg-dl dd{margin:0}
+@media (max-width:900px){.leyenda,.leg-intro{grid-template-columns:minmax(0,1fr)}.leyenda li.ancho{grid-column:auto}}
+@media (max-width:600px){.leyenda li{grid-template-columns:minmax(0,1fr);gap:10px}.leg-ej{justify-self:start;min-width:132px;grid-auto-flow:column;gap:12px}.leg-dl{grid-template-columns:76px minmax(0,1fr)}}
 
 /* escáner */
 .scan{overflow:hidden}
@@ -319,18 +330,12 @@ footer code{font-family:var(--f-num);font-size:11.5px}
 
   <details class="card learn">
     <summary>¿Cómo se lee este escáner?</summary>
-    <div class="gloss">
-      <div class="term"><b>La lista</b><p>Las acciones que más suben hoy, con el criterio deducido del scanner de GreenOrDieTrying: precio hasta 50 USD, volumen de al menos 30 K y float bajo 18 M (o volumen sobre 14 M). Fuera de bolsa (OTC) no entra. Que esté en la lista no significa que sea buena: significa que se está moviendo.</p></div>
-      <div class="term"><b>Apta / No apta</b><p>El dictamen automático. "No apta" significa que un dato no se pudo verificar o que rompe una regla de la Mesa (dilución, pausa, spread, liquidez). Lo que no se puede verificar no se opera. "Apta" solo significa que vale la pena evaluarla con tus reglas.</p></div>
-      <div class="term"><b>RVOL y barras de señal</b><p>Cuánto más volumen que lo normal trae. Las barras se encienden a 1×, 2×, 5×, 10× y 20×. Usamos el rvol por hora del día: compara contra lo que suele operar a esta misma hora.</p></div>
-      <div class="term"><b>Float y rotaciones</b><p>Float: acciones disponibles para operar. Rotaciones: cuántas veces se operó el float entero hoy. Rotar varias veces significa que la demanda supera por mucho a la oferta. El número lleva color de advertencia cuando dos fuentes no concuerdan.</p></div>
-      <div class="term"><b>Dial HOD</b><p>Dónde está el precio entre el mínimo y el máximo del día (HOD). La aguja a la derecha significa que está tocando su máximo; parpadea cuando está a menos de 2%.</p></div>
-      <div class="term"><b>Dial VWAP</b><p>VWAP es el precio promedio ponderado por volumen del día: el "precio justo" que pagó la mayoría. Aguja a la derecha (verde): cotiza sobre el VWAP. A la izquierda (rojo): bajo el VWAP.</p></div>
-      <div class="term"><b>Últimos 15 min</b><p>Quince velas de un minuto. Verde: cerró más arriba de lo que abrió. Rosado: más abajo. Abre la fila para ver el día completo.</p></div>
-      <div class="term"><b>SSR</b><p>Short Sale Restriction: se activa cuando una acción cae 10% bajo el cierre anterior. Ese día y el siguiente nadie puede vender en corto a la baja.</p></div>
-      <div class="term"><b>Dilución</b><p>Riesgo de que la empresa emita más acciones, leído directo de la SEC con 7 factores: caja para menos de 4 trimestres, shelf S-3/F-3 vigente, venta de acciones en 6 meses, warrants grandes, convertibles, aviso de la bolsa (8-K 3.01) y split inverso en 12 meses. Alta: caja corta y 2 factores o más. Una venta (424B, 8-K 3.02) en los últimos 10 días o una quiebra (8-K 1.03) es veto directo.</p></div>
-      <div class="term"><b>Temperatura</b><p>Cuántas acciones de la lista suben 20% o más hoy: 5 o más es caliente, 2 a 4 tibia, 1 o ninguna fría. Esos cortes son provisionales hasta calibrarlos con los resultados. Es la primera pregunta antes de mirar una acción.</p></div>
+    <div class="leg-intro">
+      <p><b>La lista.</b> Las acciones que más suben hoy con el criterio deducido del scanner de GreenOrDieTrying: precio hasta 50 USD, volumen de al menos 30 K y float bajo 18 M (o volumen sobre 14 M), sin OTC. Estar en la lista significa que se mueve, no que sea buena.</p>
+      <p><b>Temperatura.</b> Cuántas de la lista suben 20% o más hoy: 5 o más es caliente, 2 a 4 tibia, 1 o ninguna fría. Los cortes son provisionales hasta calibrarlos con los resultados.</p>
     </div>
+    <p class="leg-note small muted">Cada elemento se ve igual que en la tabla. Los valores de los ejemplos son inventados.</p>
+    <ol class="leyenda" id="leyenda"></ol>
   </details>
 
   <section class="card scan" id="scan" aria-live="polite">
@@ -392,6 +397,44 @@ function reloj() {
   el.innerHTML = `<b>${f.t}</b><small>${f.s}</small>`;
 }
 reloj(); setInterval(reloj, 15000);
+
+/* ── leyenda: cada término con el mismo elemento gráfico de la tabla ── */
+function renderLeyenda() {
+  const v15 = [[0,2.10,2.12,2.08,2.11],[0,2.11,2.13,2.10,2.12],[0,2.12,2.12,2.07,2.08],[0,2.08,2.10,2.06,2.09],[0,2.09,2.15,2.09,2.14],[0,2.14,2.18,2.13,2.17],[0,2.17,2.17,2.12,2.13],[0,2.13,2.16,2.12,2.15],[0,2.15,2.22,2.15,2.21],[0,2.21,2.24,2.18,2.19],[0,2.19,2.20,2.15,2.16],[0,2.16,2.19,2.15,2.18],[0,2.18,2.25,2.17,2.24],[0,2.24,2.27,2.22,2.23],[0,2.23,2.26,2.21,2.25]];
+  const T = [
+    {col: "Acción", t: "Semáforo, ticker y etiquetas", ancho: true, ej: `<span class="who"><span class="t"><span class="sem ready"><i></i><i></i><i></i></span><span class="tk lowf">ABCD</span></span><span class="chips"><span class="chip ssr">SSR</span><span class="chip pm">sobre PM</span></span></span>`,
+     p: "El semáforo resume el dictamen: verde parpadeando es apta para evaluar, rojo es no apta. Bajo el ticker van las etiquetas, que aparecen solo cuando aplican.",
+     dl: [[`<span class="sem stop"><i></i><i></i><i></i></span>`, "No apta: mira el motivo en la columna Dictamen."],
+          [`<span class="who"><span class="tk lowf">ABCD</span></span>`, "Ticker en amarillo: float bajo 2 M, se mueve violento en ambos sentidos."],
+[`<span class="chip red">China</span>`, "País con más riesgo de información (China, Hong Kong y similares). La SEC dice menos de estas empresas."],
+          [`<span class="chip halt">2 pausas</span>`, "La bolsa la pausó hoy. Con la acción pausada no puedes salir; <b>EN PAUSA</b> significa que lo está ahora."],
+          [`<span class="chip ssr">SSR</span>`, "Short Sale Restriction: cayó 10% bajo el cierre anterior y por hoy y mañana no se puede vender en corto a la baja."],
+          [`<span class="chip split">split</span>`, "Contrasplit en los últimos 30 días: el float y el historial cambian de golpe."],
+          [`<span class="chip pm">sobre PM</span>`, "Cotiza sobre el máximo del premarket, un nivel que mira todo el mercado."]]},
+    {col: "Cambio", t: "Cambio y precio", ej: `<span class="chg" style="text-align:center"><b class="pos">+42,5%</b><small>$2,19</small></span>`,
+     p: "Cuánto sube desde el cierre de ayer y, abajo, el precio. Un +200% ya ocurrió: no es razón para entrar."},
+    {col: "Volumen · RVOL", t: "Volumen y barras de señal", ej: `<span class="vol"><b>37,3 M</b>${senal(7.3)}</span>`,
+     p: "Acciones transadas hoy y RVOL: cuántas veces el volumen normal a esta misma hora. Las barras se encienden a 1×, 2×, 5×, 10× y 20×."},
+    {col: "Float · rot.", t: "Float y rotaciones", ej: `<span class="flt" style="width:100%"><b class="disp">0,54–1,60 M</b><span class="rot"><i style="width:100%"></i></span><small>ROT 2,4×</small></span>`,
+     p: "Float: acciones disponibles para transar. Si dos fuentes no concuerdan se muestra el rango en naranjo. La barra y ROT dicen cuántas veces se transó el float entero hoy; llena = una vez o más."},
+    {col: "HOD", t: "Dial HOD", ej: `<span class="dcell">${dial(.93, "hod", true)}<small>-1,3%</small></span>`,
+     p: "Dónde está el precio entre el mínimo y el máximo del día. Aguja a la derecha: tocando el máximo. Parpadea cuando está a menos de 2%. El número es la distancia al máximo."},
+    {col: "VWAP", t: "Dial VWAP", ej: `<span class="dcell">${dial(.83, "vwap")}<small>+6,7%</small></span>`,
+     p: "VWAP: precio promedio del día ponderado por volumen. Aguja en verde: cotiza sobre él y quien compró hoy, en promedio, gana. En rosado: bajo él, y la Mesa no entra."},
+    {col: "Últimos 15 min", t: "Velas de 1 minuto", ej: `<span style="width:100%">${mini(v15)}</span>`,
+     p: "Las últimas quince velas. Verde: cerró sobre su apertura. Rosado: bajo ella. Abre la fila para ver el día con VWAP, máximos y pausas."},
+    {col: "Short", t: "Short / float", ej: `<span class="dcell"><small style="font-size:12px;color:var(--text)">21,8%</small><small>short</small></span>`,
+     p: "Qué parte del float está vendida en corto, con dato de FINRA de hace unas semanas. Alto significa combustible para subidas bruscas, no salud del negocio."},
+    {col: "Dilución", t: "Dial de dilución", ej: `<span class="dcell">${dial(.83, "dil")}<small>alta</small></span>`,
+     p: "Riesgo de que la empresa emita más acciones, leído de la SEC con 7 factores (caja corta, shelf vigente, venta reciente, warrants, convertibles, aviso de la bolsa, split inverso). Alta: caja corta y 2 factores o más. Una venta en 10 días o una quiebra es veto directo."},
+    {col: "Dictamen", t: "Apta / No apta", ej: `<span class="verdict" style="justify-items:center"><span class="vchip ok">APTA</span><small>1 cautela</small></span><span class="verdict" style="justify-items:center"><span class="vchip no">NO APTA</span></span>`,
+     p: "El veredicto automático. No apta: un dato no se pudo verificar o rompe una regla (dilución, pausa, spread, liquidez). Apta solo significa que vale la pena evaluarla; la Mesa decide con tus reglas."},
+    {col: "Bajo la fila", t: "Titular", ej: `<span class="hl" style="padding:0;font-size:12px"><b>Titular</b></span>`,
+     p: "La última noticia que entrega Yahoo. Puede ser vieja o de otra acción: revisa su fecha en el detalle antes de tomarla como catalizador."},
+  ];
+  $("#leyenda").innerHTML = T.map(x => `<li${x.ancho ? ' class="ancho"' : ""}><span class="leg-ej" aria-hidden="true">${x.ej}</span><div><span class="leg-col">${x.col}</span><h3>${x.t}</h3><p>${x.p}</p>${x.dl ? `<dl class="leg-dl">${x.dl.map(d => `<dt>${d[0]}</dt><dd>${d[1]}</dd>`).join("")}</dl>` : ""}</div></li>`).join("");
+}
+renderLeyenda();
 
 /* ── estado ── */
 const S = {idx: null, dia: null, fotos: [], i: 0, snap: null, res: null, filtro: "todas", abiertos: new Set(), velas: {}, vivo: true};

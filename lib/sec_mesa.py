@@ -120,12 +120,25 @@ def dilucion(ticker: str, hoy: Optional[date] = None, splits_12m=None) -> Dict[s
         out["runway_q"], out["caja_periodo"] = fx7["detalle"]["runway_q"], fx7["detalle"].get("caja_al")
     corto = out["runway_q"] is not None and out["runway_q"] < 4
     out["veto_venta"], out["veto_quiebra"] = venta_10, quiebra
-    if venta_90 or (registro_12m and corto):
+    # Nivel v2 (06-11), calibrado contra el scanner en 23 acciones (19/23; la regla v1.2 daba 15/23):
+    #   alta  = caja corta (< 4 trimestres) y al menos 2 de los 7 factores
+    #   media = al menos 2 factores, o caja corta
+    #   baja  = el resto
+    # Los vetos (venta en 10 días, quiebra) no cambian.
+    p7 = fx7["puntaje"]
+    caja_corta = fx7["factores"].get("caja_corta") is True
+    if caja_corta and p7 >= 2:
         out["dil"] = "alta"
-    elif registro_12m or corto:
+    elif p7 >= 2 or caja_corta:
         out["dil"] = "media"
     else:
         out["dil"] = "baja"
+    out["dil_puntaje"] = f"{p7}/{fx7['cobertura']}"
+    nombres = {"caja_corta": "caja para menos de 4 trimestres", "shelf_activo": "shelf S-3/F-3 vigente",
+               "venta_reciente": "venta de acciones en 6 meses", "warrants": "warrants ≥ 20% de las acciones",
+               "convertibles": "deuda convertible", "aviso_bolsa": "aviso de la bolsa (8-K 3.01)",
+               "split_inverso": "split inverso en 12 meses"}
+    out["dil_factores_si"] = [nombres[k] for k, v in fx7["factores"].items() if v]
     if venta_10: out["dil_motivo"].append("venta de acciones (424B / 8-K 3.02) en 10 días → VETO")
     elif venta_90: out["dil_motivo"].append("venta de acciones en 90 días")
     if registro_12m: out["dil_motivo"].append("registro S-1/S-3/F-1/F-3 en 12 meses")

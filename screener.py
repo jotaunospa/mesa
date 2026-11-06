@@ -108,17 +108,20 @@ def base_10d(tk: str) -> dict:
             h = h.assign(_d=idx.date, _m=idx.hour * 60 + idx.minute)
             previos = h[h["_d"] < hoy]
             # volumen acumulado a cada minuto del día, promedio entre días previos
-            acum = {}
+            # Base del RVOL por hora: promedio de las últimas 10 sesiones del volumen acumulado
+            # ANTES de cada minuto. Los minutos sin operaciones (Yahoo no trae la vela) cuentan
+            # como cero; antes se descartaban y eso dejaba sin dato a las acciones poco líquidas.
+            # 10 sesiones = lo que mejor calza con el TOD RVOL del scanner (diagnóstico 06-11).
+            dias = sorted(previos["_d"].unique())[-10:]
             for d, g in previos.groupby("_d"):
                 c = g.sort_values("_m")
-                acum[d] = dict(zip(c["_m"], c["Volume"].cumsum()))
                 out["dias"].append({"fecha": str(d), "cierre": float(c["Close"].iloc[-1]),
                                     "minimo": float(c["Low"].min())})
-            ult = sorted(acum)[-10:]
-            for m in range(9 * 60 + 30, 16 * 60, 5):
-                vals = [acum[d].get(m) for d in ult if acum[d].get(m) is not None]
-                if vals:
-                    out["perfil"][m] = sum(vals) / len(vals)
+            sub = previos[previos["_d"].isin(dias)]
+            for m in range(9 * 60 + 35, 16 * 60 + 1, 5):
+                por_dia = sub[sub["_m"] < m].groupby("_d")["Volume"].sum().reindex(dias, fill_value=0)
+                if len(dias):
+                    out["perfil"][m] = float(por_dia.mean())
             out["dias"] = out["dias"][-10:]
         s = t.splits
         if s is not None and len(s):
@@ -136,7 +139,7 @@ def base_10d(tk: str) -> dict:
 def dil(tk: str) -> dict:
     if tk not in _cache_dil:
         try:
-            _cache_dil[tk] = sec_mesa.dilucion(tk)
+            _cache_dil[tk] = sec_mesa.dilucion(tk, splits_12m=base_10d(tk).get("splits_12m"))
         except Exception as e:
             _cache_dil[tk] = {"dil": None, "estado": f"error {type(e).__name__}: {e}"[:200], "dil_motivo": []}
     return _cache_dil[tk]
@@ -208,6 +211,16 @@ def confianza_float(flt, d: dict, b: dict) -> tuple[str, list]:
     return "alta", [f"EE.UU., float ≤ acciones de portada SEC ({port['valor']:,} al {port['fecha']}, {port['form']})"]
 
 
+def short_pct(inf: dict, flt, fx: dict, d: dict):
+    """Acciones en corto (FINRA, vía Yahoo) / float. Así lo calcula el scanner (diagnóstico 06-11:
+    15/15 en EE.UU. con el float de Yahoo; en extranjeras usa las acciones totales: ZNB, JDZG, VSA)."""
+    ss = inf.get("sharesShort")
+    if not ss:
+        return None
+    base = inf.get("sharesOutstanding") if d.get("extranjero") else (flt or inf.get("sharesOutstanding"))
+    return r(ss / base * 100) if base else None
+
+
 # ───────────────────────── fuentes del día ─────────────────────────
 
 def pausas_nasdaq() -> tuple[dict, str]:
@@ -273,6 +286,28 @@ def cotizacion_nasdaq(tk: str) -> dict:
         return {"error": type(e).__name__}
 
 
+_cache_pre: dict = {}
+
+
+def premarket_nasdaq(tk: str) -> dict:
+    """Premarket consolidado de Nasdaq.com: volumen, máximo y mínimo (el HOD del scanner los usa).
+    Después de las 9:30 la página queda fija con el total del premarket: se lee una vez por día."""
+    if tk in _cache_pre:
+        return _cache_pre[tk]
+    out = {}
+    try:
+        req = urllib.request.Request(f"https://api.nasdaq.com/api/quote/{tk}/extended-trading?markettype=pre&assetclass=stocks&time=0",
+                                     headers=dict(_UA, Origin="https://www.nasdaq.com", Referer="https://www.nasdaq.com/"))
+        row = (((json.loads(urllib.request.urlopen(req, timeout=15).read()).get("data") or {}).get("infoTable") or {}).get("rows") or [{}])[0]
+        num = lambda x: float(str(x).split()[0].replace("$", "").replace(",", "")) if x and str(x).split()[0] not in ("N/A", "--") else None
+        out = {"vol": num(row.get("volume")), "max": num(row.get("highPrice")), "min": num(row.get("lowPrice")), "fuente": "nasdaq"}
+    except Exception as e:
+        out = {"error": type(e).__name__}
+    if ahora_ny().hour * 60 + ahora_ny().minute >= 9 * 60 + 31:
+        _cache_pre[tk] = out
+    return out
+
+
 def universo() -> list[dict]:
     q = Q("and", [Q("eq", ["region", "us"]),
                   Q("gte", ["percentchange", 5]),
@@ -315,9 +350,13 @@ def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
     # El scanner del canal mide el HOD y el mínimo incluyendo el premarket (comparado el 05-11:
     # ZNB 1,83 y FLYE 3,36 = máximos de premarket). Se guardan ambos.
     hi_reg, lo_reg = hi, lo
-    if pre is not None and not pre.empty:
-        hi = max(x for x in (hi, float(pre["High"].max())) if x is not None)
-        lo = min(x for x in (lo, float(pre["Low"].min())) if x is not None)
+    pn = premarket_nasdaq(tk)
+    pm_hi = pn.get("max") or (float(pre["High"].max()) if pre is not None and not pre.empty else None)
+    pm_lo = pn.get("min") or (float(pre["Low"].min()) if pre is not None and not pre.empty else None)
+    if pm_hi is not None:
+        hi = max(x for x in (hi, pm_hi) if x is not None)
+    if pm_lo is not None:
+        lo = min(x for x in (lo, pm_lo) if x is not None)
 
     vwap = None
     if reg is not None and not reg.empty and reg["Volume"].sum() > 0:
@@ -342,11 +381,11 @@ def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
     b = base_10d(tk)
     rvol_hora = None
     m_ahora = ahora.hour * 60 + ahora.minute
-    if b["perfil"] and reg is not None and not reg.empty and m_ahora >= 9 * 60 + 35:
-        m5 = min(max((m_ahora // 5) * 5, 9 * 60 + 30), 15 * 60 + 55)
+    if b["perfil"] and m_ahora >= 9 * 60 + 35:
+        m5 = min(max((m_ahora // 5) * 5, 9 * 60 + 35), 16 * 60)
         tip = b["perfil"].get(m5)
-        if tip:
-            rvol_hora = float(reg["Volume"].sum()) / tip
+        if tip and vol:
+            rvol_hora = float(vol) / tip     # volumen total de hoy (como el scanner) / típico a esta hora
             calc.append("rvol_hora")
     if rvol_hora is None:
         unsure.append("rvol_hora")
@@ -434,17 +473,20 @@ def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
         "surge5m": r(surge5),
         "velas15": velas15,
         "ssr": ssr, "ssr_motivo": ssr_motivo,
-        "short_pct_float": r((inf.get("shortPercentOfFloat") or 0) * 100) if inf.get("shortPercentOfFloat") else None,
+        "short_pct_float": short_pct(inf, flt, fx, d),
+        "short_fecha": (datetime.fromtimestamp(inf["dateShortInterest"], NY).date().isoformat()
+                        if inf.get("dateShortInterest") else None),   # FINRA, cada dos semanas: dato rancio
         "pais": pais, "pais_riesgo": pais in PAISES_ROJOS,
         "split_reciente": b["splits_30d"],
         "halts_hoy": dir_halts,
         "noticias": noticias,
         # ── extras propios ──
-        "premarket": {"max": r(pre["High"].max(), 4), "vol": int(pre["Volume"].sum())}
-                     if pre is not None and not pre.empty else None,
+        "premarket": ({"max": r(pm_hi, 4), "min": r(pm_lo, 4), "vol": int(pn["vol"]) if pn.get("vol") else None,
+                       "fuente": "nasdaq" if pn.get("max") else "yahoo"} if pm_hi is not None else None),
         "spread_pct": r(spread),
         "sec": {k: d.get(k) for k in ("dil_motivo", "veto_venta", "veto_quiebra", "extranjero",
-                                      "runway_q", "caja_periodo", "filings_recientes", "estado")},
+                                      "runway_q", "caja_periodo", "filings_recientes", "estado",
+                                      "dil_puntaje", "dil_factores_si")},
         "sec_hoy": vivo.get(tk, []),
         "veto": bool(d.get("veto_venta") or d.get("veto_quiebra") or any(
             f["form"].startswith("424B") for f in vivo.get(tk, []))),

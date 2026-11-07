@@ -38,15 +38,37 @@ SUFIJOS = {"inc", "inc.", "corp", "corp.", "corporation", "ltd", "ltd.", "limite
 # Páginas permanentes de cotización: tienen fecha reciente pero no son noticias.
 PERMANENTE = re.compile(r"stock price|price today|\bquote\b|seasonal returns|\bchart\b|sec filings?\b|"
                         r"\b(call|put) \(|options? chain|technical analysis|latest stock news|news (&|and) headlines|"
-                        r"stock forecast|short interest|competitors|dividend history|\bnews\s+[-\u2014]\s+(NASDAQ|NYSE)", re.I)
+                        r"stock forecast|short interest|reacting to|trading (systems?|strateg(y|ies)|plans?)\b|price action|competitors|dividend history|\bnews\s+[-\u2014]\s+(NASDAQ|NYSE)", re.I)
 # Notas que solo describen el movimiento del precio ("sube 59%"): no explican el porqué.
 MOVIMIENTO = re.compile(r"\b(surges?|jumps?|soars?|sinks?|falls?|plunges?|rall(y|ies)|explodes?|tumbles?|spikes?|"
                         r"rockets?|skyrockets?|drops?|climbs?|pops?|slides?|plummets?|gains?|rises?|lifted|up|down)\b[^.]{0,25}\d+(\.\d+)?%|"
-                        r"why (is|did)\b.{0,60}\b(stock|shares)\b|what'?s driving|stock is (up|down|moving)|watchlist", re.I)
+                        r"\d+(\.\d+)?%\s+(jump|gain|rise|rall(y|ies)|surge|drop|fall|pop|move|spike|plunge|decline|slide|climb|pop)s?\b|"
+                        r"^\s*(why|what|is|can|did|does|how)\b.{0,90}\b(stock|shares|gain|jump|rise|move|surge|rally|pop|drop|fall)|"
+                        r"what'?s driving|explained by|no (company )?news|stock is (up|down|moving)|watchlist", re.I)
+# Cifras de la empresa que suben ("Revenue Rises 37%") son un catalizador, no el movimiento del precio.
+FUNDAMENTAL = re.compile(r"\b(revenues?|sales|earnings|net income|income|profits?|EPS|bookings|backlog|orders|margins?|ARR)\s+"
+                         r"(\w+\s+){0,2}(rises?|jumps?|grows?|grew|surges?|climbs?|increases?|soars?|up)\b", re.I)
+# "...jumps 45% after FDA nod": el movimiento viene con su hecho, cuenta como noticia.
+CON_CAUSA = re.compile(r"\b(after|on|following|as|amid)\s+(\S+\s+){0,4}?(FDA|approval|clearance|contract|deal|agreement|award|order|LOI|"
+                       r"letter of intent|partnership|collaboration|acquisition|merger|buyback|repurchase|offering|earnings|results|revenue|"
+                       r"guidance|trial|data|patent|launch|listing|uplisting|split)\b", re.I)
+SIN_CAUSA = re.compile(r"explained by|no (company )?news|what'?s driving|watchlist", re.I)
+
+
+def es_movimiento(t: str) -> bool:
+    """El titular solo describe que la acción se movió, sin un hecho de la empresa."""
+    if SIN_CAUSA.search(t):
+        return True
+    if FUNDAMENTAL.search(t) or CON_CAUSA.search(t):
+        return False
+    return MOVIMIENTO.search(t) is not None
+
+
 # Primeras palabras del nombre que son palabras comunes: se exige la frase de dos palabras.
 COMUNES = {"mixed", "digital", "big", "global", "first", "new", "american", "united", "high", "smart", "green",
            "blue", "next", "future", "power", "energy", "data", "health", "life", "bright", "star", "golden",
-           "national", "general", "capital", "world", "trend", "quantum", "solar", "clean", "safe", "pure"}
+           "national", "general", "capital", "world", "trend", "quantum", "solar", "clean", "safe", "pure",
+           "naas", "saas", "cloud", "network", "crypto", "bitcoin"}  # también términos de la industria
 
 
 def palabra_clave(nombre: str | None) -> str | None:
@@ -160,7 +182,7 @@ def evaluar(tk: str, nombre: str | None, hora: datetime, fuentes: dict[str, list
             else:
                 ok_t = lim <= fe <= hora + timedelta(minutes=1)
             t = n.get("titulo") or ""
-            if ok_t and not GENERICO.search(t) and not PERMANENTE.search(t) and not MOVIMIENTO.search(t) and nombra_a(t, tk, nombre):
+            if ok_t and not GENERICO.search(t) and not PERMANENTE.search(t) and not es_movimiento(t) and nombra_a(t, tk, nombre):
                 validas.append({**n, "origen": origen})
     validas.sort(key=lambda n: n["fecha"], reverse=True)
     estado = "confirmada" if validas else ("no_encontrada" if respondieron else "sin_dato")

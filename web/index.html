@@ -81,14 +81,20 @@ button{font:inherit;color:inherit}
 /* tablero superior */
 .board{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,1fr);gap:18px;margin-block:14px 22px}
 @media (max-width:1000px){.board{grid-template-columns:minmax(0,1fr)}}
-.temp{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 16px;align-items:center;padding:14px 18px}
+/* las tres tarjetas comparten estructura: rótulo arriba, dato al medio, apoyo abajo */
+.bcard{display:flex;flex-direction:column;gap:12px;padding:16px 18px}
+.b-lab{font-size:12.5px;font-weight:700;color:var(--muted);line-height:1.2}
+.b-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ctl-nav{flex-wrap:nowrap!important;gap:14px!important}.ctl-nav input{flex:1;min-width:0}
+.b-foot{margin-top:auto;font-size:12.5px;color:var(--muted);line-height:1.45}
 .temp.caliente,.temp.tibia,.temp.fría{color:var(--on-pastel)}
+.temp.caliente .b-lab,.temp.tibia .b-lab,.temp.fría .b-lab,.temp.caliente .b-foot,.temp.tibia .b-foot,.temp.fría .b-foot{color:var(--on-pastel);opacity:.78}
 .temp.caliente{background:var(--peach)}.temp.tibia{background:var(--butter)}.temp.fría{background:var(--sky)}
-.temp svg{width:46px;height:86px;grid-row:span 3}
-.temp .lvl{font-family:var(--f-disp);font-weight:800;font-size:26px;letter-spacing:-.02em;text-transform:capitalize}
-.temp small{font-size:12.5px;opacity:.8}
+.temp-main{display:flex;align-items:center;gap:14px}
+.temp svg{width:30px;height:56px;flex-shrink:0}
+.temp .lvl{font-family:var(--f-disp);font-weight:800;font-size:30px;letter-spacing:-.02em;text-transform:capitalize;line-height:1}
 .merc{position:absolute;left:19px;width:8px;border-radius:4px;background:var(--bad);transition:all .9s cubic-bezier(.16,1,.3,1)}
-.tally{padding:14px 18px;display:grid;gap:10px;align-content:start}
+
 .tally .row{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
 .tl{display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:14px}
 .tl b{font-family:var(--f-num);font-size:20px}
@@ -96,14 +102,12 @@ button{font:inherit;color:inherit}
 .tally .bar i{display:block;height:100%;transition:width .9s cubic-bezier(.16,1,.3,1)}
 .tally .bar .a{background:var(--mint);border-right:var(--bw) solid var(--ink)}
 .tally .bar .n{background:var(--pink)}
-.ctl{padding:14px 18px;display:grid;gap:10px;align-content:start}
-.ctl label{font-size:12.5px;font-weight:700;color:var(--muted)}
 .ctl .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 select,input[type=range]{accent-color:var(--ink)}
 select{font:inherit;font-size:14px;color:var(--text);background:var(--card);border:var(--bw) solid var(--ink);border-radius:12px;padding:6px 10px;min-height:38px}
 input[type=range]{width:100%}
 .seg{display:inline-flex;border:var(--bw) solid var(--ink);border-radius:99px;overflow:hidden;box-shadow:2px 2px 0 var(--shadow)}
-.seg button{font-size:13px;font-weight:700;border:0;background:var(--card);padding:6px 13px;cursor:pointer}
+.seg button{font-size:13px;font-weight:700;border:0;background:var(--card);padding:6px 11px;cursor:pointer}
 .seg button+button{border-left:var(--bw) solid var(--ink)}
 .seg button[aria-pressed="true"]{background:var(--lilac);color:var(--on-pastel)}
 .dl{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--text);text-decoration:none;border:var(--bw) solid var(--ink);border-radius:99px;padding:5px 12px;background:var(--card);box-shadow:2px 2px 0 var(--shadow);transition:transform .1s,box-shadow .1s}
@@ -302,33 +306,35 @@ footer code{font-family:var(--f-num);font-size:11.5px}
 
 <main class="wrap">
   <section class="board">
-    <div class="card temp" id="temp">
+    <div class="card bcard temp" id="temp">
+      <span class="b-lab">Temperatura del día</span>
+      <div class="temp-main">
       <svg viewBox="0 0 46 86" aria-hidden="true">
         <rect x="15" y="4" width="16" height="60" rx="8" style="fill:var(--card);stroke:#1C1A22;stroke-width:2.5"/>
         <circle cx="23" cy="70" r="12" style="fill:var(--bad);stroke:#1C1A22;stroke-width:2.5"/>
         <rect id="merc" x="19" y="60" width="8" height="10" rx="4" style="fill:var(--bad);transition:all .9s cubic-bezier(.16,1,.3,1)"/>
       </svg>
-      <small>Temperatura del día</small>
       <div class="lvl" id="t-lvl">—</div>
-      <small id="t-sub">—</small>
+      </div>
+      <small class="b-foot" id="t-sub">—</small>
     </div>
-    <div class="card tally">
+    <div class="card bcard tally">
+      <span class="b-lab">Dictamen de esta foto</span>
       <div class="row">
         <span class="tl"><span class="sem ready"><i></i><i></i><i></i></span> Aptas <b id="n-ok">0</b></span>
         <span class="tl"><span class="sem stop"><i></i><i></i><i></i></span> No aptas <b id="n-no">0</b></span>
       </div>
       <div class="bar"><i class="a" id="b-ok" style="width:0"></i><i class="n" id="b-no" style="width:0"></i></div>
-      <small class="muted" id="foto-info">Cargando…</small>
+      <small class="b-foot" id="foto-info">Cargando…</small>
     </div>
-    <div class="card ctl">
-      <label for="dia">Día y foto</label>
-      <div class="row"><select id="dia"></select><span class="live" id="live"><i></i> <span>en vivo</span></span></div>
-      <input type="range" id="foto" min="0" max="0" value="0" aria-label="Foto del día">
-      <div class="row">
+    <div class="card bcard ctl">
+      <div class="b-head"><label class="b-lab" for="dia">Día y foto</label><span class="live" id="live"><i></i> <span>en vivo</span></span></div>
+      <div class="row ctl-nav"><select id="dia"></select><input type="range" id="foto" min="0" max="0" value="0" aria-label="Foto del día"></div>
+      <div class="row b-foot">
         <div class="seg" role="group" aria-label="Filtro">
           <button data-f="todas" aria-pressed="true">Todas</button><button data-f="aptas" aria-pressed="false">Aptas</button><button data-f="no" aria-pressed="false">No aptas</button>
         </div>
-        <a class="dl" id="mesa-json" href="#" download hidden title="Archivo con la última foto de este día, para cargarlo en la Mesa con &quot;Cargar archivo&quot;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Archivo para la Mesa</a>
+        <a class="dl" id="mesa-json" href="#" download hidden title="Archivo con la última foto de este día, para cargarlo en la Mesa con &quot;Cargar archivo&quot;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Archivo Mesa</a>
       </div>
     </div>
   </section>
@@ -521,7 +527,7 @@ function render() {
   }
   // temperatura
   const t = s.temperatura || {}, tl = t.nivel || "—";
-  $("#temp").className = "card temp " + tl;
+  $("#temp").className = "card bcard temp " + tl;
   $("#t-lvl").textContent = tl;
   $("#t-sub").innerHTML = `${t.suben_20_float_bajo ?? "—"} de la lista suben 20% o más · IWM ${pct(t.iwm_chg, 2)} · ${t.pausas_hoy_total ?? "—"} pausas hoy<br><span style="opacity:.8">Cortes provisionales</span>`;
   const h = tl === "caliente" ? 52 : tl === "tibia" ? 32 : 14;

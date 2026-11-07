@@ -16,6 +16,10 @@ Tres piezas, en orden. Todo es medición en papel: no predice nada.
    stop, objetivo 2R, cierre 10:30, costos supuestos de la Mesa), con las reglas completas,
    quitando una regla a la vez y con umbrales de stop/VWAP más flojos.
 
+**Todo de una vez:** `analisis/semana.sh DIR_DATOS mesa-test.html SALIDA AAAA-MM-DD ...` corre los pasos 2 y 3 y
+`criterios.py`, que aplica los criterios de abajo y escribe `SALIDA/informe.md`. La tarea programada
+"Mesa: revisión semanal de reglas" lo corre cada viernes y sube el informe a `analisis/informes/`.
+
 Primera corrida: 06-11 (una sola ventana). Siguiente: viernes 13-11 con la semana completa.
 
 ## Criterios para la revisión del 13-11 (fijados el 06-11, antes de ver la semana)

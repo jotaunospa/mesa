@@ -13,7 +13,7 @@ Esto mide reglas, no predice nada: es papel, sin spread real ni ejecuciones parc
 
 Uso: python analisis/backtest.py veredictos.json DIR_DATOS
 """
-import gzip, json, sys
+import gzip, json, os, sys
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -72,6 +72,8 @@ def fin(e, x, motivo, t):
 
 import re
 
+SALIDA = {"grupos": {}, "variantes": {}}  # BT_JSON=archivo.json la guarda para criterios.py
+
 VARIANTES = {  # stop permitido (% mín, % máx) y entrada máxima sobre el VWAP (%)
     "reglas actuales (stop 2-8%, VWAP +3%)": (2, 8, 3),
     "stop hasta 12%, VWAP +12%": (2, 12, 12),
@@ -118,6 +120,7 @@ def variantes(V, datos):
                 continue
             vistos.add((r["dia"], r["tk"]))
             L.append((r["dia"], r["hora"], r["tk"], res, s["pct"]))
+        SALIDA["variantes"][nombre] = [{"dia": x[0], "hora": x[1], "tk": x[2], "R": x[3][0], "motivo": x[3][1]} for x in L]
         tot = sum(x[3][0] for x in L)
         print(f"  {nombre}: {len(L)} operaciones, R neto total {tot:+.2f}")
         for x in L:
@@ -160,7 +163,10 @@ def main(verd, datos):
         print(f"{g}: {len(L)} operaciones, R neto total {tot:+.2f}" + (f", promedio {tot / len(L):+.2f} R" if L else ""))
         for x in L:
             print(f"   {x[0]} {x[1]} {x[2]:<5} {x[3][0]:+.2f} R ({x[3][1]}, entra {x[3][2]})  bloqueada por: {', '.join(x[4]) or 'nada'}")
+    SALIDA["grupos"] = {g: [{"dia": x[0], "hora": x[1], "tk": x[2], "R": x[3][0], "motivo": x[3][1]} for x in L] for g, L in grupos.items()}
     variantes(V, datos)
+    if os.environ.get("BT_JSON"):
+        json.dump(SALIDA, open(os.environ["BT_JSON"], "w"), ensure_ascii=False)
 
 
 if __name__ == "__main__":

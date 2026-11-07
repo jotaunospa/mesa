@@ -8,7 +8,7 @@ Reglas de traducción (todas visibles para José en la Mesa):
 - Float: el que usa el Escáner; si está en disputa o es de una sola fuente queda marcado "?".
 - Dilución: alta/media/baja -> alto/medio/bajo.
 - VWAP: sobre o bajo según el precio contra el VWAP calculado del día.
-- Pausa: "si" si está pausada o se reanudó hace menos de 5 min (la regla de la Mesa).
+- Pausa: "si" si está pausada o se reanudó hace menos de 15 min (la misma regla del dictamen).
 - Noticia: solo cuentan titulares de las últimas 20 horas; se clasifican por palabras clave
   con las mismas categorías de la Mesa. Es aproximado, por eso va marcada "?".
 - Dictamen del Escáner (`esc`): si dice NO APTA, la Mesa lo trata como veto (NO-GO).
@@ -93,7 +93,7 @@ def _pausa(f: dict, ahora: datetime) -> str:
         except ValueError:
             continue
         mins = ahora.hour * 60 + ahora.minute - (rh * 60 + rm)
-        if 0 <= mins < 5:
+        if 0 <= mins < 15:  # misma regla que el dictamen del Escáner
             return "si"
     return "no"
 
@@ -133,12 +133,13 @@ def fila_mesa(f: dict, ahora: datetime, velas: list | None) -> dict:
     row = {
         "ticker": f["ticker"], "price": _s(f.get("price")), "chg": _s(f.get("chg")), "volM": _s(f.get("volM")),
         "rvol": _s(None if rv is None else round(rv, 1)), "floatM": _s(flo),
+        "floatMinM": _s((fx.get("rango_M") or [None, None])[0]), "floatMaxM": _s((fx.get("rango_M") or [None, None])[1]),
         "dayLow": _s(f.get("dayLow")), "dayHigh": _s(f.get("dayHigh")),
         "dil": {"alta": "alto", "media": "medio", "baja": "bajo"}.get(f.get("dil"), "medio"),
         "vwap": "na" if sv is None else ("sobre" if sv >= 0 else "bajo"),
         "news": nw, "deal": "", "headline": hl[:90], "halt": _pausa(f, ahora),
         "unsure": unsure, "confirm": False,
-        "esc": {"apto": bool(f.get("apto")), "motivos": f.get("no_apto_por") or [], "cautela": f.get("cautela") or [],
+        "esc": {"apto": None if f.get("apto") is None else bool(f.get("apto")), "motivos": f.get("no_apto_por") or [], "cautela": f.get("cautela") or [],
                 "foto": ahora.strftime("%H:%M"), "spread": f.get("spread_pct"), "url": URL},
     }
     g = _grafico(velas, ahora.strftime("%H:%M"))

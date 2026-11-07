@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Revisión semanal de reglas. Uso: analisis/semana.sh DIR_DATOS MESA_TEST_HTML SALIDA_DIR DIA1 [DIA2 ...]
+# Revisión semanal de reglas. Uso: [RULES_V=v1.4] analisis/semana.sh DIR_DATOS MESA_TEST_HTML SALIDA_DIR DIA1 [DIA2 ...]
 # DIR_DATOS: clon de la rama `datos`. MESA_TEST_HTML: la Mesa con window.__mesa expuesto (README.md).
 set -euo pipefail
 DATOS=$1; MESA=$2; OUT=$3; shift 3
@@ -13,4 +13,5 @@ for i in $(seq 1 20); do curl -s -o /dev/null localhost:8766/mesa-test.html && b
 BASE=http://localhost:8766 OUT="$OUT/veredictos.json" node "$AQUI/veredictos.js"
 BT_JSON="$OUT/backtest.json" python3 "$AQUI/backtest.py" "$OUT/veredictos.json" "$DATOS" > "$OUT/backtest.txt"
 python3 "$AQUI/criterios.py" "$OUT/backtest.json" "$OUT/veredictos.json" > "$OUT/informe.md"
-echo "listo: $OUT/informe.md"
+python3 "$AQUI/registro.py" "$OUT/veredictos.json" "$DATOS" "${RULES_V:-?}" "$AQUI/registro"
+echo "listo: $OUT/informe.md (registro en analisis/registro/)"

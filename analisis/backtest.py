@@ -72,7 +72,7 @@ def fin(e, x, motivo, t):
 
 import re
 
-SALIDA = {"grupos": {}, "variantes": {}}  # BT_JSON=archivo.json la guarda para criterios.py
+SALIDA = {"grupos": {}, "variantes": {}, "base": {}}  # BT_JSON=archivo.json la guarda para criterios.py
 
 VARIANTES = {  # stop permitido (% mín, % máx) y entrada máxima sobre el VWAP (%)
     "reglas actuales (stop 2-8%, VWAP +3%)": (2, 8, 3),
@@ -127,6 +127,37 @@ def variantes(V, datos):
             print(f"     {x[0]} {x[1]} {x[2]:<5} stop a {x[4]}%  {x[3][0]:+.2f} R ({x[3][1]}, entra {x[3][2]})")
 
 
+BASE_STOP = 8.0  # % de stop de la línea base (el máximo que permite el setup); objetivo 2R
+
+
+def linea_base(V, datos):
+    """Vara de comparación: entrar a ciegas en la próxima vela tras la primera foto de cada
+    acción en la ventana, con stop fijo y los mismos costos. 'azar' = cualquier acción de la
+    lista; 'candidato sin setup' = solo las que pasan todas las reglas de la acción."""
+    print(f"\nLínea base (entrada en la apertura siguiente, stop {BASE_STOP:.0f}%, objetivo 2R, cierre 10:30):")
+    for nombre, filtro in (("azar", lambda r: True),
+                           ("candidato sin setup", lambda r: any(r[p]["stage"] in ("candidato", "entrada") for p in ("cons", "mom")))):
+        L, vistos = [], set()
+        for r in V:
+            if not (ENTRY_START <= r["hora"] < ENTRY_END) or (r["dia"], r["tk"]) in vistos or not filtro(r):
+                continue
+            v = velas(datos, r["dia"], r["tk"])
+            sig = next((c for c in v or [] if c[0] > r["hora"]), None)
+            if not sig or sig[0] >= ENTRY_END:
+                continue
+            e = sig[1]
+            st = {"entry": e, "stop": e * (1 - BASE_STOP / 100), "tgt": e * (1 + 2 * BASE_STOP / 100)}
+            fin.stop, fin.entrada = st["stop"], st["entry"]
+            res = simular(v, sig[0], st)
+            if res is None:
+                continue
+            vistos.add((r["dia"], r["tk"]))
+            L.append((r["dia"], sig[0], r["tk"], res))
+        SALIDA["base"][nombre] = [{"dia": x[0], "hora": x[1], "tk": x[2], "R": x[3][0], "motivo": x[3][1]} for x in L]
+        tot = sum(x[3][0] for x in L)
+        print(f"  {nombre}: {len(L)} operaciones, R neto total {tot:+.2f}" + (f", promedio {tot / len(L):+.2f} R" if L else ""))
+
+
 def main(verd, datos):
     V = json.load(open(verd))
     grupos = defaultdict(list)
@@ -165,6 +196,7 @@ def main(verd, datos):
             print(f"   {x[0]} {x[1]} {x[2]:<5} {x[3][0]:+.2f} R ({x[3][1]}, entra {x[3][2]})  bloqueada por: {', '.join(x[4]) or 'nada'}")
     SALIDA["grupos"] = {g: [{"dia": x[0], "hora": x[1], "tk": x[2], "R": x[3][0], "motivo": x[3][1]} for x in L] for g, L in grupos.items()}
     variantes(V, datos)
+    linea_base(V, datos)
     if os.environ.get("BT_JSON"):
         json.dump(SALIDA, open(os.environ["BT_JSON"], "w"), ensure_ascii=False)
 

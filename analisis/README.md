@@ -40,3 +40,14 @@ escritas antes de mirar los datos para no acomodar los criterios al resultado.
   sistema si en sus velas había un setup que se podía tomar en ese momento (no mirando el final del día).
 - Ninguna regla se cambia en mitad de la semana: la semana debe medirse con las mismas reglas.
 - Un ajuste propuesto el 13-11 es provisional; se confirma con una segunda semana antes de darlo por bueno.
+
+## Línea base y registro de aprendizaje (07-11)
+
+- **Línea base** (`backtest.py`, sección final): entrar a ciegas en la vela siguiente a la primera foto de
+  cada acción de la lista en la ventana, stop 8%, objetivo 2R, mismos costos. Si el sistema no supera a
+  esta entrada al azar, no hay ventaja aunque su número salga positivo. `criterios.py` las compara.
+- **Registro** (`registro.py`, lo corre `semana.sh`): `analisis/registro/AAAA-MM-DD.jsonl` guarda cada
+  GO, LISTO, VIGILAR y "casi" (una sola regla dura fallando cerca del límite) con su perfil, la regla que
+  falló, el setup, la versión de reglas y lo que pasó 15 y 30 min después (máximo, mínimo, último, en %
+  contra el precio de la foto). Se acumula semana a semana para buscar patrones con muchos casos.
+  El 05-11 se registró con noticias solo de Yahoo (antes del feed de tres fuentes).

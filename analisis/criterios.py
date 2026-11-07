@@ -52,6 +52,20 @@ for k, L in var.items():
         continue
     v, d = juzgar([x for x in L if clave(x) not in base])
     print(f"| {k} | **{v}** | {d} |")
+print("\n## Contra la línea base\n")
+print("La pregunta es si las reglas eligen mejor que entrar a ciegas en la misma lista a la misma hora.\n")
+prom = lambda L: (sum(x["R"] for x in L) / len(L)) if L else None
+fmt = lambda L: f"{len(L)} operaciones, promedio {prom(L):+.2f} R" if L else "0 operaciones"
+sis = g.get("reglas completas", [])
+print(f"- Sistema (reglas completas): {fmt(sis)}")
+for k, L in bt.get("base", {}).items():
+    print(f"- Línea base, {k}: {fmt(L)}")
+az = bt.get("base", {}).get("azar", [])
+if len(sis) >= MIN_OPS and az:
+    d = prom(sis) - prom(az)
+    print(f"\nDiferencia sistema menos azar: {d:+.2f} R por operación. " + ("El sistema elige mejor que el azar esta semana." if d > 0 else "El sistema no supera al azar esta semana."))
+else:
+    print(f"\nSin conclusión: el sistema necesita {MIN_OPS} operaciones o más para compararlo con el azar.")
 print("\n## Operaciones\n")
 for k in ["reglas completas"] + sorted(x for x in g if x.startswith("todas menos")):
     for x in g.get(k, []):

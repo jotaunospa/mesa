@@ -156,6 +156,8 @@ input[type=range]{width:100%}
 .tk-row.open{background:var(--soft)}
 .hl{display:flex;gap:8px;align-items:baseline;padding:0 14px 9px;font-size:12.5px;color:var(--muted);min-width:0}
 .hl span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ntag{flex-shrink:0;font-size:10.5px;font-weight:800;padding:0 6px;border-radius:99px;border:1.5px solid var(--ink);color:var(--on-pastel);white-space:nowrap}
+.ntag.hoy{background:var(--mint)}.ntag.vieja{background:var(--soft);color:var(--muted);border-color:var(--muted)}
 .hl b{flex-shrink:0;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--text)}
 .who{display:grid;gap:3px;min-width:0}
 .who .t{display:flex;align-items:center;gap:7px}
@@ -439,8 +441,8 @@ function renderLeyenda() {
      p: "Riesgo de que la empresa emita más acciones, leído de la SEC con 7 factores (caja corta, shelf vigente, venta reciente, warrants, convertibles, aviso de la bolsa, split inverso). Alta: caja corta y 2 factores o más. Una venta en 10 días o una quiebra es veto directo."},
     {col: "Dictamen", t: "Apta / No apta", ej: `<span class="verdict" style="justify-items:center"><span class="vchip ok">APTA</span><small>1 cautela</small></span><span class="verdict" style="justify-items:center"><span class="vchip no">NO APTA</span></span>`,
      p: "El veredicto automático. No apta: un dato no se pudo verificar o rompe una regla (dilución, pausa, spread, liquidez). Apta solo significa que vale la pena evaluarla; la Mesa decide con tus reglas."},
-    {col: "Bajo la fila", t: "Titular", ej: `<span class="hl" style="padding:0;font-size:12px"><b>Titular</b></span>`,
-     p: "La última noticia que entrega Yahoo. Puede ser vieja o de otra acción: revisa su fecha en el detalle antes de tomarla como catalizador."},
+    {col: "Bajo la fila", t: "Titular", ej: `<span class="ntag hoy">hace 2 h</span><span class="ntag vieja">antigua</span>`,
+     p: "La noticia de las últimas 20 horas que nombra a la acción, con su antigüedad. Si no hay, lo dice y muestra la fecha de la última. Es la misma regla que usa la Mesa para exigir catalizador."},
   ];
   $("#leyenda").innerHTML = T.map(x => `<li${x.ancho ? ' class="ancho"' : ""}><span class="leg-ej" aria-hidden="true">${x.ej}</span><div><span class="leg-col">${x.col}</span><h3>${x.t}</h3><p>${x.p}</p>${x.dl ? `<dl class="leg-dl">${x.dl.map(d => `<dt>${d[0]}</dt><dd>${d[1]}</dd>`).join("")}</dl>` : ""}</div></li>`).join("");
 }
@@ -502,6 +504,19 @@ function mini(v15) {
   }).join("")}</svg>`;
 }
 const ESTADO_FLOAT = {confirmado: "confirmado por dos fuentes", en_disputa: "en disputa entre fuentes", una_fuente: "una sola fuente", sin_dato: "sin dato"};
+/* noticias: solo cuenta la de las últimas 20 h que nombra a la acción (la misma regla que usa la Mesa) */
+const GEN = /most active|stocks? to watch|movers|gainers|losers|stocks? moving|trending stocks|market (wrap|update|today)|premarket|pre-market/i;
+const MESES = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+function fechaCorta(fe) { const d = new Date(fe); return isNaN(d) ? "fecha desconocida" : `${d.getUTCDate()} ${MESES[d.getUTCMonth()]}`; }
+function edadNoticia(fe) { const h = (Date.parse(S.snap.hora_ny) - Date.parse(fe)) / 36e5; return h < 1 ? "hace menos de 1 h" : `hace ${Math.round(h)} h`; }
+const SUF = new Set(["inc","inc.","corp","corp.","corporation","ltd","ltd.","limited","holdings","holding","group","co","co.","company","plc","sa","the","technologies","technology","international","global","ordinary","shares","class","a","&"]);
+function nombraA(t, f) {
+  if (new RegExp(`(^|[^A-Z])${f.ticker.replace(/[.]/g, "\\.")}([^A-Z]|$)`).test(t)) return true;
+  const w = String((f.meta || {}).nombre || "").split(/[\s,()]+/).filter(x => x && !SUF.has(x.toLowerCase()) && x.length > 2)[0];
+  return !!w && t.toLowerCase().includes(w.toLowerCase());
+}
+function esReciente(n, f) { const h = (Date.parse(S.snap.hora_ny) - Date.parse(n.fecha)) / 36e5; const t = n.titulo || ""; return h >= -1 && h <= 20 && !GEN.test(t) && nombraA(t, f); }
+function noticiaDeHoy(f) { return (f.noticias || []).find(n => esReciente(n, f)) || null; }
 function semClase(f) { return f.apto ? "ready" : "stop"; }
 
 /* ── lectura en palabras (determinista; nunca dice si va a subir) ── */
@@ -569,7 +584,9 @@ function fila(f, i) {
   if (f.ssr) chips.push(`<span class="chip ssr">SSR</span>`);
   if ((f.split_reciente || []).length) chips.push(`<span class="chip split">split</span>`);
   if (f.premarket && f.premarket.max && f.price >= f.premarket.max) chips.push(`<span class="chip pm">sobre PM</span>`);
-  const hd = f.headline ? `<div class="hl"><b>Titular</b><span>${esc(f.headline)}</span></div>` : `<div class="hl"><b>Titular</b><span>sin noticias en Yahoo</span></div>`;
+  const nh = noticiaDeHoy(f), ult = (f.noticias || [])[0];
+  const hd = nh ? `<div class="hl"><b>Titular</b><span>${esc(nh.titulo)}</span><span class="ntag hoy">${esc(edadNoticia(nh.fecha))}</span></div>`
+    : `<div class="hl"><b>Titular</b><span class="muted">Sin noticia de hoy${ult ? ` · la última es del ${esc(fechaCorta(ult.fecha))}` : " en Yahoo"}</span></div>`;
   return `<div class="tk-row${S.abiertos.has(f.ticker) ? " open" : ""}" id="r-${f.ticker}" style="animation-delay:${i * 35}ms">
     <button class="tk-main" data-tk="${f.ticker}" aria-expanded="${S.abiertos.has(f.ticker)}" aria-controls="d-${f.ticker}">
       <span class="who"><span class="t"><span class="sem ${semClase(f)}"><i></i><i></i><i></i></span><span class="tk${f.float_muy_bajo ? " lowf" : ""}">${f.ticker}</span></span><span class="chips">${chips.join("")}</span></span>
@@ -636,7 +653,7 @@ function detalle(f) {
         ${(sec.filings_recientes || []).length ? `<p class="small muted">Últimos 30 días: ${sec.filings_recientes.slice(0, 6).map(x => esc(x.form + " " + x.fecha)).join(" · ")}</p>` : ""}
         ${(f.sec_hoy || []).length ? `<p class="small"><b>Hoy en EDGAR:</b> ${f.sec_hoy.map(x => esc(x.form)).join(", ")}</p>` : ""}
         ${sec.runway_q != null ? `<p class="small muted">Autonomía de caja: ${fmt(sec.runway_q, 1)} trimestres (dato al ${esc(sec.caja_periodo || "—")}).</p>` : ""}</div>
-      ${(f.noticias || []).length ? `<div class="panel box"><h3>Noticias</h3><div class="news">${f.noticias.map(n => `<p>${esc(n.titulo)}<small>${esc(n.fuente || "")} ${esc(String(n.fecha || "").slice(0, 16).replace("T", " "))}</small></p>`).join("")}</div></div>` : ""}
+      ${(f.noticias || []).length ? `<div class="panel box"><h3>Noticias</h3><div class="news">${f.noticias.map(n => `<p>${esc(n.titulo)}<small>${esc(n.fuente || "")} · ${esc(fechaCorta(n.fecha))} <span class="ntag ${esReciente(n, f) ? "hoy" : "vieja"}">${esReciente(n, f) ? esc(edadNoticia(n.fecha)) : GEN.test(n.titulo || "") ? "lista genérica" : (Date.parse(S.snap.hora_ny) - Date.parse(n.fecha)) / 36e5 > 20 ? "antigua" : "de otra acción"}</span></small></p>`).join("")}</div><p class="small muted">Para la Mesa solo cuenta como catalizador una noticia de las últimas 20 horas que nombre a la acción.</p></div>` : ""}
     </div>
   </div>`;
 }

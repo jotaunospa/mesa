@@ -49,7 +49,7 @@ MOVIMIENTO = re.compile(r"\b(surges?|jumps?|soars?|sinks?|falls?|plunges?|rall(y
 FUNDAMENTAL = re.compile(r"\b(revenues?|sales|earnings|net income|income|profits?|EPS|bookings|backlog|orders|margins?|ARR)\s+"
                          r"(\w+\s+){0,2}(rises?|jumps?|grows?|grew|surges?|climbs?|increases?|soars?|up)\b", re.I)
 # "...jumps 45% after FDA nod": el movimiento viene con su hecho, cuenta como noticia.
-CON_CAUSA = re.compile(r"\b(after|on|following|as|amid)\s+(\S+\s+){0,4}?(FDA|approval|clearance|contract|deal|agreement|award|order|LOI|"
+CON_CAUSA = re.compile(r"\b(after|on|following)\s+(?!(\w+\s+){0,2}(peers?|sector|rivals?|market)\b)(\S+\s+){0,3}?(FDA|approval|clearance|contract|deal|agreement|award|order|LOI|"
                        r"letter of intent|partnership|collaboration|acquisition|merger|buyback|repurchase|offering|earnings|results|revenue|"
                        r"guidance|trial|data|patent|launch|listing|uplisting|split)\b", re.I)
 SIN_CAUSA = re.compile(r"explained by|no (company )?news|what'?s driving|watchlist", re.I)

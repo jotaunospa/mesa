@@ -516,7 +516,11 @@ function nombraA(t, f) {
   return !!w && t.toLowerCase().includes(w.toLowerCase());
 }
 function esReciente(n, f) { const h = (Date.parse(S.snap.hora_ny) - Date.parse(n.fecha)) / 36e5; const t = n.titulo || ""; return h >= -1 && h <= 20 && !GEN.test(t) && nombraA(t, f); }
-function noticiaDeHoy(f) { return (f.noticias || []).find(n => esReciente(n, f)) || null; }
+function noticiaDeHoy(f) {
+  if (f.noticias_eval) return (f.noticias_eval.validas || [])[0] || null;  // Google Noticias + Nasdaq + Yahoo
+  return (f.noticias || []).find(n => esReciente(n, f)) || null;
+}
+const ORIGEN = {google: "Google Noticias", nasdaq: "Nasdaq", yahoo: "Yahoo"};
 function semClase(f) { return f.apto ? "ready" : "stop"; }
 
 /* ── lectura en palabras (determinista; nunca dice si va a subir) ── */
@@ -585,7 +589,7 @@ function fila(f, i) {
   if ((f.split_reciente || []).length) chips.push(`<span class="chip split">split</span>`);
   if (f.premarket && f.premarket.max && f.price >= f.premarket.max) chips.push(`<span class="chip pm">sobre PM</span>`);
   const nh = noticiaDeHoy(f), ult = (f.noticias || [])[0];
-  const hd = nh ? `<div class="hl"><b>Titular</b><span>${esc(nh.titulo)}</span><span class="ntag hoy">${esc(edadNoticia(nh.fecha))}</span></div>`
+  const hd = nh ? `<div class="hl"><b>Titular</b><span>${esc(nh.titulo)}</span><span class="ntag hoy">${esc(edadNoticia(nh.fecha))}${nh.origen ? " · " + esc(ORIGEN[nh.origen] || nh.origen) : ""}</span></div>`
     : `<div class="hl"><b>Titular</b><span class="muted">Sin noticia de hoy${ult ? ` · la última es del ${esc(fechaCorta(ult.fecha))}` : " en Yahoo"}</span></div>`;
   return `<div class="tk-row${S.abiertos.has(f.ticker) ? " open" : ""}" id="r-${f.ticker}" style="animation-delay:${i * 35}ms">
     <button class="tk-main" data-tk="${f.ticker}" aria-expanded="${S.abiertos.has(f.ticker)}" aria-controls="d-${f.ticker}">
@@ -653,7 +657,15 @@ function detalle(f) {
         ${(sec.filings_recientes || []).length ? `<p class="small muted">Últimos 30 días: ${sec.filings_recientes.slice(0, 6).map(x => esc(x.form + " " + x.fecha)).join(" · ")}</p>` : ""}
         ${(f.sec_hoy || []).length ? `<p class="small"><b>Hoy en EDGAR:</b> ${f.sec_hoy.map(x => esc(x.form)).join(", ")}</p>` : ""}
         ${sec.runway_q != null ? `<p class="small muted">Autonomía de caja: ${fmt(sec.runway_q, 1)} trimestres (dato al ${esc(sec.caja_periodo || "—")}).</p>` : ""}</div>
-      ${(f.noticias || []).length ? `<div class="panel box"><h3>Noticias</h3><div class="news">${f.noticias.map(n => `<p>${esc(n.titulo)}<small>${esc(n.fuente || "")} · ${esc(fechaCorta(n.fecha))} <span class="ntag ${esReciente(n, f) ? "hoy" : "vieja"}">${esReciente(n, f) ? esc(edadNoticia(n.fecha)) : GEN.test(n.titulo || "") ? "lista genérica" : (Date.parse(S.snap.hora_ny) - Date.parse(n.fecha)) / 36e5 > 20 ? "antigua" : "de otra acción"}</span></small></p>`).join("")}</div><p class="small muted">Para la Mesa solo cuenta como catalizador una noticia de las últimas 20 horas que nombre a la acción.</p></div>` : ""}
+      ${(() => {
+        const ev = f.noticias_eval, val = ev ? ev.validas || [] : [], vistos = new Set(val.map(n => n.titulo));
+        const resto = (f.noticias || []).filter(n => !vistos.has(n.titulo));
+        if (!val.length && !resto.length && !ev) return "";
+        const est = !ev ? "" : ev.estado === "confirmada" ? "" : ev.estado === "no_encontrada"
+          ? `<p class="small"><b>Sin noticia de hoy</b> en ${esc((ev.fuentes || []).map(x => ORIGEN[x] || x).join(", "))}.</p>`
+          : `<p class="small"><b>Sin dato:</b> las fuentes de noticias no respondieron en esta foto.</p>`;
+        return `<div class="panel box"><h3>Noticias</h3>${est}<div class="news">${val.map(n => `<p>${n.url ? `<a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.titulo)}</a>` : esc(n.titulo)}<small>${esc(n.fuente || "")} · ${esc(ORIGEN[n.origen] || n.origen || "")} · <span class="ntag hoy">${esc(edadNoticia(n.fecha))}</span></small></p>`).join("")}${resto.map(n => `<p>${esc(n.titulo)}<small>${esc(n.fuente || "")} · Yahoo · ${esc(fechaCorta(n.fecha))} <span class="ntag vieja">${GEN.test(n.titulo || "") ? "lista genérica" : (Date.parse(S.snap.hora_ny) - Date.parse(n.fecha)) / 36e5 > 20 ? "antigua" : "de otra acción"}</span></small></p>`).join("")}</div><p class="small muted">Cuenta como catalizador una noticia de las últimas 20 horas, publicada antes de la foto, que nombre a la acción y explique algo (no solo que sube). Fuentes: Google Noticias, Nasdaq y Yahoo.</p></div>`;
+      })()}
     </div>
   </div>`;
 }

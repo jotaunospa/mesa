@@ -27,6 +27,7 @@ VER = 1
 _REGLAS = [
     ("quiebra", r"chapter 11|bankrupt|bancarrota|quiebra|liquidat|receivership|delist|deslist"),
     ("oferta", r"offering|registered direct|private placement|at[- ]the[- ]market|\bATM\b|warrant inducement|"
+               r"share sale|stock sale|sells? (\$?[\d.]+ ?(million|M) (of|in) )?(common )?(shares|stock)|convertible (preferred|notes?|debentures?)|"
                r"prices? .{0,40}(public|direct) offering|shelf registration|S-1 |S-3 |F-1 |F-3 |colocaci[oó]n"),
     ("adquisicion", r"(acquire|acquisition of|to be acquired|buyout|take[- ]private|tender offer).{0,80}"
                     r"(\$\s?\d+(\.\d+)?\s*(per|a|/)\s*share|per share in cash)"),
@@ -57,6 +58,26 @@ def _habla_de(t: str, tk: str, nombre: str | None) -> bool:
 
 
 def _noticia(f: dict, ahora: datetime) -> tuple[str, str, bool]:
+    """Si la foto trae la evaluación de las tres fuentes (lib/noticias.py), manda esa."""
+    ev = f.get("noticias_eval")
+    if ev:
+        if ev.get("validas"):
+            t = str(ev["validas"][0].get("titulo") or "")
+            return _categoria(t), t, True
+        return "ninguna", "", ev.get("estado") == "sin_dato"
+    return _noticia_yahoo(f, ahora)
+
+
+def _categoria(t: str) -> str:
+    for cat, rx in _REGLAS:
+        if re.search(rx, t, re.I):
+            if cat in ("adquisicion", "fusion") and re.search(r"terminat|cancel|rescind|abandon|withdraw", t, re.I):
+                return "otra"
+            return cat
+    return "otra"
+
+
+def _noticia_yahoo(f: dict, ahora: datetime) -> tuple[str, str, bool]:
     """(categoría, titular, dudosa). Solo titulares de las últimas 20 horas, propios de la acción."""
     lim = ahora - timedelta(hours=20)
     nombre = (f.get("meta") or {}).get("nombre")

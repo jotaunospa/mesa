@@ -35,23 +35,43 @@ SUFIJOS = {"inc", "inc.", "corp", "corp.", "corporation", "ltd", "ltd.", "limite
            "international", "global", "ordinary", "shares", "class", "a", "&", "acquisition", "corp,"}
 
 
+# Páginas permanentes de cotización: tienen fecha reciente pero no son noticias.
+PERMANENTE = re.compile(r"stock price|price today|\bquote\b|seasonal returns|\bchart\b|sec filings?\b|"
+                        r"\b(call|put) \(|options? chain|technical analysis|latest stock news|news (&|and) headlines|"
+                        r"stock forecast|short interest|competitors|dividend history|\bnews\s+[-\u2014]\s+(NASDAQ|NYSE)", re.I)
+# Notas que solo describen el movimiento del precio ("sube 59%"): no explican el porqué.
+MOVIMIENTO = re.compile(r"\b(surges?|jumps?|soars?|sinks?|falls?|plunges?|rall(y|ies)|explodes?|tumbles?|spikes?|"
+                        r"rockets?|skyrockets?|drops?|climbs?|pops?|slides?|plummets?|gains?|rises?|lifted|up|down)\b[^.]{0,25}\d+(\.\d+)?%|"
+                        r"why (is|did)\b.{0,60}\b(stock|shares)\b|what'?s driving|stock is (up|down|moving)|watchlist", re.I)
+# Primeras palabras del nombre que son palabras comunes: se exige la frase de dos palabras.
+COMUNES = {"mixed", "digital", "big", "global", "first", "new", "american", "united", "high", "smart", "green",
+           "blue", "next", "future", "power", "energy", "data", "health", "life", "bright", "star", "golden",
+           "national", "general", "capital", "world", "trend", "quantum", "solar", "clean", "safe", "pure"}
+
+
 def palabra_clave(nombre: str | None) -> str | None:
-    """Primera palabra distintiva del nombre ("Vivakor, Inc." -> "Vivakor")."""
-    for w in re.split(r"[\s,()]+", str(nombre or "")):
-        if w and w.lower() not in SUFIJOS and len(w) >= 4:
-            return w
-    return None
+    """Parte distintiva del nombre ("Vivakor, Inc." -> "Vivakor"; "Mixed Martial Arts" -> "Mixed Martial")."""
+    ws = [w for w in re.split(r"[\s,()]+", str(nombre or "")) if w and w.lower() not in SUFIJOS]
+    if not ws or len(ws[0]) < 4:
+        return None
+    if ws[0].lower() in COMUNES:
+        return " ".join(ws[:2]) if len(ws) > 1 else None
+    return ws[0]
 
 
 def nombra_a(titulo: str, tk: str, nombre: str | None) -> bool:
-    if re.search(rf"\(\s*(?:NASDAQ|NYSE|NYSE American|AMEX|OTC)?\s*:?\s*{re.escape(tk)}\s*\)", titulo, re.I):
+    """El titular habla de esta empresa (no de un homónimo ni de otra bolsa)."""
+    t, e = titulo, re.escape(tk)
+    if re.search(rf"\(\s*(?:NASDAQ|NYSE|NYSE American|AMEX)?\s*:?\s*{e}\s*\)", t, re.I):
         return True
-    if re.search(rf"(?:NASDAQ|NYSE|AMEX)\s*:\s*{re.escape(tk)}\b", titulo, re.I):
-        return True
-    if len(tk) >= 3 and re.search(rf"(?<![A-Za-z]){re.escape(tk)}(?![A-Za-z])", titulo):  # ticker en mayúsculas
+    if re.search(rf"(?:NASDAQ|NYSE|AMEX)\s*:\s*{e}(?![A-Za-z.])", t, re.I) or re.search(rf"\${e}(?![A-Za-z])", t):
         return True
     w = palabra_clave(nombre)
-    return bool(w) and re.search(rf"(?<![A-Za-z]){re.escape(w)}(?![A-Za-z])", titulo, re.I) is not None
+    if not w:
+        return False
+    # Nombres con mayúsculas internas (NaaS) se comparan respetando mayúsculas: "Naas" es otra cosa.
+    sensible = any(c.isupper() for c in w[1:]) and not w.isupper()
+    return re.search(rf"(?<![A-Za-z]){re.escape(w)}(?![A-Za-z])", t, 0 if sensible else re.I) is not None
 
 
 def google(tk: str, nombre: str | None, timeout: int = 12) -> list[dict] | None:
@@ -79,7 +99,15 @@ def google(tk: str, nombre: str | None, timeout: int = 12) -> list[dict] | None:
         return None
 
 
-def nasdaq(tk: str, timeout: int = 12) -> list[dict] | None:
+def _hace(txt: str, ahora: datetime) -> datetime | None:
+    m = re.match(r"(\d+)\s+(minute|hour|day)s?\s+ago", str(txt or "").strip(), re.I)
+    if not m:
+        return None
+    n, u = int(m.group(1)), m.group(2).lower()
+    return ahora - timedelta(minutes=n) if u == "minute" else ahora - timedelta(hours=n) if u == "hour" else ahora - timedelta(days=n)
+
+
+def nasdaq(tk: str, timeout: int = 12, ahora: datetime | None = None) -> list[dict] | None:
     url = f"https://api.nasdaq.com/api/news/topic/articlebysymbol?q={tk.lower()}|stocks&offset=0&limit=15&fallback=false"
     try:
         r = requests.get(url, headers={**UA, "Accept": "application/json", "Origin": "https://www.nasdaq.com",
@@ -89,8 +117,9 @@ def nasdaq(tk: str, timeout: int = 12) -> list[dict] | None:
         rows = ((r.json() or {}).get("data") or {}).get("rows") or []
         out = []
         for x in rows:
-            fe = None
-            for k in ("created", "ago", "date"):
+            fe = _hace(x.get("ago"), ahora or datetime.now(timezone.utc))
+            exacta = fe is not None
+            for k in (() if exacta else ("created", "ago", "date")):
                 v = x.get(k)
                 if not v:
                     continue
@@ -103,7 +132,7 @@ def nasdaq(tk: str, timeout: int = 12) -> list[dict] | None:
                 if fe:
                     break
             out.append({"titulo": x.get("title") or "", "fuente": x.get("publisher") or "Nasdaq",
-                        "fecha": fe.isoformat() if fe else None, "solo_dia": True,
+                        "fecha": fe.isoformat() if fe else None, "solo_dia": not exacta,
                         "url": "https://www.nasdaq.com" + x["url"] if str(x.get("url", "")).startswith("/") else x.get("url"),
                         "origen": "nasdaq", "crudo": {k: x.get(k) for k in ("created", "ago", "date")}})
         return out
@@ -119,13 +148,19 @@ def evaluar(tk: str, nombre: str | None, hora: datetime, fuentes: dict[str, list
         for n in items or []:
             if not n.get("fecha"):
                 continue
-            fe = datetime.fromisoformat(str(n["fecha"]).replace("Z", "+00:00"))
+            try:
+                fe = (datetime.fromtimestamp(n["fecha"], timezone.utc) if isinstance(n["fecha"], (int, float))
+                      else datetime.fromisoformat(str(n["fecha"]).replace("Z", "+00:00")))
+            except ValueError:
+                continue
+            if fe.tzinfo is None:
+                fe = fe.replace(tzinfo=timezone.utc)
             if n.get("solo_dia"):  # Nasdaq a veces solo da el día: cuenta si es el mismo día de la foto
                 ok_t = fe.date() == hora.astimezone(timezone.utc).date()
             else:
                 ok_t = lim <= fe <= hora + timedelta(minutes=1)
             t = n.get("titulo") or ""
-            if ok_t and not GENERICO.search(t) and nombra_a(t, tk, nombre):
+            if ok_t and not GENERICO.search(t) and not PERMANENTE.search(t) and not MOVIMIENTO.search(t) and nombra_a(t, tk, nombre):
                 validas.append({**n, "origen": origen})
     validas.sort(key=lambda n: n["fecha"], reverse=True)
     estado = "confirmada" if validas else ("no_encontrada" if respondieron else "sin_dato")

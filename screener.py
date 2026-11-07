@@ -33,6 +33,7 @@ import yfinance as yf
 from yfinance import EquityQuery as Q
 
 from lib import sec_mesa
+from lib import noticias as noticias_mod
 
 NY = ZoneInfo("America/New_York")
 DATOS = Path(os.environ.get("DATOS", "datos"))
@@ -322,6 +323,22 @@ def universo() -> list[dict]:
 
 # ───────────────────────── una fila ─────────────────────────
 
+_NOT_CACHE: dict = {}
+
+
+def noticias_extra(tk: str, nombre: str | None) -> tuple:
+    """Google Noticias y Nasdaq, con caché de 10 min por ticker (la ventana toma fotos cada 3)."""
+    hit = _NOT_CACHE.get(tk)
+    if hit and time.time() - hit[0] < 600:
+        return hit[1], hit[2]
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(2) as ex:
+        fg, fq = ex.submit(noticias_mod.google, tk, nombre), ex.submit(noticias_mod.nasdaq, tk)
+        g, q = fg.result(), fq.result()
+    _NOT_CACHE[tk] = (time.time(), g, q)
+    return g, q
+
+
 def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
     tk = qt["symbol"]
     inf = info(tk)
@@ -423,6 +440,15 @@ def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
                              "fuente": (c.get("provider") or {}).get("displayName") if isinstance(c.get("provider"), dict) else None})
     except Exception:
         unsure.append("news")
+    # Segunda y tercera fuente: Yahoo casi no trae noticias de small caps.
+    nombre = qt.get("longName") or qt.get("shortName")
+    try:
+        g, q = noticias_extra(tk, nombre)
+        ev = noticias_mod.evaluar(tk, nombre, ahora, {"google": g, "nasdaq": q, "yahoo": noticias})
+        noticias_eval = {"estado": ev["estado"], "fuentes": ev["fuentes"],
+                         "validas": [{k: n.get(k) for k in ("titulo", "fuente", "fecha", "url", "origen")} for n in ev["validas"][:3]]}
+    except Exception as e:
+        noticias_eval = {"estado": "sin_dato", "fuentes": [], "validas": [], "error": f"{type(e).__name__}"[:60]}
 
     d = dil(tk)
     conf_float, conf_motivos = confianza_float(flt, d, b)
@@ -453,7 +479,7 @@ def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
         "dayHigh_regular": r(hi_reg, 4), "dayLow_regular": r(lo_reg, 4),
         "halt": en_pausa,
         "news": bool(noticias),
-        "headline": noticias[0]["titulo"] if noticias else None,
+        "headline": (noticias_eval["validas"][0]["titulo"] if noticias_eval["validas"] else noticias[0]["titulo"] if noticias else None),
         "dil": d.get("dil"),
         "unsure": sorted(set(unsure + (["rvol"] if not (vol and avgv) else []))),
         # ── extras del scanner ──
@@ -480,6 +506,7 @@ def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
         "split_reciente": b["splits_30d"],
         "halts_hoy": dir_halts,
         "noticias": noticias,
+        "noticias_eval": noticias_eval,
         # ── extras propios ──
         "premarket": ({"max": r(pm_hi, 4), "min": r(pm_lo, 4), "vol": int(pn["vol"]) if pn.get("vol") else None,
                        "fuente": "nasdaq" if pn.get("max") else "yahoo"} if pm_hi is not None else None),

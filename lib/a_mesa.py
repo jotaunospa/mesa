@@ -98,11 +98,11 @@ def _pausa(f: dict, ahora: datetime) -> str:
     return "no"
 
 
-def _grafico(velas: list | None) -> dict | None:
-    """Velas regulares (09:30 en adelante) con VWAP acumulado; las últimas 40."""
+def _grafico(velas: list | None, hasta: str = "16:00") -> dict | None:
+    """Velas regulares (09:30 hasta la hora de la foto) con VWAP acumulado; las últimas 40."""
     if not velas:
         return None
-    reg = [v for v in velas if "09:30" <= str(v[0]) < "16:00"]
+    reg = [v for v in velas if "09:30" <= str(v[0]) < min(hasta, "16:00")]
     if len(reg) < 8:
         return None
     pv = vv = 0.0
@@ -141,7 +141,7 @@ def fila_mesa(f: dict, ahora: datetime, velas: list | None) -> dict:
         "esc": {"apto": bool(f.get("apto")), "motivos": f.get("no_apto_por") or [], "cautela": f.get("cautela") or [],
                 "foto": ahora.strftime("%H:%M"), "spread": f.get("spread_pct"), "url": URL},
     }
-    g = _grafico(velas)
+    g = _grafico(velas, ahora.strftime("%H:%M"))
     if g:
         row["chart"] = g
     return row

@@ -49,7 +49,10 @@ def main(verd, datos, rules_v, out):
             por_dia[r["dia"]].append(ev)
     os.makedirs(out, exist_ok=True)
     for dia, L in por_dia.items():
-        with open(os.path.join(out, f"{dia}.jsonl"), "w") as f:
+        dest = os.path.join(out, f"{dia}.jsonl")
+        if os.path.exists(dest):  # congelado: un día ya registrado no se reescribe con reglas posteriores
+            continue
+        with open(dest, "w") as f:
             for ev in L:
                 f.write(json.dumps(ev, ensure_ascii=False) + "\n")
     print(f"registro: {sum(map(len, por_dia.values()))} casos en {len(por_dia)} días -> {out}")

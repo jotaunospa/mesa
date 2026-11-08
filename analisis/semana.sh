@@ -13,5 +13,8 @@ for i in $(seq 1 20); do curl -s -o /dev/null localhost:8766/mesa-test.html && b
 BASE=http://localhost:8766 OUT="$OUT/veredictos.json" node "$AQUI/veredictos.js"
 BT_JSON="$OUT/backtest.json" python3 "$AQUI/backtest.py" "$OUT/veredictos.json" "$DATOS" > "$OUT/backtest.txt"
 python3 "$AQUI/criterios.py" "$OUT/backtest.json" "$OUT/veredictos.json" > "$OUT/informe.md"
+python3 "$AQUI/tramos.py" "$DATOS" "$OUT/tramos.json" "$OUT/tramos.md" "$@"
+python3 "$AQUI/excursiones.py" "$OUT/veredictos.json" "$DATOS" "$OUT/excursiones.json" "$OUT/excursiones.md"
+{ echo; cat "$OUT/tramos.md"; echo; cat "$OUT/excursiones.md"; } >> "$OUT/informe.md"
 python3 "$AQUI/registro.py" "$OUT/veredictos.json" "$DATOS" "${RULES_V:-?}" "$AQUI/registro"
 echo "listo: $OUT/informe.md (registro en analisis/registro/)"

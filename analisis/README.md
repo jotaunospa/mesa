@@ -51,3 +51,20 @@ escritas antes de mirar los datos para no acomodar los criterios al resultado.
   falló, el setup, la versión de reglas y lo que pasó 15 y 30 min después (máximo, mínimo, último, en %
   contra el precio de la foto). Se acumula semana a semana para buscar patrones con muchos casos.
   El 05-11 se registró con noticias solo de Yahoo (antes del feed de tres fuentes).
+
+## Tramos del día y excursiones (07-11, solo medición)
+
+- `tramos.py`: para cada candidata (todas las de `resultados.json`), retorno por tramo: noche (cierre
+  anterior → primer precio del premarket), premarket (→ 09:30), apertura (→ 09:35), ventana (09:35 → 10:15)
+  y resto (→ cierre). Separado por noticia, gap, float, temperatura y dictamen. Bruto y neto de costos.
+  Los tramos se encadenan al retorno de cierre a cierre. El cierre anterior se calcula de las fotos
+  (precio / (1 + cambio)); el cierre del día es el oficial cuando la acción sale en las fotos del día
+  siguiente, y si no la última vela de 1 min (difiere ~1% del oficial). Lo que falta queda "sin dato".
+- `excursiones.py`: para cada setup detectado (misma simulación que `backtest.py`, cumpla o no los
+  umbrales): MAE y MFE hasta la salida, R bruto y neto, deslizamiento observado al entrar y al salir con
+  stop, y velocidad de subidas contra bajadas en velas de 1 min.
+- `costos.py`: spread de Nasdaq de la fila + deslizamiento escalonado de la Mesa + comisión de Racional
+  **supuesta** (0,25% por lado, no confirmada).
+- Las dos entran a `semana.sh` y al informe. n < 30: "muestra chica, no concluye".
+- Prueba del 07-11 (días 05 y 06, 97 candidatas): en RAYA, STAK, SNT y ARDT los tramos encadenados
+  reproducen el retorno de cierre a cierre de `resultados.json` con error < 0,01 pp.

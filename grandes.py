@@ -45,6 +45,7 @@ _diario: dict = {}
 _perfil: dict = {}
 _info: dict = {}
 _not: dict = {}
+_crudas: dict = {}  # titulares sin filtrar, para re-evaluar con reglas futuras
 
 
 def r(x, n=2):
@@ -123,6 +124,7 @@ def noticias(tk: str, nombre: str | None, hora: datetime) -> dict:
     if not c or time.time() - c[0] > 900:
         c = (time.time(), {"google": N.google(tk, nombre), "nasdaq": N.nasdaq(tk, ahora=datetime.now(timezone.utc))})
         _not[tk] = c
+    _crudas[tk] = c[1]
     ev = N.evaluar(tk, nombre, hora, c[1])
     ev["validas"] = [{k: v.get(k) for k in ("titulo", "fuente", "fecha", "url", "origen")} for v in ev["validas"]]
     return ev
@@ -220,6 +222,18 @@ def guardar(snap: dict, vel: dict) -> Path:
     p.write_text(json.dumps(snap, ensure_ascii=False, indent=1, default=str))
     for tk, v in vel.items():
         (d / "velas" / f"{tk}.json").write_text(json.dumps(v, separators=(",", ":")))
+    # Titulares crudos del día (Google + Nasdaq), uno por ticker sin repetir, para re-evaluarlos después.
+    pn = d / "noticias.json"
+    todo = json.loads(pn.read_text()) if pn.exists() else {}
+    for tk, fuentes in _crudas.items():
+        vistos = {(x.get("titulo"), x.get("origen")) for x in todo.get(tk, [])}
+        for items in fuentes.values():
+            for x in items or []:
+                k = (x.get("titulo"), x.get("origen"))
+                if k not in vistos:
+                    vistos.add(k)
+                    todo.setdefault(tk, []).append({c: x.get(c) for c in ("titulo", "fuente", "fecha", "solo_dia", "url", "origen")})
+    pn.write_text(json.dumps(todo, ensure_ascii=False, separators=(",", ":")))
     return p
 
 

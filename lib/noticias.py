@@ -38,7 +38,7 @@ SUFIJOS = {"inc", "inc.", "corp", "corp.", "corporation", "ltd", "ltd.", "limite
 # Páginas permanentes de cotización: tienen fecha reciente pero no son noticias.
 PERMANENTE = re.compile(r"stock price|price today|\bquote\b|seasonal returns|\bchart\b|sec filings?\b|"
                         r"\b(call|put) \(|options? chain|technical analysis|latest stock news|news (&|and) headlines|"
-                        r"stock forecast|short interest|reacting to|trading (systems?|strateg(y|ies)|plans?)\b|price action|competitors|dividend history|\bnews\s+[-\u2014]\s+(NASDAQ|NYSE)", re.I)
+                        r"stock forecast|short interest|reacting to|trading (systems?|strateg(y|ies)|plans?)\b|price action|trading signals|market dynamics|key takeaways|shares (sold|bought|acquired|purchased) by|(acquires|buys|sells|purchases|trims|boosts|raises|lowers|cuts) (\d[\d,]* shares|(its )?(stake|position|holdings))|(stake|position|holdings) (in|raised|lowered|trimmed|boosted)|competitors|dividend history|\bnews\s+[-\u2014]\s+(NASDAQ|NYSE)", re.I)
 # Notas que solo describen el movimiento del precio ("sube 59%"): no explican el porqué.
 MOVIMIENTO = re.compile(r"\b(surges?|jumps?|soars?|sinks?|falls?|plunges?|rall(y|ies)|explodes?|tumbles?|spikes?|"
                         r"rockets?|skyrockets?|drops?|climbs?|pops?|slides?|plummets?|gains?|rises?|lifted|up|down)\b[^.]{0,25}\d+(\.\d+)?%|"

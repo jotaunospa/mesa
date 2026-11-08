@@ -68,3 +68,12 @@ escritas antes de mirar los datos para no acomodar los criterios al resultado.
 - Las dos entran a `semana.sh` y al informe. n < 30: "muestra chica, no concluye".
 - Prueba del 07-11 (días 05 y 06, 97 candidatas): en RAYA, STAK, SNT y ARDT los tramos encadenados
   reproducen el retorno de cierre a cierre de `resultados.json` con error < 0,01 pp.
+
+## Criterio de detención (sección H de la propuesta, aprobado el 07-11)
+
+`detencion.py`, llamado por `criterios.py`: sección fija arriba de cada informe. Semanas completas de
+ventana (todos los días hábiles de NYSE con fotos 09:31–10:20), n y retorno neto medio de la ventana
+(09:35 → 10:15) de las candidatas APTAS en una foto hasta las 09:35, con intervalo t de 90% sobre los
+promedios diarios. Estado: "midiendo" (< 4 semanas), "se cumple" (intervalo entero bajo 0: el informe lo
+dice arriba y no propone ajustes de entrada), "no concluye" (cruza el 0; se revisa a las 8 semanas) o
+"no se cumple" (entero sobre 0; no prueba ventaja). Probado con datos sintéticos en los cuatro estados.

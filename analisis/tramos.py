@@ -208,18 +208,18 @@ def markdown(filas) -> str:
     neta = [r["neto"]["ventana"] for r in filas if r.get("neto", {}).get("ventana") is not None]
     md = ["## Tramos del día: ¿dónde está el retorno de las candidatas?\n",
           f"{len(filas)} candidatas (todas las que salieron en alguna foto), {len({r['dia'] for r in filas})} días. "
-          "Retorno de comprar al inicio del tramo y vender al final. ⚠ = muestra chica (n < 30), no concluye.\n",
+          "Retorno de comprar al inicio del tramo y vender al final. ⚠ = primeras lecturas (n < 30), no concluye.\n",
           C.nota() + "\n"]
     if vent:
         pos = sum(1 for x in vent if x > 0)
         md.append(f"**a) Ventana (09:35 → 10:15):** n = {len(vent)}; promedio bruto {st.mean(vent):+.2f}%, mediana {st.median(vent):+.2f}%, "
                   f"{pos} de {len(vent)} positivas. Neto de costos (n = {len(neta)}): "
                   + (f"promedio {st.mean(neta):+.2f}%, mediana {st.median(neta):+.2f}%." if neta else "sin dato.")
-                  + (" **Muestra chica, no concluye.**" if len(vent) < MIN_N else ""))
+                  + (" **Primeras lecturas, no concluye.**" if len(vent) < MIN_N else ""))
     chica = [r["neto"]["ventana"] for r in filas if r.get("neto", {}).get("ventana") is not None and (r["spread_pct"] or 99) <= 3]
     if chica:
         md.append(f"Solo las que tenían spread ≤ 3% (las que el Escáner deja pasar por spread): n = {len(chica)}, ventana neta "
-                  f"promedio {st.mean(chica):+.2f}%, mediana {st.median(chica):+.2f}%." + (" Muestra chica, no concluye." if len(chica) < MIN_N else ""))
+                  f"promedio {st.mean(chica):+.2f}%, mediana {st.median(chica):+.2f}%." + (" Primeras lecturas, no concluye." if len(chica) < MIN_N else ""))
     difs = [abs(r["dif_ultima_vela_pct"]) for r in filas if r.get("dif_ultima_vela_pct") is not None]
     if difs:
         md.append(f"\nCierre del día: si la acción salió también al día siguiente se usa su cierre oficial (calculado de esa foto); si no, "

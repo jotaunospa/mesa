@@ -157,7 +157,7 @@ def main(verd, datos, sal_json, sal_md):
 
 
 def markdown(ops, vel) -> str:
-    aviso = lambda n: " **Muestra chica, no concluye.**" if n < MIN_N else ""
+    aviso = lambda n: " **Primeras lecturas, no concluye.**" if n < MIN_N else ""
     md = ["## Excursiones de los setups: MAE, MFE, velocidad y deslizamiento\n",
           f"{len(ops)} setups activados (todos los que detectó la Mesa en la ventana, cumplan o no sus umbrales; uno por acción y día). "
           "Simulación de backtest.py: entrada en el precio del setup o en la apertura si ya lo pasó, stop, objetivo 2R, cierre 10:30.\n",
@@ -204,7 +204,7 @@ def markdown(ops, vel) -> str:
         md.append(f"| {g} | {len(up)}{' ⚠' if len(up) < MIN_N else ''} | {len(dn)}{' ⚠' if len(dn) < MIN_N else ''} | {su:.3f} | {sd:.3f} | "
                   f"{sd / su:.2f} | {st.mean(p[2] for p in up):.1f} | {st.mean(p[2] for p in dn):.1f} |")
     md.append("\nBajada ÷ subida > 1 significa que las caídas son más rápidas que las subidas (\"escalera arriba, ascensor abajo\"): "
-              "en ese caso el deslizamiento al salir con stop tiende a ser mayor que al entrar. ⚠ = n < 30, no concluye.")
+              "en ese caso el deslizamiento al salir con stop tiende a ser mayor que al entrar. ⚠ = n < 30: primeras lecturas, no concluye.")
     return "\n".join(md) + "\n"
 
 

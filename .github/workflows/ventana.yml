@@ -40,3 +40,9 @@ jobs:
       - run: .github/actions-datos.sh
       - name: Fotos
         run: python screener.py ${{ inputs.modo || 'ventana' }}
+
+  # Acciones grandes: solo recolección, en un trabajo aparte (si falla, las fotos siguen).
+  grandes:
+    uses: ./.github/workflows/grandes.yml
+    with:
+      modo: ${{ inputs.modo || 'ventana' }}

@@ -1,0 +1,45 @@
+name: Grandes (solo recolección)
+
+# Junta fotos de acciones grandes en juego, sin reglas ni Mesa. Lo llaman ventana.yml y
+# cierre.yml como un trabajo aparte: si falla, no afecta las fotos del Escáner.
+on:
+  workflow_call:
+    inputs:
+      modo:
+        type: string
+        default: ventana
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: "ventana | una_vez | cierre | prueba"
+        default: "prueba"
+
+permissions:
+  contents: write
+
+jobs:
+  grandes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    concurrency:
+      group: grandes-${{ inputs.modo }}
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+      DATOS: ${{ github.workspace }}/datos
+      FORZAR: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Prueba (no publica)
+        if: inputs.modo == 'prueba'
+        run: DATOS=/tmp/prueba python grandes.py una_vez | tee resumen.txt
+      - name: Recolección
+        if: inputs.modo != 'prueba'
+        run: |
+          .github/actions-datos.sh
+          python grandes.py ${{ inputs.modo }}

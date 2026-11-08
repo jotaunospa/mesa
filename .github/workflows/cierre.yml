@@ -36,3 +36,8 @@ jobs:
       - run: pip install -r requirements.txt
       - run: .github/actions-datos.sh
       - run: python cierre.py
+
+  grandes:
+    uses: ./.github/workflows/grandes.yml
+    with:
+      modo: cierre

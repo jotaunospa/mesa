@@ -13,6 +13,8 @@ jobs:
   diag:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      SEC_CONTACTO: ${{ secrets.SEC_CONTACTO }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
@@ -20,7 +22,7 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
-      - run: python diag/velas_hoy.py STAK YMAT | tee resumen.txt
+      - run: python diag/sec_check.py | tee resumen.txt
       - name: Guardar en rama diag
         if: always()
         run: |

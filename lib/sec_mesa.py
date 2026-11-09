@@ -18,6 +18,7 @@ dice en `dil_motivo` que es un sustituto. Emisores extranjeros (20-F/6-K):
 """
 from __future__ import annotations
 
+import os
 import re
 import time
 import urllib.request
@@ -27,7 +28,8 @@ from typing import Any, Dict, List, Optional
 
 from lib.datos_sec import SEC, fundamentales
 
-UA = "Mesa/0.1 (contacto-en-secreto-SEC_CONTACTO)"
+# La SEC exige un correo de contacto real; viene del secreto SEC_CONTACTO del repositorio (no queda en el código).
+UA = f"Mesa/0.1 ({os.environ.get('SEC_CONTACTO') or 'contacto no configurado'})"
 REGISTROS = {"S-1", "S-3", "F-1", "F-3", "S-1/A", "S-3/A", "F-1/A", "F-3/A", "S-3ASR", "F-3ASR"}
 
 _cliente: Optional[SEC] = None

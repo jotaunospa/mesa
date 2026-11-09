@@ -27,6 +27,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       DATOS: ${{ github.workspace }}/datos
       FORZAR: ${{ inputs.forzar }}
+      SEC_CONTACTO: ${{ secrets.SEC_CONTACTO }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6

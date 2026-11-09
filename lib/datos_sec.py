@@ -33,7 +33,7 @@ VERSION = "1.0.0"
 
 # La SEC exige un User-Agent con contacto real. Un correo inventado es motivo
 # de bloqueo, no un detalle de estilo.
-CONTACTO = os.environ.get("FARO_CONTACTO", "contacto-en-secreto-SEC_CONTACTO")
+CONTACTO = os.environ.get("SEC_CONTACTO") or os.environ.get("FARO_CONTACTO") or "contacto no configurado"  # secreto SEC_CONTACTO
 USER_AGENT = f"Faro/{VERSION} ({CONTACTO})"
 
 CACHE_DIR = os.environ.get(

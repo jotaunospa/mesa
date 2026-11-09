@@ -4,7 +4,8 @@ Lo usa la tarea programada "Escáner Mesa: llenar la Mesa". Lee la rama `datos` 
 de GitHub (gh), así que funciona desde cualquier sesión de Claude con acceso al repo.
 
 Uso:
-  python integracion/a_mesa_lote.py --ultima HHMM --out DIR [--esperar 420]
+  python integracion/a_mesa_lote.py --ultima HHMM --out DIR [--esperar 420] [--solo-bench]
+  (--solo-bench: modo observación de la tarde, escribe solo el banco; con --esperar 0 toma la última foto)
 
 Imprime una sola línea JSON:
   {"nueva": true, "foto": "0945", "hora": "09:45 NY", "lote": "DIR/lote.json", "filas": 20, "aptas": 3}
@@ -51,6 +52,7 @@ def main() -> None:
     ap.add_argument("--ultima", default="", help="última foto ya escrita en la Mesa (HHMM)")
     ap.add_argument("--out", required=True)
     ap.add_argument("--esperar", type=int, default=420, help="segundos máximos de espera")
+    ap.add_argument("--solo-bench", action="store_true", help="modo observación de la tarde: solo el banco, sin lecturas al historial")
     a = ap.parse_args()
     ahora = datetime.now(NY)
     hoy = ahora.strftime("%Y-%m-%d")
@@ -83,7 +85,7 @@ def main() -> None:
         p.unlink()
     (out / "bench.json").write_text(json.dumps(m["bench"], ensure_ascii=False))
     writes = [{"op": "set", "collection": "data/users/me", "doc_id": "bench", "file_path": str(out / "bench.json")}]
-    for r in m["reads"]:
+    for r in ([] if a.solo_bench else m["reads"]):
         f = out / f"{r['id']}.json"
         f.write_text(json.dumps(r, ensure_ascii=False))
         writes.append({"op": "set", "collection": "data/users/me", "doc_id": r["id"], "file_path": str(f)})

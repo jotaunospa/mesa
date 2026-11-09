@@ -586,7 +586,7 @@ function render() {
   $("#b-ok").style.width = (ok / Math.max(1, s.filas.length) * 100) + "%";
   $("#b-no").style.width = (no / Math.max(1, s.filas.length) * 100) + "%";
   const hh = s.hora_ny.slice(11, 16), edad = Math.round((Date.now() - Date.parse(s.hora_ny)) / 60000);
-  $("#foto-info").innerHTML = `Foto de las <b class="num">${hh}</b> NY (${S.i + 1} de ${S.fotos.length})${S.dia === diaNY() && S.i === S.fotos.length - 1 ? ` · hace ${edad} min` : ""} · ${s.con_float_bajo} con float bajo de ${s.universo_yahoo}`;
+  $("#foto-info").innerHTML = `Foto de las <b class="num">${hh}</b> NY (${S.i + 1} de ${S.fotos.length})${S.dia === diaNY() && S.i === S.fotos.length - 1 && minNY() <= 10 * 60 + 23 ? ` · hace ${edad} min` : ""} · ${s.con_float_bajo} con float bajo de ${s.universo_yahoo}`;
   const enVivo = S.dia === diaNY() && S.i === S.fotos.length - 1 && fase().k === "ventana";
   $("#live").className = "live" + (enVivo ? " on" : "");
   $("#live span").textContent = enVivo ? "en vivo" : "historial";
@@ -888,7 +888,18 @@ function proxima() {
     $("#nx-t").innerHTML = `Esperando la primera foto de la ventana, <b>09:31</b> NY · se publica con 2 a 3 min de demora`;
     return;
   }
-  if (!ult) { nx.hidden = true; return; }
+  if (!ult) {
+    // fuera de las fotos: decir cuándo llega la próxima, para que no parezca detenido
+    const viendoHoy = S.modo === "pm" || (S.dia === diaNY() && S.i === S.fotos.length - 1) || (S.idx && S.dia === S.idx.ultimo_dia && S.i === S.fotos.length - 1);
+    if (!viendoHoy) { nx.hidden = true; return; }
+    nx.hidden = false; nx.classList.remove("tarde"); $("#nx-i").style.width = "0%";
+    const wd = new Intl.DateTimeFormat("en-US", {timeZone: "America/New_York", weekday: "short"}).format(new Date());
+    const hoyHabil = !finde();
+    const cuando = hoyHabil && m < 7 * 60 ? "hoy" : (wd === "Fri" || wd === "Sat") ? "el lunes" : "mañana";
+    const scl = (h, mi) => { const off = (() => { const a = hora("America/Santiago").split(":").map(Number), b = hora("America/New_York").split(":").map(Number); return ((a[0] * 60 + a[1]) - (b[0] * 60 + b[1]) + 1440) % 1440; })(); const t = (h * 60 + mi + off) % 1440; return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`; };
+    $("#nx-t").innerHTML = `Fotos en pausa hasta ${cuando}: premarket <b>07:00</b> NY (${scl(7, 0)} Stgo) · ventana <b>09:31</b> NY (${scl(9, 31)} Stgo)`;
+    return;
+  }
   nx.hidden = false;
   const t0 = Date.parse(ult), sig = t0 + paso * 60000, ahora = Date.now(), resta = (sig - ahora) / 1000;
   const hSig = new Intl.DateTimeFormat("es-CL", {timeZone: "America/New_York", hour: "2-digit", minute: "2-digit", hour12: false}).format(new Date(sig));

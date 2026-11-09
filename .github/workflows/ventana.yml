@@ -17,7 +17,8 @@ on:
         default: "una_vez"
 
 concurrency:
-  group: ventana
+  # una_vez (foto de respaldo) no espera detrás del loop de todo el día
+  group: ventana-${{ inputs.modo || 'ventana' }}
   cancel-in-progress: false
 
 permissions:

@@ -178,7 +178,7 @@ def main(modo: str) -> None:
         t0 = time.time()
         try:
             s = foto(); guardar(s); print(resumen(s), flush=True); n += 1
-            if n % 3 == 0:
+            if n % (1 if PASO_MIN >= 20 else 3) == 0:  # after-hours (cada 20 min): publica cada foto
                 publicar(f"{SES['carpeta']}: fotos hasta {s['hora_ny'][11:16]}")
         except Exception:
             traceback.print_exc()

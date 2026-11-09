@@ -632,6 +632,8 @@ def foto() -> dict:
     quotes = universo()
     # Quinta letra en Nasdaq: P preferente, R derecho, U unidad, W warrant, Z otros. No son acciones comunes.
     quotes = [q for q in quotes if not (len(q["symbol"]) >= 5 and q["symbol"][-1] in "PRUWZ")]
+    # Clases con guion o punto (SNUS-PH, ABC.WS, XYZ-P-A): preferentes, warrants o clases especiales. Tampoco son comunes.
+    quotes = [q for q in quotes if "-" not in q["symbol"] and "." not in q["symbol"]]
     # Sin OTC (el scanner no los muestra).
     quotes = [q for q in quotes if "OTC" not in (q.get("fullExchangeName") or "")]
     tv = float_tradingview([q["symbol"] for q in quotes])

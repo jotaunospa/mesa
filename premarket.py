@@ -33,10 +33,18 @@ from lib import noticias as N
 NY = ZoneInfo("America/New_York")
 DATOS = Path(os.environ.get("DATOS", "datos"))
 CAMBIO_MIN, VOL_MIN, N_MAX = 5, 20_000, 30
-INICIO, FIN, PASO_MIN = (7, 0), (9, 28), 10
+# Dos sesiones fuera del horario regular, con la misma lógica:
+# pre = premarket (07:00–09:28 NY, cada 10 min) · post = after-hours (16:05–19:58 NY, cada 20 min).
+SESIONES = {
+    "pre": {"tv": "premarket", "nasdaq": "pre", "carpeta": "premarket", "ini": (7, 0), "fin": (9, 28), "paso": 10},
+    "post": {"tv": "postmarket", "nasdaq": "post", "carpeta": "postmarket", "ini": (16, 5), "fin": (19, 58), "paso": 20},
+}
+SES = SESIONES[os.environ.get("SESION", "pre")]
+INICIO, FIN, PASO_MIN = SES["ini"], SES["fin"], SES["paso"]
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36",
       "Accept": "application/json", "Accept-Language": "en-US,en;q=0.9"}
-COLS = ["name", "description", "premarket_close", "premarket_change", "premarket_volume", "premarket_high", "premarket_low",
+_T = SES["tv"]
+COLS = ["name", "description", f"{_T}_close", f"{_T}_change", f"{_T}_volume", f"{_T}_high", f"{_T}_low",
         "close", "float_shares_outstanding", "market_cap_basic", "exchange", "update_mode"]
 _not: dict = {}
 
@@ -47,11 +55,11 @@ def ahora_ny() -> datetime:
 
 def lista_tradingview() -> list[dict]:
     body = json.dumps({"markets": ["america"], "symbols": {"query": {"types": []}, "tickers": []},
-                       "filter": [{"left": "premarket_change", "operation": "greater", "right": CAMBIO_MIN},
-                                  {"left": "premarket_volume", "operation": "greater", "right": VOL_MIN},
+                       "filter": [{"left": f"{_T}_change", "operation": "greater", "right": CAMBIO_MIN},
+                                  {"left": f"{_T}_volume", "operation": "greater", "right": VOL_MIN},
                                   {"left": "exchange", "operation": "in_range", "right": ["NASDAQ", "NYSE", "AMEX"]},
                                   {"left": "type", "operation": "equal", "right": "stock"}],
-                       "columns": COLS, "sort": {"sortBy": "premarket_change", "sortOrder": "desc"},
+                       "columns": COLS, "sort": {"sortBy": f"{_T}_change", "sortOrder": "desc"},
                        "range": [0, N_MAX]}).encode()
     req = urllib.request.Request("https://scanner.tradingview.com/america/scan", data=body,
                                  headers=dict(UA, **{"Content-Type": "application/json"}))
@@ -61,7 +69,7 @@ def lista_tradingview() -> list[dict]:
 
 def nasdaq_pre(tk: str) -> dict:
     try:
-        req = urllib.request.Request(f"https://api.nasdaq.com/api/quote/{tk}/extended-trading?markettype=pre&assetclass=stocks&time=0",
+        req = urllib.request.Request(f"https://api.nasdaq.com/api/quote/{tk}/extended-trading?markettype={SES['nasdaq']}&assetclass=stocks&time=0",
                                      headers=dict(UA, Origin="https://www.nasdaq.com", Referer="https://www.nasdaq.com/"))
         d = (json.loads(urllib.request.urlopen(req, timeout=15).read()).get("data") or {})
         row = ((d.get("infoTable") or {}).get("rows") or [{}])[0]
@@ -96,17 +104,17 @@ def foto() -> dict:
     def fila(x):
         tk, nombre = x["name"], x.get("description")
         return {"ticker": tk, "nombre": nombre, "bolsa": x.get("exchange"),
-                "pm_precio_tv": r(x.get("premarket_close")), "pm_cambio_tv": r(x.get("premarket_change"), 2),
-                "pm_vol_tv": x.get("premarket_volume"), "pm_max_tv": r(x.get("premarket_high")), "pm_min_tv": r(x.get("premarket_low")),
+                "pm_precio_tv": r(x.get(f"{_T}_close")), "pm_cambio_tv": r(x.get(f"{_T}_change"), 2),
+                "pm_vol_tv": x.get(f"{_T}_volume"), "pm_max_tv": r(x.get(f"{_T}_high")), "pm_min_tv": r(x.get(f"{_T}_low")),
                 "cierre_ant": r(x.get("close")), "floatM_tv": r((x.get("float_shares_outstanding") or 0) / 1e6, 3) or None,
                 "cap_M": r((x.get("market_cap_basic") or 0) / 1e6, 1) or None, "tv_modo": x.get("update_mode"),
                 "nasdaq": nasdaq_pre(tk), "noticias_eval": noticias(tk, nombre, ahora)}
 
     with ThreadPoolExecutor(6) as ex:
         filas = list(ex.map(lambda x: _seguro(fila, x), lista))
-    return {"hora_ny": ahora.isoformat(timespec="seconds"), "version": 1,
+    return {"hora_ny": ahora.isoformat(timespec="seconds"), "version": 1, "sesion": os.environ.get("SESION", "pre"),
             "aviso": "Lista y precios de TradingView con 15 min de atraso; volumen/máximo/mínimo de Nasdaq al momento de la foto.",
-            "criterio": f"premarket ≥ {CAMBIO_MIN}% y volumen ≥ {VOL_MIN:,}; NASDAQ, NYSE y AMEX; acciones comunes; hasta {N_MAX}",
+            "criterio": f"{SES['carpeta']} ≥ {CAMBIO_MIN}% y volumen ≥ {VOL_MIN:,}; NASDAQ, NYSE y AMEX; acciones comunes; hasta {N_MAX}",
             "filas": filas, "duracion_s": round(time.time() - t0, 1)}
 
 
@@ -119,7 +127,7 @@ def _seguro(fn, x):
 
 def guardar(s: dict) -> None:
     h = datetime.fromisoformat(s["hora_ny"])
-    d = DATOS / h.strftime("%Y-%m-%d") / "premarket"
+    d = DATOS / h.strftime("%Y-%m-%d") / SES["carpeta"]
     d.mkdir(parents=True, exist_ok=True)
     (d / f"snap-{h.strftime('%H%M')}.json").write_text(json.dumps(s, ensure_ascii=False, indent=1, default=str))
     # Índice y última foto, para que el Escáner los lea sin listar la carpeta.
@@ -132,7 +140,7 @@ def publicar(msg: str) -> None:
     if not (DATOS / ".git").exists():
         return
     g = ["git", "-C", str(DATOS)]
-    subprocess.run(g + ["add", "-A", "--", ":(glob)*/premarket/**"], check=False)
+    subprocess.run(g + ["add", "-A", "--", f":(glob)*/{SES['carpeta']}/**"], check=False)
     if subprocess.run(g + ["diff", "--cached", "--quiet"]).returncode == 0:
         return
     subprocess.run(g + ["commit", "-qm", msg], check=False)
@@ -157,12 +165,12 @@ def resumen(s: dict) -> str:
 
 def main(modo: str) -> None:
     if modo == "una_vez":
-        s = foto(); guardar(s); print(resumen(s)); publicar("premarket: foto"); return
+        s = foto(); guardar(s); print(resumen(s)); publicar(f"{SES['carpeta']}: foto"); return
     hoy = ahora_ny()
     ini = hoy.replace(hour=INICIO[0], minute=INICIO[1], second=0, microsecond=0)
     fin = hoy.replace(hour=FIN[0], minute=FIN[1], second=0, microsecond=0)
     if hoy.weekday() >= 5 or hoy > fin:
-        print(f"fuera del premarket ({hoy:%a %H:%M} NY)"); return
+        print(f"fuera de {SES['carpeta']} ({hoy:%a %H:%M} NY)"); return
     if hoy < ini:
         time.sleep((ini - hoy).total_seconds())
     n = 0
@@ -171,11 +179,11 @@ def main(modo: str) -> None:
         try:
             s = foto(); guardar(s); print(resumen(s), flush=True); n += 1
             if n % 3 == 0:
-                publicar(f"premarket: fotos hasta {s['hora_ny'][11:16]}")
+                publicar(f"{SES['carpeta']}: fotos hasta {s['hora_ny'][11:16]}")
         except Exception:
             traceback.print_exc()
         time.sleep(max(0, PASO_MIN * 60 - (time.time() - t0)))
-    publicar("premarket: fin")
+    publicar(f"{SES['carpeta']}: fin")
 
 
 if __name__ == "__main__":

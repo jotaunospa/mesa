@@ -8,21 +8,25 @@ on:
       modo:
         description: "ventana | una_vez | prueba"
         default: "prueba"
+      sesion:
+        description: "pre (premarket) | post (after-hours)"
+        default: "pre"
 
 permissions:
   contents: write
 
 concurrency:
-  group: premarket
+  group: extendido-${{ inputs.sesion || 'pre' }}
   cancel-in-progress: false
 
 jobs:
   premarket:
     runs-on: ubuntu-latest
-    timeout-minutes: 170
+    timeout-minutes: 260
     env:
       GH_TOKEN: ${{ github.token }}
       DATOS: ${{ github.workspace }}/datos
+      SESION: ${{ inputs.sesion || 'pre' }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6

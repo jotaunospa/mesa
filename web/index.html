@@ -421,7 +421,7 @@ function fase() {
   if (m < 9 * 60 + 30) return {k: "pre", t: "Premarket", s: "La ventana de la Mesa abre 09:35 NY"};
   if (m < 9 * 60 + 35) return {k: "pre", t: "Apertura", s: "Primeros minutos: mucho ruido"};
   if (m <= 10 * 60 + 15) return {k: "ventana", t: "Ventana de entrada", s: "09:35–10:15 NY · fotos cada 3 min"};
-  if (m < 16 * 60) return {k: "abierto", t: "Mercado abierto", s: "Fuera de la ventana de la Mesa"};
+  if (m < 16 * 60) return {k: "abierto", t: "Mercado abierto", s: "Fuera de la ventana · fotos cada 10 min"};
   if (m < 20 * 60) return {k: "post", t: "Postmarket", s: "Registro de resultados 16:37 NY"};
   return {k: "cerrado", t: "Mercado cerrado", s: "Vuelve mañana 04:00 NY"};
 }
@@ -567,7 +567,7 @@ function render() {
   if (S.modo === "pm") return renderPM();
   const s = S.snap, box = $("#rows");
   if (!s) {
-    box.innerHTML = `<div class="empty"><svg aria-hidden="true"><use href="#papelito"/></svg><div><h3>Todavía no hay fotos de este día</h3><p class="muted small">El screener toma fotos de 09:31 a 10:20 de Nueva York en días hábiles.</p></div></div>`;
+    box.innerHTML = `<div class="empty"><svg aria-hidden="true"><use href="#papelito"/></svg><div><h3>Todavía no hay fotos de este día</h3><p class="muted small">El screener toma fotos desde las 09:31 de Nueva York (cada 3 min en la ventana y cada 10 min hasta el cierre) en días hábiles.</p></div></div>`;
     $("#foto-info").textContent = "Sin datos"; return;
   }
   modoNormal();
@@ -586,8 +586,8 @@ function render() {
   $("#b-ok").style.width = (ok / Math.max(1, s.filas.length) * 100) + "%";
   $("#b-no").style.width = (no / Math.max(1, s.filas.length) * 100) + "%";
   const hh = s.hora_ny.slice(11, 16), edad = Math.round((Date.now() - Date.parse(s.hora_ny)) / 60000);
-  $("#foto-info").innerHTML = `Foto de las <b class="num">${hh}</b> NY (${S.i + 1} de ${S.fotos.length})${S.dia === diaNY() && S.i === S.fotos.length - 1 && minNY() <= 10 * 60 + 23 ? ` · hace ${edad} min` : ""} · ${s.con_float_bajo} con float bajo de ${s.universo_yahoo}`;
-  const enVivo = S.dia === diaNY() && S.i === S.fotos.length - 1 && fase().k === "ventana";
+  $("#foto-info").innerHTML = `Foto de las <b class="num">${hh}</b> NY (${S.i + 1} de ${S.fotos.length})${S.dia === diaNY() && S.i === S.fotos.length - 1 && minNY() <= 16 * 60 + 3 ? ` · hace ${edad} min` : ""} · ${s.con_float_bajo} con float bajo de ${s.universo_yahoo}`;
+  const enVivo = S.dia === diaNY() && S.i === S.fotos.length - 1 && ["ventana", "abierto", "pre"].includes(fase().k) && minNY() >= 9 * 60 + 31;
   $("#live").className = "live" + (enVivo ? " on" : "");
   $("#live span").textContent = enVivo ? "en vivo" : "historial";
   const mj = $("#mesa-json"); mj.href = `${S.dia}/mesa.json`; mj.setAttribute("download", `mesa-${S.dia}.json`); mj.hidden = S.dia < "2026-11-06";
@@ -881,9 +881,9 @@ function proxima() {
   const nx = $("#nx"), m = minNY();
   let ult = null, paso = 0;
   if (S.modo === "pm" && S.pmSnap && S.pmI === S.pmFotos.length - 1 && !finde() && m < 9 * 60 + 31) { ult = S.pmSnap.hora_ny; paso = 10; }
-  else if (S.modo !== "pm" && S.snap && S.dia === diaNY() && S.i === S.fotos.length - 1 && m >= 9 * 60 + 31 && m <= 10 * 60 + 23) { ult = S.snap.hora_ny; paso = 3; }
+  else if (S.modo !== "pm" && S.snap && S.dia === diaNY() && S.i === S.fotos.length - 1 && m >= 9 * 60 + 31 && m <= 16 * 60 + 3) { ult = S.snap.hora_ny; paso = m <= 10 * 60 + 22 ? 3 : 10; }
   const hoyD = (S.idx?.dias || []).find(x => x.fecha === diaNY());
-  if (!ult && !finde() && m >= 9 * 60 + 31 && m <= 10 * 60 + 23 && !(hoyD && hoyD.fotos && hoyD.fotos.length)) {
+  if (!ult && !finde() && m >= 9 * 60 + 31 && m <= 16 * 60 && !(hoyD && hoyD.fotos && hoyD.fotos.length)) {
     nx.hidden = false; nx.classList.add("tarde");
     $("#nx-t").innerHTML = `Esperando la primera foto de la ventana, <b>09:31</b> NY · se publica con 2 a 3 min de demora`;
     return;

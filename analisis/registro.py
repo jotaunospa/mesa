@@ -32,6 +32,8 @@ def main(verd, datos, rules_v, out):
     V = json.load(open(verd))
     por_dia = defaultdict(list)
     for r in V:
+        if r["hora"] > "10:20":
+            continue  # fotos de la tarde: fuera de la ventana de la Mesa
         casi = {c.split(":")[0]: c.split(":")[1] for c in r.get("casi") or []}
         for p in ("cons", "mom"):
             etapa = ETAPA.get(r[p]["stage"]) or ("CASI" if p in casi else None)

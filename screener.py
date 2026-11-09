@@ -49,6 +49,7 @@ PRECIO_MAX = 50           # hipótesis: FLGT ($21,62) entra (06-11); APP (ciento
 RANCIA_S = 900            # cotización con más de 15 min se descarta de la foto
 MAX_FILAS = 20            # filas con detalle completo por foto
 INICIO, FIN, PASO_MIN = (9, 31), (10, 20), 3   # ventana 09:35–10:15 NY + margen (antes de 9:30 Yahoo muestra el % de ayer)
+DIA_FIN, PASO_DIA = (15, 58), 10   # después de la ventana: una foto cada 10 min hasta el cierre, solo para mirar (la Mesa no se alimenta)
 PAISES_ROJOS = {"China", "Hong Kong", "Macau", "Macao", "Taiwan", "Singapore", "Malaysia"}
 
 # Filtro propio de la Mesa (distinto del scanner): se marca, no se excluye.
@@ -763,20 +764,22 @@ def main(modo: str) -> None:
     fin = hoy.replace(hour=FIN[0], minute=FIN[1], second=0, microsecond=0)
     if hoy.weekday() >= 5:
         print("fin de semana: nada que hacer"); return
-    if hoy > fin:
-        print(f"ventana ya cerró ({hoy:%H:%M} NY)"); return
+    fin_dia = hoy.replace(hour=DIA_FIN[0], minute=DIA_FIN[1], second=0, microsecond=0)
+    if hoy > fin_dia:
+        print(f"el mercado ya cerró ({hoy:%H:%M} NY)"); return
     espera = (ini - hoy).total_seconds()
     if espera > 30 * 60:
         print(f"muy temprano ({hoy:%H:%M} NY): sale y deja que corra el respaldo"); return
     if espera > 0:
         print(f"esperando {int(espera)}s hasta {ini:%H:%M} NY"); time.sleep(espera)
-    while ahora_ny() <= fin:
+    while ahora_ny() <= fin_dia:
         t0 = time.time()
         try:
             s = foto(); p = guardar(s); print(resumen(s), flush=True); publicar(f"foto {p.name}")
         except Exception:
             traceback.print_exc()
-        time.sleep(max(0, PASO_MIN * 60 - (time.time() - t0)))
+        paso = PASO_MIN if ahora_ny() <= fin else PASO_DIA
+        time.sleep(max(0, paso * 60 - (time.time() - t0)))
 
 
 if __name__ == "__main__":

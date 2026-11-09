@@ -107,6 +107,8 @@ def medir_dia(dia: Path) -> list[dict]:
     fotos = fotos_por_ticker(dia)
     out = []
     for c in res["candidatas"]:
+        if c["primera_hora"][11:16] > "10:20":
+            continue  # apareció después de la ventana (fotos de la tarde, solo para mirar)
         tk = c["ticker"]
         filas = fotos.get(tk, [])
         al = c.get("al_aparecer") or {}

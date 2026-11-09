@@ -1,6 +1,6 @@
 name: Ventana (fotos del screener)
 
-# Fotos cada 3 min entre 09:31 y 10:20 de Nueva York, días hábiles.
+# Fotos cada 3 min entre 09:31 y 10:20 de Nueva York y cada 10 min hasta las 15:58, días hábiles.
 # El cron de GitHub va en UTC y se atrasa en horas punta: hay 4 disparos de
 # respaldo que cubren horario de verano e invierno. El script sale solo si es
 # muy temprano o si la ventana ya cerró, y la concurrencia evita dos loops a la vez.
@@ -26,7 +26,7 @@ permissions:
 jobs:
   fotos:
     runs-on: ubuntu-latest
-    timeout-minutes: 420
+    timeout-minutes: 450   # 09:01–15:58 NY son ~417 min; margen para instalar
     env:
       GH_TOKEN: ${{ github.token }}
       DATOS: ${{ github.workspace }}/datos

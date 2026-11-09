@@ -794,7 +794,13 @@ function pintarFase() {
 /* ── premarket: antes de la primera foto del día, la misma tabla con lo que se mueve antes de abrir.
    Solo registro (sin dictamen): la lista viene de TradingView con 15 min de atraso. ── */
 const CAB_NORMAL = $("#scan-h").innerHTML;
-const CAB_PM = "<span>Acción</span><span>Premarket</span><span>Volumen PM</span><span>Float · rot.</span><span>Máx. PM</span><span>VWAP</span><span>Últimos 15 min</span><span>Short</span><span>Dilución</span><span>Dictamen</span>";
+// Dos sesiones fuera del horario regular con la misma vista: premarket (antes de abrir) y after-hours (después del cierre).
+const SESX = {
+  pre: {carpeta: "premarket", nom: "Premarket", corto: "PM", cuando: "antes de abrir", paso: 10},
+  post: {carpeta: "postmarket", nom: "After-hours", corto: "AH", cuando: "después del cierre", paso: 20},
+};
+const sx = () => SESX[S.ses || "pre"];
+const cabPM = () => `<span>Acción</span><span>${sx().nom}</span><span>Volumen ${sx().corto}</span><span>Float · rot.</span><span>Máx. ${sx().corto}</span><span>VWAP</span><span>Últimos 15 min</span><span>Short</span><span>Dilución</span><span>Dictamen</span>`;
 function modoNormal() {
   $("#scan-h").innerHTML = CAB_NORMAL;
   $("#c-lab").textContent = "Dictamen de esta foto"; document.querySelector(".tally").classList.remove("pm");
@@ -805,17 +811,20 @@ function modoNormal() {
 async function revisarPM() {
   const hoy = diaNY(), d = (S.idx?.dias || []).find(x => x.fecha === hoy);
   S.pmDisp = false;
-  if (!finde() && !(d && d.fotos && d.fotos.length)) {
-    try { const ix = await getJSON(`${hoy}/premarket/indice.json`); S.pmFotos = ix.fotos || []; S.pmDisp = S.pmFotos.length > 0; } catch (e) {}
+  const conFotos = d && d.fotos && d.fotos.length;
+  // antes de la primera foto: premarket; desde las 16:00 NY: after-hours (si ya hay fotos)
+  S.ses = !conFotos ? "pre" : minNY() >= 16 * 60 ? "post" : null;
+  if (!finde() && S.ses) {
+    try { const ix = await getJSON(`${hoy}/${sx().carpeta}/indice.json`); S.pmFotos = ix.fotos || []; S.pmDisp = S.pmFotos.length > 0; } catch (e) {}
   }
   const sel = $("#dia");
   let op = sel.querySelector('option[value="pm"]');
   if (S.pmDisp && !op) { op = document.createElement("option"); op.value = "pm"; sel.prepend(op); }
-  if (op) { op.textContent = `${fechaLarga(hoy)} · premarket`; op.hidden = !S.pmDisp; }
+  if (op) { op.textContent = `${fechaLarga(hoy)} · ${sx().nom.toLowerCase()}`; op.hidden = !S.pmDisp; }
   return S.pmDisp;
 }
 async function cargarPMFoto() {
-  S.pmSnap = await getJSON(`${diaNY()}/premarket/snap-${S.pmFotos[S.pmI]}.json`);
+  S.pmSnap = await getJSON(`${diaNY()}/${sx().carpeta}/snap-${S.pmFotos[S.pmI]}.json`);
   render();
 }
 async function entrarPM() {
@@ -839,12 +848,12 @@ function filaPM(f, i) {
       <span class="chg"><b class="${(f.pm_cambio_tv ?? 0) >= 0 ? "pos" : "neg"}">${pct(f.pm_cambio_tv)}</b><small>${px(p)}</small></span>
       <span class="vol"><b>${vN == null ? "—" : vol(vN / 1e6)}</b>${senal(null)}</span>
       <span class="flt"><b>${f.floatM_tv == null ? "—" : fmt(f.floatM_tv, f.floatM_tv < 10 ? 2 : 1) + " M"}</b><span class="rot"><i style="width:${Math.min(100, (rot || 0) * 100)}%"></i></span><small>ROT ${rot == null ? "—" : fmt(rot, rot >= 10 ? 0 : 1) + "×"}</small></span>
-      <span class="dcell c-hod"><small class="lab">Máx. PM</small>${dial(maxV, "hod", dMax != null && dMax > -2)}<small>${dMax == null ? "—" : pct(dMax)}</small></span>
+      <span class="dcell c-hod"><small class="lab">Máx. ${sx().corto}</small>${dial(maxV, "hod", dMax != null && dMax > -2)}<small>${dMax == null ? "—" : pct(dMax)}</small></span>
       <span class="dcell c-vw dial-off" title="El VWAP se calcula desde la apertura"><small class="lab">VWAP</small>${dial(null, "vwap")}<small>—</small></span>
-      <span class="c-mini"><span class="small muted">velas desde la apertura</span></span>
+      <span class="c-mini"><span class="small muted">${S.ses === "post" ? "fuera del horario regular" : "velas desde la apertura"}</span></span>
       <span class="dcell c-sq"><small class="lab">Short</small><small style="font-size:12px;color:var(--text)">—</small><small>short</small></span>
       <span class="dcell c-dil dial-off" title="La SEC se revisa en la primera foto"><small class="lab">Dilución</small>${dial(null, "dil")}<small>—</small></span>
-      <span class="verdict"><span class="vchip pre">EN ESPERA</span><small>sin dictamen antes de abrir</small></span>
+      <span class="verdict"><span class="vchip pre">${S.ses === "post" ? "PARA MAÑANA" : "EN ESPERA"}</span><small>sin dictamen ${sx().cuando}</small></span>
     </div>
     ${hd}
   </div>`;
@@ -854,25 +863,33 @@ function renderPM() {
   const filas = (s.filas || []).filter(f => !f.error), hh = String(s.hora_ny).slice(11, 16);
   const n20 = filas.filter(f => (f.pm_cambio_tv ?? 0) >= 20).length, conN = filas.filter(f => ((f.noticias_eval || {}).validas || []).length).length;
   const fz = fase();
-  $("#temp").className = "card bcard temp sin";
   $("#t-lab").textContent = "Temperatura de hoy";
   pintarFase();
-  $("#t-lvl").textContent = "Sin medir";
-  $("#t-sub").innerHTML = `Se mide desde la primera foto, 09:31 NY.<br>En premarket: ${n20} suben 20% o más · ${conN} con noticia`;
-  const m = $("#merc"); m.setAttribute("y", 70); m.setAttribute("height", 0);
-  $("#c-lab").textContent = "Premarket de esta foto"; document.querySelector(".tally").classList.add("pm");
+  const tHoy = S.ses === "post" && S.snap && S.dia === diaNY() ? (S.snap.temperatura || {}).nivel : null;
+  if (tHoy) {
+    // after-hours: la temperatura del día ya se midió; se deja la de la última foto y se suma el after-hours
+    $("#temp").className = "card bcard temp " + tHoy;
+    $("#t-lvl").textContent = tHoy;
+    $("#t-sub").innerHTML = `Temperatura del día (última foto, ${String(S.snap.hora_ny).slice(11, 16)} NY).<br>En after-hours: ${n20} suben 20% o más · ${conN} con noticia`;
+  } else {
+    $("#temp").className = "card bcard temp sin";
+    $("#t-lvl").textContent = "Sin medir";
+    $("#t-sub").innerHTML = `Se mide desde la primera foto, 09:31 NY.<br>En premarket: ${n20} suben 20% o más · ${conN} con noticia`;
+    const m = $("#merc"); m.setAttribute("y", 70); m.setAttribute("height", 0);
+  }
+  $("#c-lab").textContent = `${sx().nom} de esta foto`; document.querySelector(".tally").classList.add("pm");
   $("#l-ok").textContent = "Con noticia"; $("#l-no").textContent = "Sin noticia";
   $("#s-ok").className = "sem ready"; $("#s-no").className = "sem wait";
   $("#n-ok").textContent = conN; $("#n-no").textContent = filas.length - conN;
   $("#b-ok").style.width = (conN / Math.max(1, filas.length) * 100) + "%"; $("#b-no").style.width = ((filas.length - conN) / Math.max(1, filas.length) * 100) + "%";
-  $("#foto-info").innerHTML = `Foto de las <b class="num">${hh}</b> NY (${S.pmI + 1} de ${S.pmFotos.length}) · lista con 15 min de atraso · dictamen desde 09:31`;
-  const enVivo = S.pmI === S.pmFotos.length - 1 && fz.k === "pre";
+  $("#foto-info").innerHTML = `Foto de las <b class="num">${hh}</b> NY (${S.pmI + 1} de ${S.pmFotos.length}) · lista con 15 min de atraso · ${S.ses === "post" ? "sin dictamen fuera del horario regular" : "dictamen desde 09:31"}`;
+  const enVivo = S.pmI === S.pmFotos.length - 1 && fz.k === (S.ses === "post" ? "post" : "pre");
   $("#live").className = "live" + (enVivo ? " on" : ""); $("#live span").textContent = enVivo ? "en vivo" : "historial";
   $("#mesa-json").hidden = true; document.querySelector(".seg").hidden = true;
-  $("#foto").setAttribute("aria-valuetext", `Foto de premarket de las ${hh} NY, ${S.pmI + 1} de ${S.pmFotos.length}`);
-  $("#scan-h").innerHTML = CAB_PM;
-  const clave = "pm/" + S.pmFotos[S.pmI]; box.classList.toggle("anim", clave !== S.clave); S.clave = clave; box.removeAttribute("aria-busy");
-  box.innerHTML = filas.map(filaPM).join("") || `<div class="empty"><svg aria-hidden="true"><use href="#papelito"/></svg><p class="muted">Ninguna acción sube 5% o más con volumen en esta foto de premarket.</p></div>`;
+  $("#foto").setAttribute("aria-valuetext", `Foto de ${sx().nom.toLowerCase()} de las ${hh} NY, ${S.pmI + 1} de ${S.pmFotos.length}`);
+  $("#scan-h").innerHTML = cabPM();
+  const clave = sx().carpeta + "/" + S.pmFotos[S.pmI]; box.classList.toggle("anim", clave !== S.clave); S.clave = clave; box.removeAttribute("aria-busy");
+  box.innerHTML = filas.map(filaPM).join("") || `<div class="empty"><svg aria-hidden="true"><use href="#papelito"/></svg><p class="muted">Ninguna acción sube 5% o más con volumen en esta foto de ${sx().nom.toLowerCase()}.</p></div>`;
   $("#res").hidden = true;
 }
 
@@ -880,10 +897,10 @@ function renderPM() {
 function proxima() {
   const nx = $("#nx"), m = minNY();
   let ult = null, paso = 0;
-  if (S.modo === "pm" && S.pmSnap && S.pmI === S.pmFotos.length - 1 && !finde() && m < 9 * 60 + 31) { ult = S.pmSnap.hora_ny; paso = 10; }
+  if (S.modo === "pm" && S.pmSnap && S.pmI === S.pmFotos.length - 1 && !finde() && (S.ses === "post" ? m >= 16 * 60 && m < 20 * 60 : m < 9 * 60 + 31)) { ult = S.pmSnap.hora_ny; paso = sx().paso; }
   else if (S.modo !== "pm" && S.snap && S.dia === diaNY() && S.i === S.fotos.length - 1 && m >= 9 * 60 + 31 && m <= 16 * 60 + 3) { ult = S.snap.hora_ny; paso = m <= 10 * 60 + 22 ? 3 : 10; }
   const hoyD = (S.idx?.dias || []).find(x => x.fecha === diaNY());
-  if (!ult && !finde() && m >= 9 * 60 + 31 && m <= 16 * 60 && !(hoyD && hoyD.fotos && hoyD.fotos.length)) {
+  if (!ult && S.modo !== "pm" && !finde() && m >= 9 * 60 + 31 && m <= 16 * 60 && !(hoyD && hoyD.fotos && hoyD.fotos.length)) {
     nx.hidden = false; nx.classList.add("tarde");
     $("#nx-t").innerHTML = `Esperando la primera foto de la ventana, <b>09:31</b> NY · se publica con 2 a 3 min de demora`;
     return;
@@ -897,6 +914,8 @@ function proxima() {
     const hoyHabil = !finde();
     const cuando = hoyHabil && m < 7 * 60 ? "hoy" : (wd === "Fri" || wd === "Sat") ? "el lunes" : "mañana";
     const scl = (h, mi) => { const off = (() => { const a = hora("America/Santiago").split(":").map(Number), b = hora("America/New_York").split(":").map(Number); return ((a[0] * 60 + a[1]) - (b[0] * 60 + b[1]) + 1440) % 1440; })(); const t = (h * 60 + mi + off) % 1440; return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`; };
+    const ahAun = !finde() && m >= 16 * 60 && m < 16 * 60 + 25 && S.modo !== "pm";
+    if (ahAun) { $("#nx-t").innerHTML = `Mercado cerrado · el after-hours llega desde las <b>16:05</b> NY (${scl(16, 5)} Stgo), una foto cada 20 min`; return; }
     $("#nx-t").innerHTML = `Fotos en pausa hasta ${cuando}: premarket <b>07:00</b> NY (${scl(7, 0)} Stgo) · ventana <b>09:31</b> NY (${scl(9, 31)} Stgo)`;
     return;
   }
@@ -950,6 +969,8 @@ setInterval(async () => {
     if (S.idx.ultimo_dia !== dAntes && enUltima) { S.dia = S.idx.ultimo_dia; await cargarDia(true); return; }
     const d = S.idx.dias.find(x => x.fecha === S.dia);
     if (d && (d.fotos.length !== antes || (d.resultados && !S.res)) && enUltima) await cargarDia(true);
+    // después del cierre, si ya llegó el after-hours y se está mirando lo último de hoy, pasar a esa vista
+    if (enUltima && S.dia === diaNY() && minNY() >= 16 * 60 && await revisarPM()) await entrarPM();
   } catch (e) {}
 }, 20000);
 </script>

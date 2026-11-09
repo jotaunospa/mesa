@@ -3,7 +3,8 @@
 Lo usa la tarea programada "Escáner Mesa: after-hours a la Mesa" (~20:07 NY). Lee la última foto del
 after-hours en la rama `datos` (gh api) y deja el lote de escrituras para ArtifactData "batch"
 (colección data/users/me). La Mesa muestra en "Para vigilar mañana" las lecturas de sesión post de
-las últimas 20 h con cambio ≥ 10% o con noticia; aquí se escriben solo esas (hasta 30).
+las últimas 20 h con cambio ≥ 10% o con noticia; aquí se escriben solo esas (hasta 30), y solo del
+universo de la Mesa: precio de 1 a 20 USD y float bajo 50 M (o sin dato de float).
 
 Uso: python integracion/post_a_mesa.py --out DIR [--dia AAAA-MM-DD]
 Imprime una línea JSON: {"ok": true, "foto": "1947", "filas": 12, "lote": "DIR/lote.json"} o {"ok": false, "motivo": ...}
@@ -24,6 +25,7 @@ from lib.a_mesa import _categoria  # misma clasificación de noticias que el Esc
 REPO = "jotaunospa/mesa"
 NY = ZoneInfo("America/New_York")
 CAMBIO_MIN, N_MAX = 10, 30
+PRECIO, FLOAT_MAX_M = (1, 20), 50  # mismo universo del Escáner y la Mesa (1–20 USD, float < 50 M)
 
 
 def raw(path: str):
@@ -54,6 +56,9 @@ def lecturas(snap: dict) -> list[dict]:
         hl = str((ev.get("validas") or [{}])[0].get("titulo") or "") if ev.get("validas") else ""
         nw = _categoria(hl) if hl else "ninguna"
         if f["pm_cambio_tv"] < CAMBIO_MIN and nw == "ninguna":
+            continue
+        pr, fl = f.get("pm_precio_tv"), f.get("floatM_tv")
+        if pr is None or not (PRECIO[0] <= pr <= PRECIO[1]) or (fl is not None and fl >= FLOAT_MAX_M):
             continue
         nq = f.get("nasdaq") or {}
         vol = nq.get("vol") or f.get("pm_vol_tv")

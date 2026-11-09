@@ -274,8 +274,13 @@ svg.chart{display:block;width:100%;height:auto;touch-action:pan-y}
 .res td{padding:7px 10px;border-bottom:1px solid var(--soft);font-family:var(--f-num);font-size:12.5px;text-align:right;white-space:nowrap}
 .res tr:last-child td{border-bottom:0}
 .scroll{overflow-x:auto}
-.temp.pre{background:var(--butter);color:var(--on-pastel)}
-.temp.pre .b-lab,.temp.pre .b-foot{color:var(--on-pastel);opacity:.78}
+.fz{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;padding:2px 9px 2px 7px;border-radius:99px;border:1.5px solid var(--ink);background:var(--card);color:var(--text);white-space:nowrap}
+.fz i{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.fz.pre i{background:#FFC83D}.fz.ventana i{background:#4CD681;animation:blink 1.8s ease-in-out infinite}.fz.abierto i{background:#4CD681}.fz.post i{background:#9B8CFF}
+.temp.sin .lvl{color:var(--muted)}
+.temp.sin .lvl{text-transform:none}
+.temp.sin svg circle{fill:var(--soft)!important}
+.temp.sin svg rect,.temp.sin svg circle{stroke:var(--muted)!important}
 .vchip.pre{background:var(--butter)}
 .tk-row.pm .tk-main{cursor:default}
 .dial-off .ndl,.dial-off .hub{display:none}.dial-off .arc{opacity:.3}
@@ -316,7 +321,7 @@ footer code{font-family:var(--f-num);font-size:11.5px}
 <main class="wrap">
   <section class="board">
     <div class="card bcard temp" id="temp">
-      <span class="b-lab" id="t-lab">Temperatura del día</span>
+      <div class="b-head"><span class="b-lab" id="t-lab">Temperatura del día</span><span class="fz" id="t-fase"><i></i><span>—</span></span></div>
       <div class="temp-main">
       <svg viewBox="0 0 46 86" aria-hidden="true">
         <rect x="15" y="4" width="16" height="60" rx="8" style="fill:var(--card);stroke:#1C1A22;stroke-width:2.5"/>
@@ -555,7 +560,8 @@ function render() {
   modoNormal();
   // temperatura (con la fase de hoy, para que no parezca detenida en el último día)
   const t = s.temperatura || {}, tl = t.nivel || "—";
-  $("#t-lab").textContent = S.dia === diaNY() ? `Temperatura de hoy · ${fase().t}` : `Temperatura del ${fechaLarga(S.dia)} · hoy: ${fase().t}`;
+  $("#t-lab").textContent = S.dia === diaNY() ? "Temperatura de hoy" : `Temperatura del ${fechaLarga(S.dia)}`;
+  pintarFase();
   $("#temp").className = "card bcard temp " + tl;
   $("#t-lvl").textContent = tl;
   $("#t-sub").innerHTML = `${t.suben_20_float_bajo ?? "—"} de la lista suben 20% o más · IWM ${pct(t.iwm_chg, 2)} · ${t.pausas_hoy_total ?? "—"} pausas hoy<br><span style="opacity:.8">Cortes provisionales</span>`;
@@ -766,6 +772,12 @@ function renderRes() {
   }).join("");
 }
 
+/* estado del mercado ahora (siempre de hoy), separado de la temperatura del día que se mira */
+function pintarFase() {
+  const fz = fase(), el = $("#t-fase");
+  el.className = "fz " + fz.k; el.title = fz.s;
+  el.querySelector("span").textContent = (S.modo !== "pm" && S.dia !== diaNY() ? "Hoy: " : "") + fz.t;
+}
 /* ── premarket: antes de la primera foto del día, la misma tabla con lo que se mueve antes de abrir.
    Solo registro (sin dictamen): la lista viene de TradingView con 15 min de atraso. ── */
 const CAB_NORMAL = $("#scan-h").innerHTML;
@@ -829,11 +841,12 @@ function renderPM() {
   const filas = (s.filas || []).filter(f => !f.error), hh = String(s.hora_ny).slice(11, 16);
   const n20 = filas.filter(f => (f.pm_cambio_tv ?? 0) >= 20).length, conN = filas.filter(f => ((f.noticias_eval || {}).validas || []).length).length;
   const fz = fase();
-  $("#temp").className = "card bcard temp pre";
-  $("#t-lab").textContent = `Fase de hoy, ${fechaLarga(diaNY())}`;
-  $("#t-lvl").textContent = "Premarket";
-  $("#t-sub").innerHTML = `${n20} suben 20% o más antes de abrir · ${conN} con noticia<br><span style="opacity:.8">La temperatura del día se mide desde la primera foto, 09:31 NY</span>`;
-  const h = n20 >= 5 ? 52 : n20 >= 2 ? 32 : 14, m = $("#merc"); m.setAttribute("y", 62 - h); m.setAttribute("height", h + 8);
+  $("#temp").className = "card bcard temp sin";
+  $("#t-lab").textContent = "Temperatura de hoy";
+  pintarFase();
+  $("#t-lvl").textContent = "Sin medir";
+  $("#t-sub").innerHTML = `Se mide desde la primera foto, 09:31 NY.<br>En premarket: ${n20} suben 20% o más · ${conN} con noticia`;
+  const m = $("#merc"); m.setAttribute("y", 70); m.setAttribute("height", 0);
   $("#c-lab").textContent = "Premarket de esta foto"; document.querySelector(".tally").classList.add("pm");
   $("#l-ok").textContent = "Con noticia"; $("#l-no").textContent = "Sin noticia";
   $("#s-ok").className = "sem ready"; $("#s-no").className = "sem wait";
@@ -868,6 +881,7 @@ document.querySelectorAll(".seg button").forEach(b => b.onclick = () => {
   try { await cargarIndice(); await cargarDia(true); if (await revisarPM()) await entrarPM(); }
   catch (e) { $("#rows").innerHTML = `<div class="empty"><svg aria-hidden="true"><use href="#papelito"/></svg><div><h3>No se pudieron cargar los datos</h3><p class="muted small">${esc(e.message)}</p></div></div>`; }
 })();
+setInterval(pintarFase, 30000);
 setInterval(async () => {
   const f = fase().k; if (!(f === "ventana" || f === "pre" || f === "abierto" || f === "post")) return;
   if (S.modo === "pm") {

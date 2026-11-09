@@ -274,10 +274,13 @@ svg.chart{display:block;width:100%;height:auto;touch-action:pan-y}
 .res td{padding:7px 10px;border-bottom:1px solid var(--soft);font-family:var(--f-num);font-size:12.5px;text-align:right;white-space:nowrap}
 .res tr:last-child td{border-bottom:0}
 .scroll{overflow-x:auto}
-.pm .res-h{background:var(--butter)}
-.pm th:last-child{text-align:left}
-.pm td.not{text-align:left;white-space:normal;font-family:inherit;min-width:260px;max-width:420px}
-.pm td.not a{color:inherit}
+.temp.pre{background:var(--butter);color:var(--on-pastel)}
+.temp.pre .b-lab,.temp.pre .b-foot{color:var(--on-pastel);opacity:.78}
+.vchip.pre{background:var(--butter)}
+.tk-row.pm .tk-main{cursor:default}
+.dial-off .ndl,.dial-off .hub{display:none}.dial-off .arc{opacity:.3}
+.tally.pm .bar .n{background:var(--butter)}
+@media (max-width:760px){.tk-row.pm .c-vw,.tk-row.pm .c-sq,.tk-row.pm .c-dil,.tk-row.pm .c-mini{display:none}}
 .mx{display:inline-block;height:8px;border-radius:4px;vertical-align:middle;margin-left:6px;border:1px solid var(--ink)}
 
 .sk{height:58px;margin:10px 14px;border-radius:12px;background:linear-gradient(90deg,var(--soft) 30%,color-mix(in srgb,var(--soft) 40%,var(--card)) 50%,var(--soft) 70%);background-size:300% 100%;animation:sk 1.4s ease-in-out infinite}
@@ -313,7 +316,7 @@ footer code{font-family:var(--f-num);font-size:11.5px}
 <main class="wrap">
   <section class="board">
     <div class="card bcard temp" id="temp">
-      <span class="b-lab">Temperatura del día</span>
+      <span class="b-lab" id="t-lab">Temperatura del día</span>
       <div class="temp-main">
       <svg viewBox="0 0 46 86" aria-hidden="true">
         <rect x="15" y="4" width="16" height="60" rx="8" style="fill:var(--card);stroke:#1C1A22;stroke-width:2.5"/>
@@ -325,10 +328,10 @@ footer code{font-family:var(--f-num);font-size:11.5px}
       <small class="b-foot" id="t-sub">—</small>
     </div>
     <div class="card bcard tally">
-      <span class="b-lab">Dictamen de esta foto</span>
+      <span class="b-lab" id="c-lab">Dictamen de esta foto</span>
       <div class="row">
-        <span class="tl"><span class="sem ready"><i></i><i></i><i></i></span> Aptas <b id="n-ok">0</b></span>
-        <span class="tl"><span class="sem stop"><i></i><i></i><i></i></span> No aptas <b id="n-no">0</b></span>
+        <span class="tl"><span class="sem ready" id="s-ok"><i></i><i></i><i></i></span> <span id="l-ok">Aptas</span> <b id="n-ok">0</b></span>
+        <span class="tl"><span class="sem stop" id="s-no"><i></i><i></i><i></i></span> <span id="l-no">No aptas</span> <b id="n-no">0</b></span>
       </div>
       <div class="bar"><i class="a" id="b-ok" style="width:0"></i><i class="n" id="b-no" style="width:0"></i></div>
       <small class="b-foot" id="foto-info">Cargando…</small>
@@ -355,13 +358,8 @@ footer code{font-family:var(--f-num);font-size:11.5px}
     <ol class="leyenda" id="leyenda"></ol>
   </details>
 
-  <section class="card res pm" id="pm" hidden>
-    <div class="res-h"><h2 id="pm-t">Premarket</h2><p class="small" id="pm-s"></p></div>
-    <div class="scroll"><table><thead><tr><th>Acción</th><th>Premarket</th><th>Precio</th><th>Vol. premarket</th><th>Máx. premarket</th><th>Float</th><th>Noticia</th></tr></thead><tbody id="pm-b"></tbody></table></div>
-  </section>
-
   <section class="card scan" id="scan" aria-live="polite">
-    <div class="scan-h"><span>Acción</span><span>Cambio</span><span>Volumen · RVOL</span><span>Float · rot.</span><span>HOD</span><span>VWAP</span><span>Últimos 15 min</span><span>Short</span><span>Dilución</span><span>Dictamen</span></div>
+    <div class="scan-h" id="scan-h"><span>Acción</span><span>Cambio</span><span>Volumen · RVOL</span><span>Float · rot.</span><span>HOD</span><span>VWAP</span><span>Últimos 15 min</span><span>Short</span><span>Dilución</span><span>Dictamen</span></div>
     <div id="rows" aria-busy="true"><div class="sk"></div><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
   </section>
 
@@ -458,7 +456,7 @@ function renderLeyenda() {
 renderLeyenda();
 
 /* ── estado ── */
-const S = {idx: null, dia: null, fotos: [], i: 0, snap: null, res: null, filtro: "todas", abiertos: new Set(), velas: {}, vivo: true};
+const S = {modo: "dia", pmDisp: false, pmFotos: [], pmI: 0, pmSnap: null, idx: null, dia: null, fotos: [], i: 0, snap: null, res: null, filtro: "todas", abiertos: new Set(), velas: {}, vivo: true};
 
 async function getJSON(u) { const r = await fetch(u + (u.includes("?") ? "&" : "?") + "t=" + Date.now()); if (!r.ok) throw new Error(r.status + " " + u); return r.json(); }
 
@@ -548,13 +546,16 @@ function lecturas(f) {
 
 /* ── render principal ── */
 function render() {
+  if (S.modo === "pm") return renderPM();
   const s = S.snap, box = $("#rows");
   if (!s) {
     box.innerHTML = `<div class="empty"><svg aria-hidden="true"><use href="#papelito"/></svg><div><h3>Todavía no hay fotos de este día</h3><p class="muted small">El screener toma fotos de 09:31 a 10:20 de Nueva York en días hábiles.</p></div></div>`;
     $("#foto-info").textContent = "Sin datos"; return;
   }
-  // temperatura
+  modoNormal();
+  // temperatura (con la fase de hoy, para que no parezca detenida en el último día)
   const t = s.temperatura || {}, tl = t.nivel || "—";
+  $("#t-lab").textContent = S.dia === diaNY() ? `Temperatura de hoy · ${fase().t}` : `Temperatura del ${fechaLarga(S.dia)} · hoy: ${fase().t}`;
   $("#temp").className = "card bcard temp " + tl;
   $("#t-lvl").textContent = tl;
   $("#t-sub").innerHTML = `${t.suben_20_float_bajo ?? "—"} de la lista suben 20% o más · IWM ${pct(t.iwm_chg, 2)} · ${t.pausas_hoy_total ?? "—"} pausas hoy<br><span style="opacity:.8">Cortes provisionales</span>`;
@@ -765,44 +766,121 @@ function renderRes() {
   }).join("");
 }
 
-/* ── premarket (solo registro: sin dictamen) ── */
-function hoyNY() { return new Intl.DateTimeFormat("en-CA", {timeZone: "America/New_York"}).format(new Date()); }
-async function cargarPM() {
-  const sec = $("#pm");
-  const dia = (!S.idx || S.dia === S.idx.ultimo_dia) ? hoyNY() : S.dia;
-  let s;
-  try { s = await getJSON(`${dia}/premarket/ultimo.json`); } catch (e) { sec.hidden = true; return; }
-  const h = String(s.hora_ny).slice(11, 16), filas = (s.filas || []).filter(f => !f.error);
-  $("#pm-t").textContent = `Premarket del ${fechaLarga(dia)} · foto de las ${h} NY`;
-  $("#pm-s").innerHTML = `Lo que se movía antes de abrir: ${filas.length} acciones que suben 5% o más con volumen. <b>Lista y precios con 15 min de atraso</b> (TradingView); volumen y máximo de Nasdaq. Solo registro: sin dictamen ni Mesa. El Escáner parte a las 09:31.`;
-  $("#pm-b").innerHTML = filas.map(f => {
-    const n = (f.noticias_eval || {}).validas || [], e = (f.noticias_eval || {}).estado;
-    const not = n.length ? `<a href="${esc(n[0].url)}" target="_blank" rel="noopener">${esc(n[0].titulo)}</a> <span class="small muted">${esc(n[0].fuente || "")}</span>`
-      : `<span class="muted">${e === "sin_dato" ? "fuentes sin respuesta" : "sin noticia de la empresa"}</span>`;
-    const nq = f.nasdaq || {};
-    return `<tr><td><b>${esc(f.ticker)}</b></td><td class="${(f.pm_cambio_tv ?? 0) >= 0 ? "pos" : "neg"}">${pct(f.pm_cambio_tv)}</td><td>${px(f.pm_precio_tv)}</td>
-      <td>${nq.vol != null ? vol(nq.vol / 1e6) : vol((f.pm_vol_tv ?? null) && f.pm_vol_tv / 1e6)}</td><td>${px(nq.max ?? f.pm_max_tv)}</td>
-      <td>${f.floatM_tv != null ? fmt(f.floatM_tv, 2) + " M" : "—"}</td><td class="not">${not}</td></tr>`;
-  }).join("");
-  sec.hidden = !filas.length;
+/* ── premarket: antes de la primera foto del día, la misma tabla con lo que se mueve antes de abrir.
+   Solo registro (sin dictamen): la lista viene de TradingView con 15 min de atraso. ── */
+const CAB_NORMAL = $("#scan-h").innerHTML;
+const CAB_PM = "<span>Acción</span><span>Premarket</span><span>Volumen PM</span><span>Float · rot.</span><span>Máx. PM</span><span>VWAP</span><span>Últimos 15 min</span><span>Short</span><span>Dilución</span><span>Dictamen</span>";
+function modoNormal() {
+  $("#scan-h").innerHTML = CAB_NORMAL;
+  $("#c-lab").textContent = "Dictamen de esta foto"; document.querySelector(".tally").classList.remove("pm");
+  $("#l-ok").textContent = "Aptas"; $("#l-no").textContent = "No aptas";
+  $("#s-ok").className = "sem ready"; $("#s-no").className = "sem stop";
+  document.querySelector(".seg").hidden = false;
+}
+async function revisarPM() {
+  const hoy = diaNY(), d = (S.idx?.dias || []).find(x => x.fecha === hoy);
+  S.pmDisp = false;
+  if (!finde() && !(d && d.fotos && d.fotos.length)) {
+    try { const ix = await getJSON(`${hoy}/premarket/indice.json`); S.pmFotos = ix.fotos || []; S.pmDisp = S.pmFotos.length > 0; } catch (e) {}
+  }
+  const sel = $("#dia");
+  let op = sel.querySelector('option[value="pm"]');
+  if (S.pmDisp && !op) { op = document.createElement("option"); op.value = "pm"; sel.prepend(op); }
+  if (op) { op.textContent = `${fechaLarga(hoy)} · premarket`; op.hidden = !S.pmDisp; }
+  return S.pmDisp;
+}
+async function cargarPMFoto() {
+  S.pmSnap = await getJSON(`${diaNY()}/premarket/snap-${S.pmFotos[S.pmI]}.json`);
+  render();
+}
+async function entrarPM() {
+  S.modo = "pm"; S.pmI = S.pmFotos.length - 1;
+  $("#dia").value = "pm"; const r = $("#foto"); r.max = S.pmI; r.value = S.pmI;
+  await cargarPMFoto();
+}
+function filaPM(f, i) {
+  const nq = f.nasdaq || {}, p = f.pm_precio_tv, vN = nq.vol ?? f.pm_vol_tv ?? null, max = nq.max ?? f.pm_max_tv, min = nq.min ?? f.pm_min_tv;
+  const rot = vN != null && f.floatM_tv ? vN / (f.floatM_tv * 1e6) : null;
+  const maxV = max && min && max > min && p != null ? (p - min) / (max - min) : null, dMax = max && p != null ? (p / max - 1) * 100 : null;
+  const ev = f.noticias_eval || {}, n = (ev.validas || [])[0];
+  const edad = n && n.fecha ? (Date.parse(S.pmSnap.hora_ny) - Date.parse(n.fecha)) / 36e5 : null;
+  const hd = n ? `<div class="hl"><b>Titular</b><span>${esc(n.titulo)}</span><span class="ntag hoy">${edad == null ? "hoy" : edad < 1 ? "hace menos de 1 h" : `hace ${Math.round(edad)} h`}${n.origen ? " · " + esc(ORIGEN[n.origen] || n.origen) : ""}</span></div>`
+    : `<div class="hl"><b>Titular</b><span class="muted">${ev.estado === "sin_dato" ? "Las fuentes de noticias no respondieron" : "Sin noticia de la empresa en las últimas 20 h"}</span></div>`;
+  const chips = [];
+  if (f.bolsa) chips.push(`<span class="chip pm">${esc(f.bolsa)}</span>`);
+  return `<div class="tk-row pm" style="animation-delay:${i * 35}ms">
+    <div class="tk-main">
+      <span class="who"><span class="t"><span class="sem wait"><i></i><i></i><i></i></span><span class="tk${f.floatM_tv != null && f.floatM_tv < 2 ? " lowf" : ""}">${esc(f.ticker)}</span></span><span class="chips">${chips.join("")}</span></span>
+      <span class="chg"><b class="${(f.pm_cambio_tv ?? 0) >= 0 ? "pos" : "neg"}">${pct(f.pm_cambio_tv)}</b><small>${px(p)}</small></span>
+      <span class="vol"><b>${vN == null ? "—" : vol(vN / 1e6)}</b>${senal(null)}</span>
+      <span class="flt"><b>${f.floatM_tv == null ? "—" : fmt(f.floatM_tv, f.floatM_tv < 10 ? 2 : 1) + " M"}</b><span class="rot"><i style="width:${Math.min(100, (rot || 0) * 100)}%"></i></span><small>ROT ${rot == null ? "—" : fmt(rot, rot >= 10 ? 0 : 1) + "×"}</small></span>
+      <span class="dcell c-hod"><small class="lab">Máx. PM</small>${dial(maxV, "hod", dMax != null && dMax > -2)}<small>${dMax == null ? "—" : pct(dMax)}</small></span>
+      <span class="dcell c-vw dial-off" title="El VWAP se calcula desde la apertura"><small class="lab">VWAP</small>${dial(null, "vwap")}<small>—</small></span>
+      <span class="c-mini"><span class="small muted">velas desde la apertura</span></span>
+      <span class="dcell c-sq"><small class="lab">Short</small><small style="font-size:12px;color:var(--text)">—</small><small>short</small></span>
+      <span class="dcell c-dil dial-off" title="La SEC se revisa en la primera foto"><small class="lab">Dilución</small>${dial(null, "dil")}<small>—</small></span>
+      <span class="verdict"><span class="vchip pre">EN ESPERA</span><small>sin dictamen antes de abrir</small></span>
+    </div>
+    ${hd}
+  </div>`;
+}
+function renderPM() {
+  const s = S.pmSnap, box = $("#rows"); if (!s) return;
+  const filas = (s.filas || []).filter(f => !f.error), hh = String(s.hora_ny).slice(11, 16);
+  const n20 = filas.filter(f => (f.pm_cambio_tv ?? 0) >= 20).length, conN = filas.filter(f => ((f.noticias_eval || {}).validas || []).length).length;
+  const fz = fase();
+  $("#temp").className = "card bcard temp pre";
+  $("#t-lab").textContent = `Fase de hoy, ${fechaLarga(diaNY())}`;
+  $("#t-lvl").textContent = "Premarket";
+  $("#t-sub").innerHTML = `${n20} suben 20% o más antes de abrir · ${conN} con noticia<br><span style="opacity:.8">La temperatura del día se mide desde la primera foto, 09:31 NY</span>`;
+  const h = n20 >= 5 ? 52 : n20 >= 2 ? 32 : 14, m = $("#merc"); m.setAttribute("y", 62 - h); m.setAttribute("height", h + 8);
+  $("#c-lab").textContent = "Premarket de esta foto"; document.querySelector(".tally").classList.add("pm");
+  $("#l-ok").textContent = "Con noticia"; $("#l-no").textContent = "Sin noticia";
+  $("#s-ok").className = "sem ready"; $("#s-no").className = "sem wait";
+  $("#n-ok").textContent = conN; $("#n-no").textContent = filas.length - conN;
+  $("#b-ok").style.width = (conN / Math.max(1, filas.length) * 100) + "%"; $("#b-no").style.width = ((filas.length - conN) / Math.max(1, filas.length) * 100) + "%";
+  $("#foto-info").innerHTML = `Foto de las <b class="num">${hh}</b> NY (${S.pmI + 1} de ${S.pmFotos.length}) · lista con 15 min de atraso · dictamen desde 09:31`;
+  const enVivo = S.pmI === S.pmFotos.length - 1 && fz.k === "pre";
+  $("#live").className = "live" + (enVivo ? " on" : ""); $("#live span").textContent = enVivo ? "en vivo" : "historial";
+  $("#mesa-json").hidden = true; document.querySelector(".seg").hidden = true;
+  $("#foto").setAttribute("aria-valuetext", `Foto de premarket de las ${hh} NY, ${S.pmI + 1} de ${S.pmFotos.length}`);
+  $("#scan-h").innerHTML = CAB_PM;
+  const clave = "pm/" + S.pmFotos[S.pmI]; box.classList.toggle("anim", clave !== S.clave); S.clave = clave; box.removeAttribute("aria-busy");
+  box.innerHTML = filas.map(filaPM).join("") || `<div class="empty"><svg aria-hidden="true"><use href="#papelito"/></svg><p class="muted">Ninguna acción sube 5% o más con volumen en esta foto de premarket.</p></div>`;
+  $("#res").hidden = true;
 }
 
 /* ── controles ── */
-$("#dia").onchange = async e => { S.dia = e.target.value; S.abiertos.clear(); await cargarDia(true); cargarPM(); };
-$("#foto").oninput = async e => { S.i = +e.target.value; await cargarFoto(); };
+$("#dia").onchange = async e => {
+  if (e.target.value === "pm") { await entrarPM(); return; }
+  S.modo = "dia"; S.dia = e.target.value; S.abiertos.clear(); await cargarDia(true);
+};
+$("#foto").oninput = async e => {
+  if (S.modo === "pm") { S.pmI = +e.target.value; await cargarPMFoto(); return; }
+  S.i = +e.target.value; await cargarFoto();
+};
 document.querySelectorAll(".seg button").forEach(b => b.onclick = () => {
   S.filtro = b.dataset.f; document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x === b)); render();
 });
 
 /* ── arranque y actualización ── */
 (async function inicio() {
-  try { await cargarIndice(); await cargarDia(true); cargarPM(); }
+  try { await cargarIndice(); await cargarDia(true); if (await revisarPM()) await entrarPM(); }
   catch (e) { $("#rows").innerHTML = `<div class="empty"><svg aria-hidden="true"><use href="#papelito"/></svg><div><h3>No se pudieron cargar los datos</h3><p class="muted small">${esc(e.message)}</p></div></div>`; }
 })();
 setInterval(async () => {
   const f = fase().k; if (!(f === "ventana" || f === "pre" || f === "abierto" || f === "post")) return;
+  if (S.modo === "pm") {
+    try {
+      const n = S.pmFotos.length, alFinal = S.pmI === n - 1;
+      await cargarIndice();
+      if (!(await revisarPM())) { S.modo = "dia"; S.dia = S.idx.ultimo_dia; $("#dia").value = S.dia; await cargarDia(true); return; }  // llegó la primera foto del día
+      $("#dia").value = "pm";
+      if (S.pmFotos.length !== n && alFinal) await entrarPM();
+    } catch (e) {}
+    return;
+  }
   const enUltima = S.dia === S.idx?.ultimo_dia && S.i === S.fotos.length - 1;
-  cargarPM();
   try {
     const antes = S.fotos.length, dAntes = S.idx?.ultimo_dia; await cargarIndice();
     if (S.idx.ultimo_dia !== dAntes && enUltima) { S.dia = S.idx.ultimo_dia; await cargarDia(true); return; }

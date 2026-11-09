@@ -116,7 +116,18 @@ input[type=range]{width:100%}
 .dl svg{width:16px;height:16px}
 .live{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700}
 .live i{width:10px;height:10px;border-radius:50%;background:var(--muted)}
-.live.on i{background:#4CD681;animation:blink 1.6s ease-in-out infinite}
+.live.on{padding:3px 10px 3px 8px;border-radius:99px;border:1.5px solid var(--ink);background:var(--mint);color:var(--on-pastel);text-transform:uppercase;letter-spacing:.05em;font-size:11.5px;font-weight:800}
+.live.on i{position:relative;background:#1E9E52;animation:blink 1.2s ease-in-out infinite}
+.live.on i::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid #1E9E52;animation:onda 1.6s cubic-bezier(.16,1,.3,1) infinite}
+@keyframes onda{0%{transform:scale(.5);opacity:.9}100%{transform:scale(1.7);opacity:0}}
+.clk .col{animation:tic 1s steps(1,end) infinite}
+@keyframes tic{50%{opacity:.15}}
+.nx{display:grid;gap:5px}
+.nx-bar{height:8px;border-radius:99px;border:1.5px solid var(--ink);background:var(--soft);overflow:hidden}
+.nx-bar i{display:block;height:100%;width:0;background:var(--mint);transition:width 1s linear}
+.nx.tarde .nx-bar i{width:100%!important;background:repeating-linear-gradient(-45deg,var(--butter) 0 8px,var(--peach) 8px 16px);background-size:22px 22px;animation:rayas .8s linear infinite}
+@keyframes rayas{to{background-position:22px 0}}
+.nx small{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}.nx small b{color:var(--text);font-family:var(--f-num);font-weight:600}
 @keyframes blink{50%{opacity:.3}}
 
 /* aprende */
@@ -344,6 +355,7 @@ footer code{font-family:var(--f-num);font-size:11.5px}
     <div class="card bcard ctl">
       <div class="b-head"><label class="b-lab" for="dia">Día y foto</label><span class="live" id="live"><i></i> <span>en vivo</span></span></div>
       <div class="row ctl-nav"><select id="dia"></select><input type="range" id="foto" min="0" max="0" value="0" aria-label="Foto del día"></div>
+      <div class="nx" id="nx" hidden aria-live="off"><div class="nx-bar" role="progressbar" aria-label="Tiempo hasta la próxima foto" aria-valuemin="0" aria-valuemax="100"><i id="nx-i"></i></div><small id="nx-t"></small></div>
       <div class="row b-foot">
         <div class="seg" role="group" aria-label="Filtro">
           <button data-f="todas" aria-pressed="true">Todas</button><button data-f="aptas" aria-pressed="false">Aptas</button><button data-f="no" aria-pressed="false">No aptas</button>
@@ -414,8 +426,9 @@ function fase() {
   return {k: "cerrado", t: "Mercado cerrado", s: "Vuelve mañana 04:00 NY"};
 }
 function reloj() {
-  $("#cl-scl").textContent = hora("America/Santiago");
-  $("#cl-ny").textContent = hora("America/New_York");
+  const hm = h => h.replace(":", '<span class="col">:</span>');
+  $("#cl-scl").innerHTML = hm(hora("America/Santiago"));
+  $("#cl-ny").innerHTML = hm(hora("America/New_York"));
   const f = fase(), el = $("#phase");
   el.className = "card phase " + f.k;
   el.innerHTML = `<b>${f.t}</b><small>${f.s}</small>`;
@@ -863,6 +876,26 @@ function renderPM() {
   $("#res").hidden = true;
 }
 
+/* ── próxima foto: barra que avanza hasta la foto siguiente (premarket cada 10 min, ventana cada 3) ── */
+function proxima() {
+  const nx = $("#nx"), m = minNY();
+  let ult = null, paso = 0;
+  if (S.modo === "pm" && S.pmSnap && S.pmI === S.pmFotos.length - 1 && !finde() && m < 9 * 60 + 31) { ult = S.pmSnap.hora_ny; paso = 10; }
+  else if (S.modo !== "pm" && S.snap && S.dia === diaNY() && S.i === S.fotos.length - 1 && m >= 9 * 60 + 31 && m <= 10 * 60 + 23) { ult = S.snap.hora_ny; paso = 3; }
+  if (!ult) { nx.hidden = true; return; }
+  nx.hidden = false;
+  const t0 = Date.parse(ult), sig = t0 + paso * 60000, ahora = Date.now(), resta = (sig - ahora) / 1000;
+  const hSig = new Intl.DateTimeFormat("es-CL", {timeZone: "America/New_York", hour: "2-digit", minute: "2-digit", hour12: false}).format(new Date(sig));
+  const tarde = resta < -45;
+  nx.classList.toggle("tarde", tarde);
+  const p = Math.max(0, Math.min(100, (ahora - t0) / (paso * 600)));
+  $("#nx-i").style.width = p + "%"; nx.querySelector(".nx-bar").setAttribute("aria-valuenow", Math.round(p));
+  const mmss = x => `${Math.floor(x / 60)}:${String(Math.floor(x % 60)).padStart(2, "0")}`;
+  $("#nx-t").innerHTML = tarde ? `Esperando la foto de las <b>${hSig}</b> NY · se publica con 1 a 2 min de demora`
+    : resta > 0 ? `Próxima foto <b>${hSig}</b> NY · en <b>${mmss(resta)}</b>` : `Tomando la foto de las <b>${hSig}</b> NY…`;
+}
+setInterval(proxima, 1000);
+
 /* ── controles ── */
 $("#dia").onchange = async e => {
   if (e.target.value === "pm") { await entrarPM(); return; }
@@ -901,7 +934,7 @@ setInterval(async () => {
     const d = S.idx.dias.find(x => x.fecha === S.dia);
     if (d && (d.fotos.length !== antes || (d.resultados && !S.res)) && enUltima) await cargarDia(true);
   } catch (e) {}
-}, 60000);
+}, 20000);
 </script>
 </body>
 </html>

@@ -323,9 +323,9 @@ footer code{font-family:var(--f-num);font-size:11.5px}
   <div class="wrap">
     <div class="brand"><svg aria-hidden="true"><use href="#papelito"/></svg>
       <div><b>Escáner de la Mesa</b><small>Lo que ve el mercado · las operaciones van en la <a href="https://claude.ai/artifact/VbkUnr9JNGhvrFs5h3WS4S">Mesa de Papel</a></small></div></div>
-    <div class="card clocks"><div class="clk"><small>Santiago</small><b id="cl-scl">--:--</b></div><div class="clk"><small>Nueva York</small><b id="cl-ny">--:--</b></div></div>
-    <div class="card phase" id="phase"><b>—</b><small>—</small></div>
     <button class="card theme" id="theme" aria-label="Cambiar tema"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v3M12 20v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M1 12h3M20 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></button>
+    <div class="card clocks"><div class="clk"><small>Nueva York</small><b id="cl-ny">--:--:--</b></div><div class="clk"><small>Santiago</small><b id="cl-scl">--:--:--</b></div></div>
+    <div class="card phase" id="phase"><b>—</b><small>—</small></div>
   </div>
 </header>
 
@@ -410,7 +410,7 @@ $("#theme").onclick = () => {
 };
 
 /* ── relojes y fase ── */
-function hora(tz) { return new Intl.DateTimeFormat("es-CL", {timeZone: tz, hour: "2-digit", minute: "2-digit", hour12: false}).format(new Date()); }
+function hora(tz, seg) { return new Intl.DateTimeFormat("es-CL", {timeZone: tz, hour: "2-digit", minute: "2-digit", ...(seg ? {second: "2-digit"} : {}), hour12: false}).format(new Date()); }
 function minNY() { const [h, m] = hora("America/New_York").split(":").map(Number); return h * 60 + m; }
 function diaNY() { return new Intl.DateTimeFormat("en-CA", {timeZone: "America/New_York"}).format(new Date()); }
 function finde() { const d = new Intl.DateTimeFormat("en-US", {timeZone: "America/New_York", weekday: "short"}).format(new Date()); return d === "Sat" || d === "Sun"; }
@@ -426,14 +426,14 @@ function fase() {
   return {k: "cerrado", t: "Mercado cerrado", s: "Vuelve mañana 04:00 NY"};
 }
 function reloj() {
-  const hm = h => h.replace(":", '<span class="col">:</span>');
-  $("#cl-scl").innerHTML = hm(hora("America/Santiago"));
-  $("#cl-ny").innerHTML = hm(hora("America/New_York"));
+  const hm = h => h.replaceAll(":", '<span class="col">:</span>');
+  $("#cl-ny").innerHTML = hm(hora("America/New_York", true));
+  $("#cl-scl").innerHTML = hm(hora("America/Santiago", true));
   const f = fase(), el = $("#phase");
   el.className = "card phase " + f.k;
   el.innerHTML = `<b>${f.t}</b><small>${f.s}</small>`;
 }
-reloj(); setInterval(reloj, 15000);
+reloj(); setInterval(reloj, 1000);
 
 /* ── leyenda: cada término con el mismo elemento gráfico de la tabla ── */
 function renderLeyenda() {
@@ -882,6 +882,12 @@ function proxima() {
   let ult = null, paso = 0;
   if (S.modo === "pm" && S.pmSnap && S.pmI === S.pmFotos.length - 1 && !finde() && m < 9 * 60 + 31) { ult = S.pmSnap.hora_ny; paso = 10; }
   else if (S.modo !== "pm" && S.snap && S.dia === diaNY() && S.i === S.fotos.length - 1 && m >= 9 * 60 + 31 && m <= 10 * 60 + 23) { ult = S.snap.hora_ny; paso = 3; }
+  const hoyD = (S.idx?.dias || []).find(x => x.fecha === diaNY());
+  if (!ult && !finde() && m >= 9 * 60 + 31 && m <= 10 * 60 + 23 && !(hoyD && hoyD.fotos && hoyD.fotos.length)) {
+    nx.hidden = false; nx.classList.add("tarde");
+    $("#nx-t").innerHTML = `Esperando la primera foto de la ventana, <b>09:31</b> NY · se publica con 2 a 3 min de demora`;
+    return;
+  }
   if (!ult) { nx.hidden = true; return; }
   nx.hidden = false;
   const t0 = Date.parse(ult), sig = t0 + paso * 60000, ahora = Date.now(), resta = (sig - ahora) / 1000;

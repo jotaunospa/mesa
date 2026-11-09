@@ -162,6 +162,11 @@ def nasdaq(tk: str, timeout: int = 12, ahora: datetime | None = None) -> list[di
         return None
 
 
+# Posteos de redes sociales y foros (moomoo, Stocktwits, Reddit, X): no son noticias de la empresa.
+SOCIAL = re.compile(r"moomoo|\bfutu\b|stocktwits|reddit|twitter|x\.com|tiktok|seeking alpha community|\$[A-Za-z][^$]{1,40}\.US\)?\$|"
+                    r"[\U0001F300-\U0001FAFF\u2600-\u27BF]", re.I)
+
+
 def evaluar(tk: str, nombre: str | None, hora: datetime, fuentes: dict[str, list | None]) -> dict:
     """Aplica la regla a todas las fuentes. `hora` es la de la foto (con zona)."""
     lim = hora - timedelta(hours=20)
@@ -182,7 +187,7 @@ def evaluar(tk: str, nombre: str | None, hora: datetime, fuentes: dict[str, list
             else:
                 ok_t = lim <= fe <= hora + timedelta(minutes=1)
             t = n.get("titulo") or ""
-            if ok_t and not GENERICO.search(t) and not PERMANENTE.search(t) and not es_movimiento(t) and nombra_a(t, tk, nombre):
+            if ok_t and not SOCIAL.search(t + " " + str(n.get("fuente") or "")) and not GENERICO.search(t) and not PERMANENTE.search(t) and not es_movimiento(t) and nombra_a(t, tk, nombre):
                 validas.append({**n, "origen": origen})
     validas.sort(key=lambda n: n["fecha"], reverse=True)
     estado = "confirmada" if validas else ("no_encontrada" if respondieron else "sin_dato")

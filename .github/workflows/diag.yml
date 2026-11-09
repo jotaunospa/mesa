@@ -20,11 +20,11 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
-      - run: python diag/noticias_check.py | tee resumen.txt
+      - run: python diag/velas_hoy.py STAK YMAT | tee resumen.txt
       - name: Guardar en rama diag
         if: always()
         run: |
-          mkdir -p /tmp/o && cp resumen.txt resultados/*.json /tmp/o/ 2>/dev/null || true
+          mkdir -p /tmp/o && cp resumen.txt velas_hoy.json resultados/*.json /tmp/o/ 2>/dev/null || true
           git config user.name mesa-bot; git config user.email mesa-bot@users.noreply.github.com
           git checkout --orphan diag-out && git rm -rf -q . && rm -rf diag lib .github captura *.py requirements.txt
           cp -r /tmp/o/. . && date -u > RUN.txt && git add -A && git commit -qm diag && git push -f origin diag-out

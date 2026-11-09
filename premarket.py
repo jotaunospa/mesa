@@ -122,6 +122,10 @@ def guardar(s: dict) -> None:
     d = DATOS / h.strftime("%Y-%m-%d") / "premarket"
     d.mkdir(parents=True, exist_ok=True)
     (d / f"snap-{h.strftime('%H%M')}.json").write_text(json.dumps(s, ensure_ascii=False, indent=1, default=str))
+    # Índice y última foto, para que el Escáner los lea sin listar la carpeta.
+    fotos = sorted(p.stem[5:] for p in d.glob("snap-*.json"))
+    (d / "indice.json").write_text(json.dumps({"fotos": fotos}))
+    (d / "ultimo.json").write_text(json.dumps(s, ensure_ascii=False, default=str))
 
 
 def publicar(msg: str) -> None:

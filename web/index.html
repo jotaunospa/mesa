@@ -274,6 +274,10 @@ svg.chart{display:block;width:100%;height:auto;touch-action:pan-y}
 .res td{padding:7px 10px;border-bottom:1px solid var(--soft);font-family:var(--f-num);font-size:12.5px;text-align:right;white-space:nowrap}
 .res tr:last-child td{border-bottom:0}
 .scroll{overflow-x:auto}
+.pm .res-h{background:var(--butter)}
+.pm th:last-child{text-align:left}
+.pm td.not{text-align:left;white-space:normal;font-family:inherit;min-width:260px;max-width:420px}
+.pm td.not a{color:inherit}
 .mx{display:inline-block;height:8px;border-radius:4px;vertical-align:middle;margin-left:6px;border:1px solid var(--ink)}
 
 .sk{height:58px;margin:10px 14px;border-radius:12px;background:linear-gradient(90deg,var(--soft) 30%,color-mix(in srgb,var(--soft) 40%,var(--card)) 50%,var(--soft) 70%);background-size:300% 100%;animation:sk 1.4s ease-in-out infinite}
@@ -350,6 +354,11 @@ footer code{font-family:var(--f-num);font-size:11.5px}
     <p class="leg-note small muted">Cada elemento se ve igual que en la tabla. Los valores de los ejemplos son inventados.</p>
     <ol class="leyenda" id="leyenda"></ol>
   </details>
+
+  <section class="card res pm" id="pm" hidden>
+    <div class="res-h"><h2 id="pm-t">Premarket</h2><p class="small" id="pm-s"></p></div>
+    <div class="scroll"><table><thead><tr><th>Acción</th><th>Premarket</th><th>Precio</th><th>Vol. premarket</th><th>Máx. premarket</th><th>Float</th><th>Noticia</th></tr></thead><tbody id="pm-b"></tbody></table></div>
+  </section>
 
   <section class="card scan" id="scan" aria-live="polite">
     <div class="scan-h"><span>Acción</span><span>Cambio</span><span>Volumen · RVOL</span><span>Float · rot.</span><span>HOD</span><span>VWAP</span><span>Últimos 15 min</span><span>Short</span><span>Dilución</span><span>Dictamen</span></div>
@@ -756,8 +765,30 @@ function renderRes() {
   }).join("");
 }
 
+/* ── premarket (solo registro: sin dictamen) ── */
+function hoyNY() { return new Intl.DateTimeFormat("en-CA", {timeZone: "America/New_York"}).format(new Date()); }
+async function cargarPM() {
+  const sec = $("#pm");
+  const dia = (!S.idx || S.dia === S.idx.ultimo_dia) ? hoyNY() : S.dia;
+  let s;
+  try { s = await getJSON(`${dia}/premarket/ultimo.json`); } catch (e) { sec.hidden = true; return; }
+  const h = String(s.hora_ny).slice(11, 16), filas = (s.filas || []).filter(f => !f.error);
+  $("#pm-t").textContent = `Premarket del ${fechaLarga(dia)} · foto de las ${h} NY`;
+  $("#pm-s").innerHTML = `Lo que se movía antes de abrir: ${filas.length} acciones que suben 5% o más con volumen. <b>Lista y precios con 15 min de atraso</b> (TradingView); volumen y máximo de Nasdaq. Solo registro: sin dictamen ni Mesa. El Escáner parte a las 09:31.`;
+  $("#pm-b").innerHTML = filas.map(f => {
+    const n = (f.noticias_eval || {}).validas || [], e = (f.noticias_eval || {}).estado;
+    const not = n.length ? `<a href="${esc(n[0].url)}" target="_blank" rel="noopener">${esc(n[0].titulo)}</a> <span class="small muted">${esc(n[0].fuente || "")}</span>`
+      : `<span class="muted">${e === "sin_dato" ? "fuentes sin respuesta" : "sin noticia de la empresa"}</span>`;
+    const nq = f.nasdaq || {};
+    return `<tr><td><b>${esc(f.ticker)}</b></td><td class="${(f.pm_cambio_tv ?? 0) >= 0 ? "pos" : "neg"}">${pct(f.pm_cambio_tv)}</td><td>${px(f.pm_precio_tv)}</td>
+      <td>${nq.vol != null ? vol(nq.vol / 1e6) : vol((f.pm_vol_tv ?? null) && f.pm_vol_tv / 1e6)}</td><td>${px(nq.max ?? f.pm_max_tv)}</td>
+      <td>${f.floatM_tv != null ? fmt(f.floatM_tv, 2) + " M" : "—"}</td><td class="not">${not}</td></tr>`;
+  }).join("");
+  sec.hidden = !filas.length;
+}
+
 /* ── controles ── */
-$("#dia").onchange = async e => { S.dia = e.target.value; S.abiertos.clear(); await cargarDia(true); };
+$("#dia").onchange = async e => { S.dia = e.target.value; S.abiertos.clear(); await cargarDia(true); cargarPM(); };
 $("#foto").oninput = async e => { S.i = +e.target.value; await cargarFoto(); };
 document.querySelectorAll(".seg button").forEach(b => b.onclick = () => {
   S.filtro = b.dataset.f; document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x === b)); render();
@@ -765,12 +796,13 @@ document.querySelectorAll(".seg button").forEach(b => b.onclick = () => {
 
 /* ── arranque y actualización ── */
 (async function inicio() {
-  try { await cargarIndice(); await cargarDia(true); }
+  try { await cargarIndice(); await cargarDia(true); cargarPM(); }
   catch (e) { $("#rows").innerHTML = `<div class="empty"><svg aria-hidden="true"><use href="#papelito"/></svg><div><h3>No se pudieron cargar los datos</h3><p class="muted small">${esc(e.message)}</p></div></div>`; }
 })();
 setInterval(async () => {
   const f = fase().k; if (!(f === "ventana" || f === "pre" || f === "abierto" || f === "post")) return;
   const enUltima = S.dia === S.idx?.ultimo_dia && S.i === S.fotos.length - 1;
+  cargarPM();
   try {
     const antes = S.fotos.length, dAntes = S.idx?.ultimo_dia; await cargarIndice();
     if (S.idx.ultimo_dia !== dAntes && enUltima) { S.dia = S.idx.ultimo_dia; await cargarDia(true); return; }

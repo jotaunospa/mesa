@@ -1,0 +1,36 @@
+name: Vigía (arranca lo que falte)
+
+# Cada 15 min en días hábiles revisa que estén corriendo premarket, Escáner, after-hours y cierre
+# según la hora de NY, y lanza lo que falte (vigia.py). No depende de Claude ni de tareas externas.
+# 10:00–01:00 UTC cubre 05:00–20:00 NY en invierno y 06:00–21:00 en verano.
+on:
+  schedule:
+    - cron: "7,22,37,52 10-23 * * 1-5"
+    - cron: "7,22,37,52 0 * * 2-6"
+  workflow_dispatch:
+    inputs:
+      probar:
+        description: "1 = solo probar que puede lanzar otro workflow (lanza diag.yml)"
+        default: ""
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: vigia
+  cancel-in-progress: true
+
+jobs:
+  vigia:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PROBAR_LANZAR: ${{ inputs.probar }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: python vigia.py

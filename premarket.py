@@ -29,6 +29,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from lib import noticias as N
+from lib.encadenar import lanzar
 
 NY = ZoneInfo("America/New_York")
 DATOS = Path(os.environ.get("DATOS", "datos"))
@@ -173,9 +174,12 @@ def main(modo: str) -> None:
         print(f"fuera de {SES['carpeta']} ({hoy:%a %H:%M} NY)"); return
     if hoy < ini:
         time.sleep((ini - hoy).total_seconds())
-    n = 0
+    n, cierre_lanzado = 0, False
     while ahora_ny() <= fin:
         t0 = time.time()
+        a = ahora_ny()
+        if SES is SESIONES["post"] and not cierre_lanzado and a.hour * 60 + a.minute >= 16 * 60 + 40:
+            cierre_lanzado = lanzar("cierre.yml")  # registro del día, con las velas completas
         try:
             s = foto(); guardar(s); print(resumen(s), flush=True); n += 1
             if n % (1 if PASO_MIN >= 20 else 3) == 0:  # after-hours (cada 20 min): publica cada foto
@@ -184,6 +188,8 @@ def main(modo: str) -> None:
             traceback.print_exc()
         time.sleep(max(0, PASO_MIN * 60 - (time.time() - t0)))
     publicar(f"{SES['carpeta']}: fin")
+    if n and SES is SESIONES["pre"]:  # terminó el premarket: arranca el Escáner del día
+        lanzar("ventana.yml", modo="ventana")
 
 
 if __name__ == "__main__":

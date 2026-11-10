@@ -1,7 +1,8 @@
 name: Premarket (solo recolección)
 
 # Fotos de premarket cada 10 min de 07:00 a 09:28 NY. No toca el Escáner ni la Mesa.
-# Lo dispara la tarea programada "Escáner Mesa: premarket" (el cron de GitHub llega tarde).
+# Lo lanza el vigía (vigia.yml). Al terminar el premarket lanza el Escáner (ventana.yml);
+# el after-hours (sesion=post) lo lanza el Escáner al cerrar, y este lanza el cierre a las 16:40.
 on:
   workflow_dispatch:
     inputs:
@@ -14,6 +15,7 @@ on:
 
 permissions:
   contents: write
+  actions: write   # para lanzar la etapa siguiente (lib/encadenar.py)
 
 concurrency:
   group: extendido-${{ inputs.sesion || 'pre' }}

@@ -33,6 +33,7 @@ import yfinance as yf
 from yfinance import EquityQuery as Q
 
 from lib import sec_mesa
+from lib.encadenar import lanzar
 from lib import noticias as noticias_mod
 
 NY = ZoneInfo("America/New_York")
@@ -49,7 +50,8 @@ PRECIO_MAX = 50           # hipótesis: FLGT ($21,62) entra (06-11); APP (ciento
 RANCIA_S = 900            # cotización con más de 15 min se descarta de la foto
 MAX_FILAS = 20            # filas con detalle completo por foto
 INICIO, FIN, PASO_MIN = (9, 31), (10, 20), 3   # ventana 09:35–10:15 NY + margen (antes de 9:30 Yahoo muestra el % de ayer)
-DIA_FIN, PASO_DIA = (15, 58), 10   # después de la ventana: una foto cada 10 min hasta el cierre, solo para mirar (la Mesa no se alimenta)
+DIA_FIN, PASO_DIA = (15, 58), 10
+MAX_JOB_S = 5 * 3600 + 20 * 60   # GitHub corta un job a las 6 h: antes de eso se relanza a sí mismo   # después de la ventana: una foto cada 10 min hasta el cierre, solo para mirar (la Mesa no se alimenta)
 PAISES_ROJOS = {"China", "Hong Kong", "Macau", "Macao", "Taiwan", "Singapore", "Malaysia"}
 
 # Filtro propio de la Mesa (distinto del scanner): se marca, no se excluye.
@@ -772,14 +774,20 @@ def main(modo: str) -> None:
         print(f"muy temprano ({hoy:%H:%M} NY): sale y deja que corra el respaldo"); return
     if espera > 0:
         print(f"esperando {int(espera)}s hasta {ini:%H:%M} NY"); time.sleep(espera)
+    t_job, n = time.time(), 0
     while ahora_ny() <= fin_dia:
-        t0 = time.time()
+        if time.time() - t_job > MAX_JOB_S:
+            print("límite de 6 h de GitHub cerca: lanzo la continuación del día")
+            lanzar("ventana.yml", modo="ventana"); return
+        t0 = time.time(); n += 1
         try:
             s = foto(); p = guardar(s); print(resumen(s), flush=True); publicar(f"foto {p.name}")
         except Exception:
             traceback.print_exc()
         paso = PASO_MIN if ahora_ny() <= fin else PASO_DIA
         time.sleep(max(0, paso * 60 - (time.time() - t0)))
+    if n:  # el día terminó con fotos: sigue el after-hours (sale solo si es feriado o fin de semana)
+        lanzar("premarket.yml", modo="ventana", sesion="post")
 
 
 if __name__ == "__main__":

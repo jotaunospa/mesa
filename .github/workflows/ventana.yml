@@ -23,11 +23,12 @@ concurrency:
 
 permissions:
   contents: write
+  actions: write   # para lanzar la etapa siguiente (lib/encadenar.py)
 
 jobs:
   fotos:
     runs-on: ubuntu-latest
-    timeout-minutes: 450   # 09:01–15:58 NY son ~417 min; margen para instalar
+    timeout-minutes: 350   # GitHub corta a las 6 h: screener.py se relanza solo a las 5 h 20 min
     env:
       GH_TOKEN: ${{ github.token }}
       DATOS: ${{ github.workspace }}/datos

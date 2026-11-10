@@ -22,6 +22,8 @@ import subprocess
 import sys
 import time
 import traceback
+
+from lib.git_datos import empujar
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
@@ -145,11 +147,7 @@ def publicar(msg: str) -> None:
     if subprocess.run(g + ["diff", "--cached", "--quiet"]).returncode == 0:
         return
     subprocess.run(g + ["commit", "-qm", msg], check=False)
-    for _ in range(4):
-        subprocess.run(g + ["pull", "-q", "--rebase", "origin", "datos"], check=False)
-        if subprocess.run(g + ["push", "-q", "origin", "HEAD:datos"]).returncode == 0:
-            return
-        time.sleep(5)
+    empujar(g)
 
 
 def resumen(s: dict) -> str:

@@ -34,6 +34,7 @@ from yfinance import EquityQuery as Q
 
 from lib import sec_mesa
 from lib.encadenar import lanzar
+from lib.git_datos import empujar
 from lib import noticias as noticias_mod
 
 NY = ZoneInfo("America/New_York")
@@ -51,6 +52,7 @@ RANCIA_S = 900            # cotización con más de 15 min se descarta de la fot
 MAX_FILAS = 20            # filas con detalle completo por foto
 INICIO, FIN, PASO_MIN = (9, 31), (10, 20), 3   # ventana 09:35–10:15 NY + margen (antes de 9:30 Yahoo muestra el % de ayer)
 DIA_FIN, PASO_DIA = (15, 58), 10
+WEB_ARCHIVOS = sorted(p.name for p in (Path(__file__).parent / "web").iterdir() if p.is_file()) if (Path(__file__).parent / "web").exists() else []
 MAX_JOB_S = 5 * 3600 + 20 * 60   # GitHub corta un job a las 6 h: antes de eso se relanza a sí mismo   # después de la ventana: una foto cada 10 min hasta el cierre, solo para mirar (la Mesa no se alimenta)
 PAISES_ROJOS = {"China", "Hong Kong", "Macau", "Macao", "Taiwan", "Singapore", "Malaysia"}
 
@@ -733,13 +735,13 @@ def publicar(msg: str) -> None:
         return
     g = ["git", "-C", str(DATOS)]
     subprocess.run(g + ["add", "-A"], check=False)
+    if not os.environ.get("PUBLICAR_WEB"):  # el dashboard (web/) lo sube solo publicar-web.yml
+        for f in WEB_ARCHIVOS:
+            subprocess.run(g + ["reset", "-q", "--", f], capture_output=True)
     if subprocess.run(g + ["diff", "--cached", "--quiet"]).returncode == 0:
         return
     subprocess.run(g + ["commit", "-qm", msg], check=False)
-    for _ in range(3):
-        if subprocess.run(g + ["push", "-q", "origin", "HEAD:datos"]).returncode == 0:
-            return
-        subprocess.run(g + ["pull", "-q", "--rebase", "origin", "datos"], check=False)
+    empujar(g)
 
 
 def resumen(snap: dict) -> str:

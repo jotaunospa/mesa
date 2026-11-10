@@ -21,6 +21,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       DATOS: ${{ github.workspace }}/datos
+      PUBLICAR_WEB: "1"
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6

@@ -18,6 +18,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import threading
 import subprocess
 import sys
 import time
@@ -53,6 +54,28 @@ MAX_FILAS = 20            # filas con detalle completo por foto
 INICIO, FIN, PASO_MIN = (9, 31), (10, 20), 3   # ventana 09:35–10:15 NY + margen (antes de 9:30 Yahoo muestra el % de ayer)
 DIA_FIN, PASO_DIA = (15, 58), 10
 WEB_ARCHIVOS = sorted(p.name for p in (Path(__file__).parent / "web").iterdir() if p.is_file()) if (Path(__file__).parent / "web").exists() else []
+class FotoTrabada(Exception):
+    pass
+
+
+def foto_con_limite(seg: int) -> dict:
+    """foto() en un hilo aparte: si no termina en `seg`, se abandona y el día sigue."""
+    res: dict = {}
+
+    def correr():
+        try:
+            res["s"] = foto()
+        except BaseException as e:  # noqa: BLE001
+            res["e"] = e
+    th = threading.Thread(target=correr, daemon=True)
+    th.start(); th.join(seg)
+    if th.is_alive():
+        raise FotoTrabada(f"la foto pasó {seg // 60} min sin terminar: se salta")
+    if "e" in res:
+        raise res["e"]
+    return res["s"]
+
+
 MAX_JOB_S = 5 * 3600 + 20 * 60   # GitHub corta un job a las 6 h: antes de eso se relanza a sí mismo   # después de la ventana: una foto cada 10 min hasta el cierre, solo para mirar (la Mesa no se alimenta)
 PAISES_ROJOS = {"China", "Hong Kong", "Macau", "Macao", "Taiwan", "Singapore", "Malaysia"}
 
@@ -780,16 +803,18 @@ def main(modo: str) -> None:
     while ahora_ny() <= fin_dia:
         if time.time() - t_job > MAX_JOB_S:
             print("límite de 6 h de GitHub cerca: lanzo la continuación del día")
-            lanzar("ventana.yml", modo="ventana"); return
+            lanzar("ventana.yml", modo="ventana"); sys.stdout.flush(); os._exit(0)
         t0 = time.time(); n += 1
-        try:
-            s = foto(); p = guardar(s); print(resumen(s), flush=True); publicar(f"foto {p.name}")
+        try:  # una foto trabada (fuente que no responde) no puede detener el día
+            s = foto_con_limite(8 * 60); p = guardar(s); print(resumen(s), flush=True); publicar(f"foto {p.name}")
         except Exception:
             traceback.print_exc()
         paso = PASO_MIN if ahora_ny() <= fin else PASO_DIA
         time.sleep(max(0, paso * 60 - (time.time() - t0)))
     if n:  # el día terminó con fotos: sigue el after-hours (sale solo si es feriado o fin de semana)
         lanzar("premarket.yml", modo="ventana", sesion="post")
+    sys.stdout.flush()
+    os._exit(0)  # no esperar hilos trabados de alguna fuente: el día ya terminó y quedó publicado
 
 
 if __name__ == "__main__":

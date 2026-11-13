@@ -477,7 +477,11 @@ renderLeyenda();
 /* ── estado ── */
 const S = {modo: "dia", pmDisp: false, pmFotos: [], pmI: 0, pmSnap: null, idx: null, dia: null, fotos: [], i: 0, snap: null, res: null, filtro: "todas", abiertos: new Set(), velas: {}, vivo: true};
 
-async function getJSON(u) { const r = await fetch(u + (u.includes("?") ? "&" : "?") + "t=" + Date.now()); if (!r.ok) throw new Error(r.status + " " + u); return r.json(); }
+// Los datos se leen de GitHub (rama datos), no de Vercel: así cada foto no crea un deploy (el 13-11
+// llegamos a 11 GB de 10 en Vercel). El parámetro t evita el caché de 5 min de GitHub.
+const DATOS = new URLSearchParams(location.search).get("datos") || "https://raw.githubusercontent.com/jotaunospa/mesa/datos/";
+const dURL = (u) => /^https?:/.test(u) ? u : DATOS + u.replace(/^\//, "");
+async function getJSON(u) { u = dURL(u); const r = await fetch(u + (u.includes("?") ? "&" : "?") + "t=" + Date.now()); if (!r.ok) throw new Error(r.status + " " + u); return r.json(); }
 
 async function cargarIndice() {
   S.idx = await getJSON("index.json");
@@ -591,7 +595,7 @@ function render() {
   const enVivo = S.dia === diaNY() && S.i === S.fotos.length - 1 && ["ventana", "abierto", "pre"].includes(fase().k) && minNY() >= 9 * 60 + 31;
   $("#live").className = "live" + (enVivo ? " on" : "");
   $("#live span").textContent = enVivo ? "en vivo" : "historial";
-  const mj = $("#mesa-json"); mj.href = `${S.dia}/mesa.json`; mj.setAttribute("download", `mesa-${S.dia}.json`); mj.hidden = S.dia < "2026-11-06"; $("#mesa-copiar").hidden = mj.hidden;
+  const mj = $("#mesa-json"); mj.href = dURL(`${S.dia}/mesa.json`); mj.setAttribute("download", `mesa-${S.dia}.json`); mj.hidden = S.dia < "2026-11-06"; $("#mesa-copiar").hidden = mj.hidden;
 
   const filas = s.filas.filter(f => S.filtro === "todas" || (S.filtro === "aptas" ? f.apto : !f.apto));
   const clave = S.dia + "/" + S.fotos[S.i] + "/" + S.filtro;
@@ -981,7 +985,7 @@ $("#mesa-copiar").addEventListener("click", async () => {
   const fin = (msg) => { t.textContent = msg; setTimeout(() => { t.textContent = orig; }, 4000); };
   try {
     t.textContent = "Copiando…";
-    const txt = await (await fetch(`${S.dia}/mesa.json`, { cache: "no-store" })).text();
+    const txt = await (await fetch(dURL(`${S.dia}/mesa.json`) + "?t=" + Date.now(), { cache: "no-store" })).text();
     const m = JSON.parse(txt);
     await navigator.clipboard.writeText(txt);
     fin(`Copiada la foto de las ${(m.bench && m.bench.meta && m.bench.meta.time) || "?"} · en la Mesa: Ctrl+V`);

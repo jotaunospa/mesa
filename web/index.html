@@ -20,7 +20,7 @@
   --f-num:'Martian Mono',ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
   --rc:18px; --rb:14px; --bw:2px;
   --stroke:#1C1A22; --vwap:#6A4BE0; --chartbg:#FFFBF4; --up:#B4EEC6; --dn:#FFA9BF;
-  --lv-c:#2B2833; --lv-p:#1F68B5; --lv-a:#8A6A00;
+  --lv-c:#2B2833; --lv-p:#1F68B5; --lv-a:#8A6A00; --e9:#0E8A6E; --e20:#C2410C;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -28,7 +28,7 @@
     --butter:#F5D24F; --pink:#F59AB2; --mint:#93DDAA; --peach:#F2B488; --lilac:#B39DF5; --sky:#8ECFEF;
     --good:#6FDB95; --bad:#FF8676; --warn:#F5B451; --shadow:#000000;
     --stroke:#D9D2E6; --vwap:#B9A4FF; --chartbg:#1D1A25; --up:#93DDAA; --dn:#F59AB2;
-    --lv-c:#FFFFFF; --lv-p:#7CC4F5; --lv-a:#F5D24F;
+    --lv-c:#FFFFFF; --lv-p:#7CC4F5; --lv-a:#F5D24F; --e9:#5FD3B3; --e20:#FF9F5A;
   }
 }
 :root[data-theme="dark"]{
@@ -36,7 +36,7 @@
   --butter:#F5D24F; --pink:#F59AB2; --mint:#93DDAA; --peach:#F2B488; --lilac:#B39DF5; --sky:#8ECFEF;
   --good:#6FDB95; --bad:#FF8676; --warn:#F5B451; --shadow:#000000;
   --stroke:#D9D2E6; --vwap:#B9A4FF; --chartbg:#1D1A25; --up:#93DDAA; --dn:#F59AB2;
-    --lv-c:#FFFFFF; --lv-p:#7CC4F5; --lv-a:#F5D24F;
+    --lv-c:#FFFFFF; --lv-p:#7CC4F5; --lv-a:#F5D24F; --e9:#5FD3B3; --e20:#FF9F5A;
 }
 :root[data-theme="light"]{color-scheme:light}
 :root[data-theme="dark"]{color-scheme:dark}
@@ -246,6 +246,7 @@ svg.chart{display:block;width:100%;height:auto;touch-action:pan-y}
 .chart .cd{fill:var(--dn);stroke:var(--stroke);stroke-width:1.2}
 .chart .vb{fill:var(--muted);opacity:.35}
 .chart .vwl{fill:none;stroke:var(--vwap);stroke-width:2.5;stroke-linejoin:round}
+.chart .e9l,.chart .e20l{fill:none;stroke-width:1.6;stroke-linejoin:round}.chart .e9l{stroke:var(--e9)}.chart .e20l{stroke:var(--e20)}
 .chart .hod{stroke:var(--bad);stroke-width:1.5;stroke-dasharray:4 4}
 .chart .lv{stroke-width:1.5;fill:none}
 .chart line.lv-c{stroke:var(--lv-c);stroke-dasharray:9 4}.chart line.lv-p{stroke:var(--lv-p);stroke-dasharray:2 3}.chart line.lv-a{stroke:var(--lv-a);stroke-dasharray:5 3}
@@ -254,7 +255,7 @@ svg.chart{display:block;width:100%;height:auto;touch-action:pan-y}
 .chart .lt{paint-order:stroke;stroke:var(--chartbg);stroke-width:3.5px;stroke-linejoin:round}
 .lvl{display:grid;gap:2px;margin-top:2px}
 .lvl-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.lvl button{all:unset;cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:7px 8px;border-radius:10px;border:1.5px solid transparent;font-size:13.5px}
+.lvl button{all:unset;box-sizing:border-box;width:100%;cursor:pointer;display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:7px 8px;border-radius:10px;border:1.5px solid transparent;font-size:13.5px}
 .lvl button:hover{background:var(--soft)}
 .lvl button:focus-visible{outline:3px solid var(--pink);outline-offset:1px}
 .lvl button[aria-expanded="true"]{border-color:var(--ink);background:var(--card)}
@@ -684,7 +685,7 @@ function detalle(f) {
   return `<div class="det-g">
     <div class="panel chartbox">
       <div class="sec-h"><h3>${f.ticker} · velas de 1 minuto</h3>
-        <div class="legend"><span><i style="background:var(--up);height:10px;width:10px;border:1.5px solid var(--stroke);border-radius:3px"></i>vela</span><span><i style="background:var(--vwap)"></i>VWAP</span><span><i style="background:var(--bad)"></i>máx. del día</span><span><i style="background:var(--lv-c)"></i>cierre ayer</span><span><i style="background:var(--lv-p)"></i>premarket</span><span><i style="background:var(--lv-a)"></i>ayer</span><span><i style="background:var(--bad);opacity:.3;height:10px"></i>pausa</span></div></div>
+        <div class="legend"><span><i style="background:var(--up);height:10px;width:10px;border:1.5px solid var(--stroke);border-radius:3px"></i>vela</span><span><i style="background:var(--vwap)"></i>VWAP</span><span><i style="background:var(--e9)"></i>EMA 9</span><span><i style="background:var(--e20)"></i>EMA 20</span><span><i style="background:var(--bad)"></i>máx. del día</span><span><i style="background:var(--lv-c)"></i>cierre ayer</span><span><i style="background:var(--lv-p)"></i>premarket</span><span><i style="background:var(--lv-a)"></i>ayer</span><span><i style="background:var(--bad);opacity:.3;height:10px"></i>pausa</span></div></div>
       <div class="chart-slot"><p class="small muted">Cargando velas…</p></div>
       <div class="tip num" aria-live="polite"></div>
       <div class="facts">
@@ -773,6 +774,14 @@ function dibujarGrafico(slot, velas, f) {
   const data = reg.length ? reg : velas;
   // VWAP acumulado de la sesión regular
   let pv = 0, vv = 0; const vw = data.map(c => { const tp = (c[2] + c[3] + c[4]) / 3; pv += tp * c[5]; vv += c[5]; return vv ? pv / vv : null; });
+  // EMA 9 y 20 con toda la historia hasta la foto, premarket incluido (misma fórmula que lib/ema.py; solo visual).
+  // Cada vela con operaciones es un período: en el premarket, 20 períodos pueden ser más de 20 minutos.
+  const ema = (cl, k) => { const o = cl.map(() => null); if (cl.length < k) return o; let e = cl.slice(0, k).reduce((a, b) => a + b, 0) / k; o[k - 1] = e; const a = 2 / (k + 1); for (let i = k; i < cl.length; i++) { e = cl[i] * a + e * (1 - a); o[i] = e; } return o; };
+  const histE = velas.filter(v => mm(v[0]) < 960), posE = new Map(histE.map((v, i) => [v, i]));
+  const E9a = ema(histE.map(v => v[4]), 9), E20a = ema(histE.map(v => v[4]), 20);
+  const e9 = data.map(c => posE.has(c) ? E9a[posE.get(c)] : null), e20 = data.map(c => posE.has(c) ? E20a[posE.get(c)] : null);
+  const emaNota = [[9, e9], [20, e20]].filter(([, a]) => a.every(v => v == null)).map(([k]) => `EMA ${k} no se dibuja: hay ${histE.length} velas de 1 min con operaciones antes de esta hora (incluido el premarket) y se necesitan ${k}.`);
+  const linea = (a, cls) => { const seg = []; let cur = []; a.forEach((v, i) => { if (v == null) { if (cur.length) seg.push(cur); cur = []; } else cur.push(`${x(i).toFixed(1)},${y(v).toFixed(1)}`); }); if (cur.length) seg.push(cur); return seg.map(p => `<polyline class="${cls}" clip-path="url(#cp-${f.ticker})" points="${p.join(" ")}"/>`).join(""); };
   const pf = p => fmt(p, p < 1 ? 4 : 2);
   const hod = Math.max(...data.map(c => c[2])), lod = Math.min(...data.map(c => c[3]));
   // Niveles de referencia: entran a la escala solo si están cerca de las velas (30% del rango);
@@ -806,7 +815,7 @@ function dibujarGrafico(slot, velas, f) {
   const tw = t => t.length * 6.1 + 6, ocup = [];
   const choca = q => ocup.some(o => q.x0 < o.x1 && q.x1 > o.x0 && q.y0 < o.y1 && q.y1 > o.y0);
   data.forEach((c, i) => ocup.push({x0: x(i) - cw / 2, x1: x(i) + cw / 2, y0: y(c[2]) - 1, y1: y(c[3]) + 1, vela: 1}));
-  vw.forEach((v, i) => { if (v != null) ocup.push({x0: x(i) - cw / 2, x1: x(i) + cw / 2, y0: y(v) - 2, y1: y(v) + 2, vela: 1}); });
+  [vw, e9, e20].forEach(a => a.forEach((v, i) => { if (v != null && v >= lo && v <= hi) ocup.push({x0: x(i) - cw / 2, x1: x(i) + cw / 2, y0: y(v) - 2, y1: y(v) + 2, vela: 1}); }));
   halts.filter(h => h.lbl).forEach(h => { const t = h.k > 1 ? h.k + " PAUSAS" : "PAUSA ▲"; ocup.push({x0: x(h.i0) + 2, x1: x(h.i0) + 2 + tw(t), y0: T + PH - bb - 17, y1: T + PH - bb - 2}); });
   const pctTxt = d => (d >= 0 ? "+" : "−") + fmt(Math.abs(d), Math.abs(d) < 10 ? 1 : 0) + "%";
   const precioRef = f.price || data[n - 1][4];
@@ -845,18 +854,20 @@ function dibujarGrafico(slot, velas, f) {
     ${dentro.map(v => `<line class="lv ${v.cls}" x1="${L}" x2="${W - R}" y1="${y(v.precio)}" y2="${y(v.precio)}"/>`).join("")}
     ${data.map((c, i) => { const up = c[4] >= c[1], t = y(Math.max(c[1], c[4])), b = y(Math.min(c[1], c[4]));
       return `<g class="${anim ? "candle" : ""}" style="${anim ? `animation-delay:${i * 6}ms` : ""}"><line class="wk" x1="${x(i)}" x2="${x(i)}" y1="${y(c[2])}" y2="${y(c[3])}"/><rect class="${up ? "cu" : "cd"}" x="${x(i) - Math.max(1, cw * .34)}" width="${Math.max(2, cw * .68)}" y="${t}" height="${Math.max(1, b - t)}"/></g>`; }).join("")}
+    <clipPath id="cp-${f.ticker}"><rect x="${L}" y="${T + tb}" width="${W - L - R}" height="${PH - tb - bb}"/></clipPath>
+    ${linea(e20, "e20l")}${linea(e9, "e9l")}
     <polyline class="vwl" points="${vw.map((v, i) => v == null ? "" : `${x(i)},${y(v)}`).join(" ")}"/>
     ${etiq.join("")}
     <line class="xh" id="xh" x1="0" x2="0" y1="${T}" y2="${T + PH + VB}" style="display:none"/>
     <rect id="hit" x="${L}" y="${T}" width="${W - L - R}" height="${PH + VB}" fill="transparent"/>
   </svg>`;
-  slot.innerHTML = svg + `<p class="small muted">Velas hasta las ${esc(S.snap.hora_ny.slice(11, 16))} NY, la hora de esta foto.</p>`;
+  slot.innerHTML = svg + `<p class="small muted">Velas hasta las ${esc(S.snap.hora_ny.slice(11, 16))} NY, la hora de esta foto. EMA 9 y 20: calculadas con las velas de 1 min desde el premarket; solo visual, no cambian el dictamen.${emaNota.length ? " " + emaNota.map(esc).join(" ") : ""}</p>`;
   const s = slot.querySelector("svg"), tip = slot.parentElement.querySelector(".tip"), xh = s.querySelector("#xh");
   const mover = ev => {
     const pt = s.createSVGPoint(); const e = ev.touches ? ev.touches[0] : ev; pt.x = e.clientX; pt.y = e.clientY;
     const p = pt.matrixTransform(s.getScreenCTM().inverse()); const i = Math.max(0, Math.min(n - 1, Math.floor((p.x - L) / cw)));
     const c = data[i]; xh.setAttribute("x1", x(i)); xh.setAttribute("x2", x(i)); xh.style.display = "";
-    tip.textContent = `${c[0]}  apertura ${pf(c[1])}  máx. ${pf(c[2])}  mín. ${pf(c[3])}  cierre ${pf(c[4])}  vol. ${c[5].toLocaleString("es-CL")}  VWAP ${vw[i] == null ? "—" : pf(vw[i])}`;
+    tip.textContent = `${c[0]}  apertura ${pf(c[1])}  máx. ${pf(c[2])}  mín. ${pf(c[3])}  cierre ${pf(c[4])}  vol. ${c[5].toLocaleString("es-CL")}  VWAP ${vw[i] == null ? "—" : pf(vw[i])}  EMA 9 ${e9[i] == null ? "—" : pf(e9[i])}  EMA 20 ${e20[i] == null ? "—" : pf(e20[i])}`;
   };
   s.querySelector("#hit").addEventListener("mousemove", mover);
   s.querySelector("#hit").addEventListener("touchmove", mover, {passive: true});

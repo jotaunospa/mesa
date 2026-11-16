@@ -1,0 +1,18 @@
+{
+  "nota": "Contador de hipótesis probadas por mes (principio 4 de la propuesta de rendimiento). Con muchas pruebas, alguna sale 'buena' por azar: el informe muestra cuántas van. Se agrega una línea por hipótesis el día que se empieza a medir; no se borran aunque se descarten.",
+  "hipotesis": [
+    {"mes": "2026-11", "desde": "2026-11-13", "id": "sin-noticia", "nombre": "Quitar la regla de noticia", "donde": "criterios.py"},
+    {"mes": "2026-11", "desde": "2026-11-13", "id": "sin-escaner", "nombre": "Quitar la regla del Escáner", "donde": "criterios.py"},
+    {"mes": "2026-11", "desde": "2026-11-13", "id": "sin-rvol", "nombre": "Quitar la regla de RVOL", "donde": "criterios.py"},
+    {"mes": "2026-11", "desde": "2026-11-13", "id": "sin-float", "nombre": "Quitar la regla de float", "donde": "criterios.py"},
+    {"mes": "2026-11", "desde": "2026-11-13", "id": "sin-precio", "nombre": "Quitar la regla de precio", "donde": "criterios.py"},
+    {"mes": "2026-11", "desde": "2026-11-13", "id": "sin-dilucion", "nombre": "Quitar la regla de dilución", "donde": "criterios.py"},
+    {"mes": "2026-11", "desde": "2026-11-13", "id": "sin-volumen", "nombre": "Quitar la regla de volumen", "donde": "criterios.py"},
+    {"mes": "2026-11", "desde": "2026-11-13", "id": "sin-pausa", "nombre": "Quitar la regla de pausa", "donde": "criterios.py"},
+    {"mes": "2026-11", "desde": "2026-11-13", "id": "sin-cambio", "nombre": "Quitar la regla de cambio", "donde": "criterios.py"},
+    {"mes": "2026-11", "desde": "2026-11-13", "id": "stop12-vwap12", "nombre": "Setup con stop hasta 12% y VWAP +12%", "donde": "backtest.py"},
+    {"mes": "2026-11", "desde": "2026-11-13", "id": "stop-vwap-libres", "nombre": "Setup con cualquier stop y distancia al VWAP", "donde": "backtest.py"},
+    {"mes": "2026-11", "desde": "2026-11-13", "id": "sin-maximo-dia", "nombre": "Setup sin la regla del máximo del día", "donde": "backtest.py"},
+    {"mes": "2026-11", "desde": "2026-11-16", "id": "ema-ordenada", "nombre": "Setup con medias ordenadas al entrar (EMA 9 > EMA 20 > VWAP) contra no ordenadas", "donde": "variantes.py"}
+  ]
+}

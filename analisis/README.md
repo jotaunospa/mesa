@@ -77,3 +77,17 @@ ventana (todos los días hábiles de NYSE con fotos 09:31–10:20), n y retorno 
 promedios diarios. Estado: "midiendo" (< 4 semanas), "se cumple" (intervalo entero bajo 0: el informe lo
 dice arriba y no propone ajustes de entrada), "no concluye" (cruza el 0; se revisa a las 8 semanas) o
 "no se cumple" (entero sobre 0; no prueba ventaja). Probado con datos sintéticos en los cuatro estados.
+
+## Variantes de ejecución y contador de hipótesis (16-11, solo medición)
+
+- `variantes.py` (lo corre `semana.sh`, sección al final del informe): sobre los mismos setups que
+  `excursiones.py`, etiqueta cada uno como "ordenado" (EMA 9 > EMA 20 > VWAP al cierre de la vela
+  anterior a la entrada), "no ordenado" o "sin dato" (menos de 20 velas antes de entrar). Compara n,
+  acierto, R medio y factor de ganancia, brutos y netos. No crea una regla de entrada. n < 30:
+  "primeras lecturas, no concluye".
+- EMA: `lib/ema.py`, la misma fórmula que dibujan el Escáner y la Mesa (velas de 1 min desde el
+  premarket; primera EMA = promedio simple de n cierres; cada vela con operaciones es un período).
+- `hipotesis.json`: contador de hipótesis probadas por mes (principio 4). Noviembre parte con las 12
+  pruebas del informe del 13-11 (9 reglas quitadas una a una y 3 umbrales del setup) y suma la de las
+  medias ordenadas (13). Cada variante nueva agrega una línea el día que empieza a medirse.
+- Prueba del 16-11 con la semana 09–13: 36 setups (22 ordenados, 8 no ordenados, 6 sin dato).

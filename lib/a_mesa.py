@@ -20,6 +20,7 @@ Reglas de traducción (todas visibles para José en la Mesa):
 from __future__ import annotations
 
 import re
+from lib.ema import ema, motivo_falta
 from datetime import datetime, timedelta, timezone
 
 URL = "https://mesa-liart.vercel.app"
@@ -128,14 +129,23 @@ def _grafico(velas: list | None, hasta: str = "16:00") -> dict | None:
     reg = [v for v in velas if "09:30" <= str(v[0]) < min(hasta, "16:00")]
     if len(reg) < 8:
         return None
+    # EMA 9 y 20 con toda la historia del día hasta la foto, premarket incluido (solo visual).
+    hist = [v for v in velas if str(v[0]) < min(hasta, "16:00")]
+    e9, e20 = ema([v[4] for v in hist], 9), ema([v[4] for v in hist], 20)
+    em = {str(v[0]): (a, b) for v, a, b in zip(hist, e9, e20)}
     pv = vv = 0.0
     out = []
     for t, o, h, l, c, vol in reg:
         tp = (h + l + c) / 3
         pv += tp * vol
         vv += vol
-        out.append({"t": t, "o": o, "h": h, "l": l, "c": c, "vw": round(pv / vv, 4) if vv else None})
-    return {"candles": out[-40:], "tf": "1m", "at": "", "vwApx": False, "vwNow": out[-1]["vw"], "src": "escaner"}
+        a, b = em.get(str(t), (None, None))
+        out.append({"t": t, "o": o, "h": h, "l": l, "c": c, "vw": round(pv / vv, 4) if vv else None,
+                    "e9": None if a is None else round(a, 4), "e20": None if b is None else round(b, 4)})
+    out = out[-40:]
+    notas = [motivo_falta(len(hist), n) for n, k in ((9, "e9"), (20, "e20")) if all(c[k] is None for c in out)]
+    return {"candles": out, "tf": "1m", "at": "", "vwApx": False, "vwNow": out[-1]["vw"], "src": "escaner",
+            "emaNota": notas}
 
 
 def fila_mesa(f: dict, ahora: datetime, velas: list | None) -> dict:

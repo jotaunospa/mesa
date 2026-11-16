@@ -273,6 +273,12 @@ svg.chart{display:block;width:100%;height:auto;touch-action:pan-y}
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted)}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .legend i{display:inline-block;width:16px;height:3px;border-radius:2px}
+.ema-tg{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:1px 8px;border:1.5px solid var(--ink);border-radius:999px;font-size:12px;color:var(--text)}
+.ema-tg:hover{background:var(--soft)}.ema-tg:focus-visible{outline:3px solid var(--pink);outline-offset:1px}
+.ema-tg .ema-st{font-weight:700}
+html[data-ema="no"] .chart .e9l,html[data-ema="no"] .chart .e20l,html[data-ema="no"] .chart .cx{display:none}
+html[data-ema="no"] .ema-tg{opacity:.6}
+.chart .cx{stroke:var(--chartbg);stroke-width:1.5;paint-order:stroke}.chart .cx.up{fill:var(--e9)}.chart .cx.dn{fill:var(--e20)}
 .tip{font-family:var(--f-num);font-size:12px;min-height:18px;color:var(--muted)}
 .facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 14px;padding:14px 16px}
 @media (max-width:520px){.facts{grid-template-columns:repeat(2,minmax(0,1fr));padding:12px 4px}.facts b{font-size:12px;white-space:nowrap}}
@@ -685,7 +691,7 @@ function detalle(f) {
   return `<div class="det-g">
     <div class="panel chartbox">
       <div class="sec-h"><h3>${f.ticker} · velas de 1 minuto</h3>
-        <div class="legend"><span><i style="background:var(--up);height:10px;width:10px;border:1.5px solid var(--stroke);border-radius:3px"></i>vela</span><span><i style="background:var(--vwap)"></i>VWAP</span><span><i style="background:var(--e9)"></i>EMA 9</span><span><i style="background:var(--e20)"></i>EMA 20</span><span><i style="background:var(--bad)"></i>máx. del día</span><span><i style="background:var(--lv-c)"></i>cierre ayer</span><span><i style="background:var(--lv-p)"></i>premarket</span><span><i style="background:var(--lv-a)"></i>ayer</span><span><i style="background:var(--bad);opacity:.3;height:10px"></i>pausa</span></div></div>
+        <div class="legend"><span><i style="background:var(--up);height:10px;width:10px;border:1.5px solid var(--stroke);border-radius:3px"></i>vela</span><span><i style="background:var(--vwap)"></i>VWAP</span><button type="button" class="ema-tg" data-ema-tg aria-pressed="true" title="Mostrar u ocultar las EMA 9 y 20 y sus cruces"><i style="background:var(--e9)"></i>EMA 9 <i style="background:var(--e20)"></i>EMA 20 <b class="ema-st">sí</b></button><span><i style="background:var(--bad)"></i>máx. del día</span><span><i style="background:var(--lv-c)"></i>cierre ayer</span><span><i style="background:var(--lv-p)"></i>premarket</span><span><i style="background:var(--lv-a)"></i>ayer</span><span><i style="background:var(--bad);opacity:.3;height:10px"></i>pausa</span></div></div>
       <div class="chart-slot"><p class="small muted">Cargando velas…</p></div>
       <div class="tip num" aria-live="polite"></div>
       <div class="facts">
@@ -762,6 +768,12 @@ document.addEventListener("click", e => {
   b.setAttribute("aria-expanded", String(!ab)); p.hidden = ab;
 });
 
+// Botón EMA: se recuerda en este navegador (si el almacenamiento falla, solo dura la visita).
+const emaVis = v => { document.documentElement.dataset.ema = v ? "si" : "no"; document.querySelectorAll("[data-ema-tg]").forEach(b => { b.setAttribute("aria-pressed", String(v)); b.querySelector(".ema-st").textContent = v ? "sí" : "no"; }); };
+let EMA_ON = true; try { EMA_ON = localStorage.getItem("esc-ema") !== "no"; } catch (e) {}
+document.documentElement.dataset.ema = EMA_ON ? "si" : "no";
+document.addEventListener("click", e => { if (!e.target.closest("[data-ema-tg]")) return; EMA_ON = !EMA_ON; try { localStorage.setItem("esc-ema", EMA_ON ? "si" : "no"); } catch (er) {} emaVis(EMA_ON); });
+
 /* ── gráfico de velas del día ── */
 function dibujarGrafico(slot, velas, f) {
   if (!velas || !velas.length) { slot.innerHTML = `<p class="small muted">Sin velas para este día.</p>`; return; }
@@ -781,6 +793,8 @@ function dibujarGrafico(slot, velas, f) {
   const E9a = ema(histE.map(v => v[4]), 9), E20a = ema(histE.map(v => v[4]), 20);
   const e9 = data.map(c => posE.has(c) ? E9a[posE.get(c)] : null), e20 = data.map(c => posE.has(c) ? E20a[posE.get(c)] : null);
   const emaNota = [[9, e9], [20, e20]].filter(([, a]) => a.every(v => v == null)).map(([k]) => `EMA ${k} no se dibuja: hay ${histE.length} velas de 1 min con operaciones antes de esta hora (incluido el premarket) y se necesitan ${k}.`);
+  // Cruces de EMA 9 y EMA 20 (solo visual): ▲ cuando la 9 pasa sobre la 20, ▼ cuando pasa bajo. No es señal de compra ni de venta.
+  const cruces = []; for (let i = 1; i < data.length; i++) { if ([e9[i], e20[i], e9[i - 1], e20[i - 1]].some(v => v == null)) continue; const a = e9[i - 1] - e20[i - 1], b = e9[i] - e20[i]; if (a <= 0 && b > 0) cruces.push({i, up: 1}); else if (a >= 0 && b < 0) cruces.push({i, up: 0}); }
   const linea = (a, cls) => { const seg = []; let cur = []; a.forEach((v, i) => { if (v == null) { if (cur.length) seg.push(cur); cur = []; } else cur.push(`${x(i).toFixed(1)},${y(v).toFixed(1)}`); }); if (cur.length) seg.push(cur); return seg.map(p => `<polyline class="${cls}" clip-path="url(#cp-${f.ticker})" points="${p.join(" ")}"/>`).join(""); };
   const pf = p => fmt(p, p < 1 ? 4 : 2);
   const hod = Math.max(...data.map(c => c[2])), lod = Math.min(...data.map(c => c[3]));
@@ -815,6 +829,7 @@ function dibujarGrafico(slot, velas, f) {
   const tw = t => t.length * 6.1 + 6, ocup = [];
   const choca = q => ocup.some(o => q.x0 < o.x1 && q.x1 > o.x0 && q.y0 < o.y1 && q.y1 > o.y0);
   data.forEach((c, i) => ocup.push({x0: x(i) - cw / 2, x1: x(i) + cw / 2, y0: y(c[2]) - 1, y1: y(c[3]) + 1, vela: 1}));
+  cruces.forEach(c => { const yy = y(e9[c.i]); ocup.push({x0: x(c.i) - 7, x1: x(c.i) + 7, y0: yy - 8, y1: yy + 8}); });
   [vw, e9, e20].forEach(a => a.forEach((v, i) => { if (v != null && v >= lo && v <= hi) ocup.push({x0: x(i) - cw / 2, x1: x(i) + cw / 2, y0: y(v) - 2, y1: y(v) + 2, vela: 1}); }));
   halts.filter(h => h.lbl).forEach(h => { const t = h.k > 1 ? h.k + " PAUSAS" : "PAUSA ▲"; ocup.push({x0: x(h.i0) + 2, x1: x(h.i0) + 2 + tw(t), y0: T + PH - bb - 17, y1: T + PH - bb - 2}); });
   const pctTxt = d => (d >= 0 ? "+" : "−") + fmt(Math.abs(d), Math.abs(d) < 10 ? 1 : 0) + "%";
@@ -856,12 +871,14 @@ function dibujarGrafico(slot, velas, f) {
       return `<g class="${anim ? "candle" : ""}" style="${anim ? `animation-delay:${i * 6}ms` : ""}"><line class="wk" x1="${x(i)}" x2="${x(i)}" y1="${y(c[2])}" y2="${y(c[3])}"/><rect class="${up ? "cu" : "cd"}" x="${x(i) - Math.max(1, cw * .34)}" width="${Math.max(2, cw * .68)}" y="${t}" height="${Math.max(1, b - t)}"/></g>`; }).join("")}
     <clipPath id="cp-${f.ticker}"><rect x="${L}" y="${T + tb}" width="${W - L - R}" height="${PH - tb - bb}"/></clipPath>
     ${linea(e20, "e20l")}${linea(e9, "e9l")}
+    ${cruces.filter(c => e9[c.i] >= lo && e9[c.i] <= hi).map(c => { const cx = x(c.i), cy = y(e9[c.i]); return `<path class="cx ${c.up ? "up" : "dn"}" d="${c.up ? `M${cx - 5},${cy + 4} L${cx + 5},${cy + 4} L${cx},${cy - 5} Z` : `M${cx - 5},${cy - 4} L${cx + 5},${cy - 4} L${cx},${cy + 5} Z`}"><title>${c.up ? "EMA 9 cruza sobre EMA 20" : "EMA 9 cruza bajo EMA 20"} (${esc(data[c.i][0])})</title></path>`; }).join("")}
     <polyline class="vwl" points="${vw.map((v, i) => v == null ? "" : `${x(i)},${y(v)}`).join(" ")}"/>
     ${etiq.join("")}
     <line class="xh" id="xh" x1="0" x2="0" y1="${T}" y2="${T + PH + VB}" style="display:none"/>
     <rect id="hit" x="${L}" y="${T}" width="${W - L - R}" height="${PH + VB}" fill="transparent"/>
   </svg>`;
-  slot.innerHTML = svg + `<p class="small muted">Velas hasta las ${esc(S.snap.hora_ny.slice(11, 16))} NY, la hora de esta foto. EMA 9 y 20: calculadas con las velas de 1 min desde el premarket; solo visual, no cambian el dictamen.${emaNota.length ? " " + emaNota.map(esc).join(" ") : ""}</p>`;
+  slot.innerHTML = svg + `<p class="small muted">Velas hasta las ${esc(S.snap.hora_ny.slice(11, 16))} NY, la hora de esta foto. EMA 9 y 20: calculadas con las velas de 1 min desde el premarket. ▲ / ▼: la EMA 9 cruza sobre / bajo la EMA 20. Solo visual: no es señal de compra ni de venta y no cambia el dictamen.${emaNota.length ? " " + emaNota.map(esc).join(" ") : ""}</p>`;
+  emaVis(EMA_ON);
   const s = slot.querySelector("svg"), tip = slot.parentElement.querySelector(".tip"), xh = s.querySelector("#xh");
   const mover = ev => {
     const pt = s.createSVGPoint(); const e = ev.touches ? ev.touches[0] : ev; pt.x = e.clientX; pt.y = e.clientY;

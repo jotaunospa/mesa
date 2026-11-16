@@ -1,6 +1,6 @@
 """Variantes de ejecución: mediciones sobre los setups que ya detecta la Mesa (no crean reglas).
 
-Por ahora, una variante: medias ordenadas al entrar.
+Dos variantes: medias ordenadas al entrar y último cruce de EMA antes de entrar.
 - Población: la misma de excursiones.py. Cada setup que detecta el código real de la Mesa
   (veredictos.json), cumpla o no los umbrales, en la ventana 09:35–10:15, una operación por
   acción y día, con la simulación de backtest.py (entrada si una vela de los 10 min siguientes
@@ -10,6 +10,10 @@ Por ahora, una variante: medias ordenadas al entrar.
   EMA con lib/ema.py: velas de 1 min desde el premarket, primera EMA = promedio simple de n cierres.
   VWAP: acumulado de la sesión regular desde las 09:30 (el mismo del gráfico).
   "no ordenado": cualquier otro orden. "sin dato": menos de 20 velas antes de la entrada (no hay EMA 20).
+- Etiqueta "último cruce" (desde 16-11): el último cruce de la EMA 9 con la EMA 20 antes de la vela
+  de entrada (mismas velas y mismo corte que arriba): "▲ sobre" (la 9 pasó sobre la 20), "▼ bajo"
+  (pasó bajo) o "sin cruce" (no hubo cruce desde que existe la EMA 20 ese día). Se informa también
+  cuántos minutos antes de entrar fue. Es la convención "cruce = compra / venta", medida, no aplicada.
 - Métricas por grupo: n, acierto (R > 0), R medio y factor de ganancia (ganancias / pérdidas),
   brutos y netos de costos (costos.py: spread de Nasdaq de la foto + deslizamiento escalonado +
   comisión de Racional SUPUESTA). Sin spread en la foto, esa operación no entra al neto.
@@ -37,6 +41,32 @@ from lib.ema import ema
 
 MIN_N = 30
 GRUPOS = ("ordenado", "no ordenado", "sin dato")
+GRUPOS_CX = ("▲ sobre", "▼ bajo", "sin cruce", "sin dato")
+
+
+def ultimo_cruce(v, entra: str):
+    """Último cruce EMA 9 / EMA 20 con las velas anteriores a la de entrada. (etiqueta, hora del cruce)."""
+    i0 = next((i for i, c in enumerate(v) if c[0] == entra), None)
+    if not i0:
+        return "sin dato", None
+    antes = v[:i0]
+    cl = [c[4] for c in antes]
+    e9, e20 = ema(cl, 9), ema(cl, 20)
+    if e20[-1] is None:
+        return "sin dato", None
+    for i in range(len(antes) - 1, 0, -1):
+        if None in (e9[i], e20[i], e9[i - 1], e20[i - 1]):
+            break
+        a, b = e9[i - 1] - e20[i - 1], e9[i] - e20[i]
+        if a <= 0 < b:
+            return "▲ sobre", antes[i][0]
+        if a >= 0 > b:
+            return "▼ bajo", antes[i][0]
+    return "sin cruce", None
+
+
+def minutos(h1: str, h2: str) -> int:
+    return (int(h2[:2]) * 60 + int(h2[3:])) - (int(h1[:2]) * 60 + int(h1[3:]))
 
 
 def estado_medias(v, entra: str):
@@ -101,21 +131,30 @@ def main(verd, datos, sal_json, sal_md):
             continue
         vistos.add((r["dia"], r["tk"]))
         grupo, val = estado_medias(v, o["entra"])
+        cx, hcx = ultimo_cruce(v, o["entra"])
         sp = X.spread(datos, r["dia"], r["hora"], r["tk"])
         cost = C.ida_y_vuelta(o["e"], o["x"], sp)
         R = o["e0"] - o["stop"]
         ops.append({"dia": r["dia"], "hora": r["hora"], "tk": r["tk"], "entra": o["entra"], "motivo": o["motivo"],
-                    "grupo": grupo, "medias": val, "cumple_reglas": bool(s.get("ok")), "R_bruto": o["R_bruto"],
+                    "grupo": grupo, "medias": val, "cruce": cx,
+                    "cruce_min_antes": None if hcx is None else minutos(hcx, o["entra"]), "cumple_reglas": bool(s.get("ok")), "R_bruto": o["R_bruto"],
                     "R_neto": None if cost is None else round(o["R_bruto"] - cost / 100 * o["e"] / R, 2)})
     res = {}
     for g in GRUPOS:
         L = [x for x in ops if x["grupo"] == g]
         res[g] = {"bruto": metricas([x["R_bruto"] for x in L]),
                   "neto": metricas([x["R_neto"] for x in L if x["R_neto"] is not None])}
+    res_cx = {}
+    for g in GRUPOS_CX:
+        L = [x for x in ops if x["cruce"] == g]
+        mins = sorted(x["cruce_min_antes"] for x in L if x["cruce_min_antes"] is not None)
+        res_cx[g] = {"bruto": metricas([x["R_bruto"] for x in L]),
+                     "neto": metricas([x["R_neto"] for x in L if x["R_neto"] is not None]),
+                     "min_antes_mediana": mins[len(mins) // 2] if mins else None}
     dias = sorted({x["dia"] for x in ops})
     mes = (dias[-1] if dias else "")[:7]
     nh = contador(mes) if mes else 0
-    json.dump({"variante": "ema-ordenada", "ops": ops, "resumen": res, "hipotesis_mes": nh}, open(sal_json, "w"),
+    json.dump({"variante": "ema-ordenada", "ops": ops, "resumen": res, "resumen_cruce": res_cx, "hipotesis_mes": nh}, open(sal_json, "w"),
               ensure_ascii=False, indent=1)
 
     chica = any(0 < res[g]["bruto"]["n"] < MIN_N for g in ("ordenado", "no ordenado"))
@@ -134,6 +173,18 @@ def main(verd, datos, sal_json, sal_md):
     md += ["", C.nota(), "",
            "\"sin dato\": menos de 20 velas de 1 min antes de la entrada, no hay EMA 20. "
            "El neto deja fuera las operaciones sin spread en la foto.", ""]
+    chica_cx = any(0 < res_cx[g]["bruto"]["n"] < MIN_N for g in ("▲ sobre", "▼ bajo", "sin cruce"))
+    md += ["### Último cruce de EMA antes de entrar", "",
+           "La convención de los cursos dice \"▲ = compra, ▼ = venta\". Aquí solo se mide: los mismos setups, "
+           "separados por el último cruce de la EMA 9 con la EMA 20 antes de la vela de entrada.", ""]
+    if chica_cx or not ops:
+        md += ["**Primeras lecturas, no concluye** (n < 30 en algún grupo).", ""]
+    md += ["| Último cruce | n bruto | acierto | R medio | factor de ganancia | n neto | acierto | R medio | factor de ganancia | minutos antes (mediana) |",
+           "|---|---|---|---|---|---|---|---|---|---|"]
+    for g in GRUPOS_CX:
+        mm = res_cx[g]["min_antes_mediana"]
+        md.append(f"| {g} | {fmt(res_cx[g]['bruto'])} | {fmt(res_cx[g]['neto'])} | {'—' if mm is None else mm} |")
+    md += ["", "\"sin cruce\": no hubo cruce desde que existe la EMA 20 ese día. \"sin dato\": menos de 20 velas antes de entrar.", ""]
     cnt = Counter(x["grupo"] for x in ops)
     if ops:
         md.append("<details><summary>Operaciones (" + ", ".join(f"{g}: {cnt[g]}" for g in GRUPOS) + ")</summary>\n")
@@ -143,7 +194,7 @@ def main(verd, datos, sal_json, sal_md):
                       + (f" (EMA 9 {m['e9']}, EMA 20 {m['e20']}, VWAP {m['vwap']})" if x["grupo"] != "sin dato" else
                          f" ({m.get('velas_antes', 0)} velas antes)")
                       + f", {x['R_bruto']:+.2f} R bruto, " + ("neto sin dato" if x["R_neto"] is None else f"{x['R_neto']:+.2f} R neto")
-                      + f" ({x['motivo']})")
+                      + f" ({x['motivo']})" + (f"; último cruce {x['cruce']} {x['cruce_min_antes']} min antes" if x["cruce_min_antes"] is not None else f"; {x['cruce']}"))
         md.append("\n</details>")
     Path(sal_md).write_text("\n".join(md) + "\n")
     print("\n".join(md[:20]))

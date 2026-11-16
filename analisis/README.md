@@ -90,4 +90,8 @@ dice arriba y no propone ajustes de entrada), "no concluye" (cruza el 0; se revi
 - `hipotesis.json`: contador de hipótesis probadas por mes (principio 4). Noviembre parte con las 12
   pruebas del informe del 13-11 (9 reglas quitadas una a una y 3 umbrales del setup) y suma la de las
   medias ordenadas (13). Cada variante nueva agrega una línea el día que empieza a medirse.
-- Prueba del 16-11 con la semana 09–13: 36 setups (22 ordenados, 8 no ordenados, 6 sin dato).
+- Segunda variante (16-11, hipótesis 14 del mes): el mismo grupo de setups separado por el último cruce de
+  EMA 9 / EMA 20 antes de la vela de entrada (▲ sobre, ▼ bajo, sin cruce, sin dato), con los minutos
+  desde el cruce. Mide la convención "cruce = compra / venta"; no la aplica.
+- Prueba del 16-11 con la semana 09–13: 36 setups (22 ordenados, 8 no ordenados, 6 sin dato; por cruce:
+  20 ▲, 2 ▼, 8 sin cruce, 6 sin dato).

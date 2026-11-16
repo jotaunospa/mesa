@@ -152,6 +152,22 @@ def base_10d(tk: str) -> dict:
                 if len(dias):
                     out["perfil"][m] = float(por_dia.mean())
             out["dias"] = out["dias"][-10:]
+        # Vela diaria de ayer (Yahoo, sesión regular): máximo y mínimo de ayer para el gráfico.
+        # Solo visual: no entra a ninguna regla. Si falla, queda el motivo y no se dibuja.
+        try:
+            dd = t.history(period="10d", interval="1d", auto_adjust=False)
+            if dd is not None and not dd.empty:
+                hoy_d = ahora_ny().date()
+                ix = dd.index.tz_convert(NY) if dd.index.tz is not None else dd.index
+                prev_d = [(i.date(), fl) for i, fl in zip(ix, dd.itertuples()) if i.date() < hoy_d]
+                if prev_d:
+                    fd, fl = prev_d[-1]
+                    out["ayer"] = {"fecha": str(fd), "max": float(fl.High), "min": float(fl.Low),
+                                   "cierre": float(fl.Close)}
+            if "ayer" not in out:
+                out["ayer_motivo"] = "Yahoo no trajo la vela diaria de ayer"
+        except Exception as e:
+            out["ayer_motivo"] = f"Yahoo no respondió la vela diaria ({type(e).__name__})"
         s = t.splits
         if s is not None and len(s):
             s.index = s.index.tz_convert(NY)
@@ -367,6 +383,27 @@ def noticias_extra(tk: str, nombre: str | None) -> tuple:
     return g, q
 
 
+def niveles_ref(prev, pm_hi, pm_lo, pm_fuente: str, b: dict) -> dict:
+    """Niveles de referencia para el gráfico (solo visual, no cambia reglas).
+    Cada uno: {"precio", "fuente"} o {"precio": None, "motivo"}. Nunca levanta excepción."""
+    def n(v, fuente, motivo):
+        try:
+            v = float(v) if v is not None else None
+        except (TypeError, ValueError):
+            v = None
+        return {"precio": r(v, 4), "fuente": fuente} if v and v > 0 else {"precio": None, "motivo": motivo}
+    try:
+        ay = b.get("ayer") or {}
+        sin_ay = b.get("ayer_motivo") or "sin vela diaria de ayer"
+        sin_pm = "sin operaciones de premarket en Nasdaq ni en Yahoo"
+        f_ay = f"vela diaria de Yahoo del {ay['fecha']}" if ay.get("fecha") else ""
+        return {"cierre_ayer": n(prev, "Yahoo (cierre anterior oficial)", "Yahoo no informó el cierre anterior"),
+                "pm_max": n(pm_hi, pm_fuente, sin_pm), "pm_min": n(pm_lo, pm_fuente, sin_pm),
+                "ayer_max": n(ay.get("max"), f_ay, sin_ay), "ayer_min": n(ay.get("min"), f_ay, sin_ay)}
+    except Exception as e:
+        return {"error": f"{type(e).__name__}"[:60]}
+
+
 def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
     tk = qt["symbol"]
     inf = info(tk)
@@ -398,6 +435,7 @@ def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
     pn = premarket_nasdaq(tk)
     pm_hi = pn.get("max") or (float(pre["High"].max()) if pre is not None and not pre.empty else None)
     pm_lo = pn.get("min") or (float(pre["Low"].min()) if pre is not None and not pre.empty else None)
+    pm_fuente = "Nasdaq" if pn.get("max") else "velas de Yahoo"
     if pm_hi is not None:
         hi = max(x for x in (hi, pm_hi) if x is not None)
     if pm_lo is not None:
@@ -536,6 +574,7 @@ def fila(qt: dict, halts: dict, vivo: dict, ahora: datetime) -> dict:
         "noticias": noticias,
         "noticias_eval": noticias_eval,
         # ── extras propios ──
+        "niveles": niveles_ref(prev, pm_hi, pm_lo, pm_fuente, b),
         "premarket": ({"max": r(pm_hi, 4), "min": r(pm_lo, 4), "vol": int(pn["vol"]) if pn.get("vol") else None,
                        "fuente": "nasdaq" if pn.get("max") else "yahoo"} if pm_hi is not None else None),
         "spread_pct": r(spread),

@@ -14,6 +14,8 @@ Reglas de traducción (todas visibles para José en la Mesa):
 - Dictamen del Escáner (`esc`): si dice NO APTA, la Mesa lo trata como veto (NO-GO).
 - Gráfico: últimas 40 velas de 1 minuto de la sesión regular con su VWAP, para que la Mesa
   busque el setup sola. Son velas reales de Yahoo, no transcritas.
+- Niveles de referencia (cierre de ayer, máx./mín. de premarket y de ayer): tal cual el
+  Escáner, solo para dibujar. No entran a ninguna regla.
 """
 from __future__ import annotations
 
@@ -163,6 +165,8 @@ def fila_mesa(f: dict, ahora: datetime, velas: list | None) -> dict:
         "esc": {"apto": None if f.get("apto") is None else bool(f.get("apto")), "motivos": f.get("no_apto_por") or [], "cautela": f.get("cautela") or [],
                 "foto": ahora.strftime("%H:%M"), "spread": f.get("spread_pct"), "url": URL},
     }
+    if f.get("niveles"):
+        row["niveles"] = f["niveles"]   # niveles de referencia del gráfico (solo visual)
     g = _grafico(velas, ahora.strftime("%H:%M"))
     if g:
         row["chart"] = g
@@ -183,7 +187,7 @@ def construir(snap: dict, velas: dict) -> dict:
     filas = [fila_mesa(f, ahora, velas.get(f["ticker"])) for f in snap.get("filas", [])]
     reads = []
     for x in filas:
-        r = {k: v for k, v in x.items() if k not in ("unsure", "confirm", "chart", "deal")}
+        r = {k: v for k, v in x.items() if k not in ("unsure", "confirm", "chart", "deal", "niveles")}
         r.update({"id": f"r_esc_{fecha.replace('-', '')}_{foto}_{x['ticker']}", "kind": "read", "ts": ts,
                   "etDate": fecha, "etTime": hhmm, "stC": "", "stM": "", "casi": "", "rulesV": "",
                   "sess": _sess(hhmm), "src": "escaner", "batch": batch})

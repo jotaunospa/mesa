@@ -32,7 +32,7 @@ p,li{margin:0}.muted{color:var(--muted)} a{color:inherit}
 <pre>rvol_hora, actividad, rotaciones, float_muy_bajo, float_cruce{estado, rango_M, yahoo_M, tradingview_M, sec_portada},
 float_confianza, hod_dist_pct, vwap, sobre_vwap_pct, surge5m, velas15[[hh:mm,o,h,l,c,v]], ssr, ssr_motivo,
 short_pct_float, pais, pais_riesgo, split_reciente[], halts_hoy[{hora,codigo,reanuda,direccion}], noticias[],
-premarket{max,vol}, spread_pct, nasdaq{precio,bid,ask,hora}, precio_cuadra, sec{dil_motivo[],veto_venta,veto_quiebra,
+premarket{max,min,vol,fuente}, niveles{cierre_ayer,pm_max,pm_min,ayer_max,ayer_min: {precio,fuente} o {precio:null,motivo}} (solo visual), spread_pct, nasdaq{precio,bid,ask,hora}, precio_cuadra, sec{dil_motivo[],veto_venta,veto_quiebra,
 extranjero,runway_q,caja_periodo,filings_recientes[]}, sec_hoy[], veto, en_filtro_mesa, calc[]</pre></div>
 <div class="card"><h2><code class="p">/AAAA-MM-DD/velas_vivo/TICKER.json</code></h2><p>Velas de 1 minuto del día, con premarket. Durante la ventana llegan hasta la última foto; después del cierre, el día completo.</p>
 <pre>[ ["09:30", open, high, low, close, volumen], … ]</pre></div>

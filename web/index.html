@@ -527,6 +527,15 @@ async function cargarIndice() {
   if (!S.dia || !dias.find(d => d.fecha === S.dia)) S.dia = S.idx.ultimo_dia;
   sel.value = S.dia;
 }
+// Short de FINRA directo (contraste del de Yahoo). % calculado contra el float de la fila; sin dato dice por qué.
+function shortFinraHTML(f) {
+  const s = f.short_finra;
+  if (!s) return "";
+  if (s.error || s.short == null) return `<div style="grid-column:1/-1"><small>Short FINRA directo</small><b title="${esc(s.error || "")}">sin dato</b></div>`;
+  const fe = s.fecha ? " (al " + esc(s.fecha.slice(8, 10) + "-" + s.fecha.slice(5, 7)) + ")" : "";
+  const p = f.floatM ? fmt(s.short / (f.floatM * 1e6) * 100, 1) + "% del float, calculado" : "sin float para el %";
+  return `<div style="grid-column:1/-1"><small>Short FINRA directo${fe}</small><b>${vol(s.short / 1e6)} acc. · ${p}</b></div>`;
+}
 function fechaLarga(d) { const [y, m, dd] = d.split("-").map(Number); return new Date(Date.UTC(y, m - 1, dd, 12)).toLocaleDateString("es-CL", {weekday: "short", day: "numeric", month: "short", timeZone: "UTC"}); }
 
 async function cargarDia(irAlUltimo) {
@@ -716,6 +725,7 @@ function detalle(f) {
         <div><small>Premarket máx. / vol.</small><b>${f.premarket ? px(f.premarket.max) + " / " + (f.premarket.vol ? vol(f.premarket.vol / 1e6) : "sin dato") : "—"}</b></div><div><small>Spread (Nasdaq)</small><b>${f.spread_pct == null ? "—" : fmt(f.spread_pct, 2) + "%"}</b></div>
         <div><small>Bid / Ask</small><b>${px(nq.bid)} / ${px(nq.ask)}</b></div><div><small>Surge 5 min</small><b>${pct(f.surge5m)}</b></div>
         <div><small>Short / float${f.short_fecha ? " (al " + esc(f.short_fecha.slice(8, 10) + "-" + f.short_fecha.slice(5, 7)) + ")" : ""}</small><b>${f.short_pct_float == null ? "—" : fmt(f.short_pct_float, 1) + "%"}</b></div><div><small>Bolsa</small><b>${esc((f.meta || {}).bolsa || "—")}</b></div>
+        ${shortFinraHTML(f)}
       </div>
       ${nivelesHTML(f)}
     </div>

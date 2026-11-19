@@ -751,6 +751,19 @@ def foto() -> dict:
     except Exception as e:
         for f in filas:
             f.setdefault("stocktwits", {"fuente": "StockTwits", "error": f"{type(e).__name__}"[:60]})
+    # Contraste del short con FINRA directo (fase 3, 19-11): una consulta por foto; solo se muestra, no cambia reglas.
+    try:
+        from lib.fuentes_openbb import finra_short
+        fs = finra_short([f["ticker"] for f in filas]) if filas else {}
+        for f in filas:
+            clave = "".join(c for c in f["ticker"] if c.isalnum()).upper()
+            if "error" in fs:
+                f["short_finra"] = {"fuente": "FINRA", "error": fs["error"]}
+            else:
+                f["short_finra"] = fs.get(clave) or {"fuente": "FINRA", "error": "FINRA no publica short de esta acción"}
+    except Exception as e:
+        for f in filas:
+            f.setdefault("short_finra", {"fuente": "FINRA", "error": f"{type(e).__name__}"[:60]})
     sin_float = [f["ticker"] for f in filas if f["floatM"] is None]
     return {
         "hora_ny": ahora.isoformat(timespec="seconds"),

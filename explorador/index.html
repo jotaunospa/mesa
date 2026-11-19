@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Explorador de candidatas · Mesa</title>
+<meta name="description" content="Historial de candidatas del Escáner: lo visto al primer avistamiento y qué pasó después.">
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=Martian+Mono:wght@400;500&display=swap">
+<!-- Perspective 5.9.2 (Apache 2.0): https://github.com/perspective-dev/perspective, commit 989fc44 -->
+<link rel="stylesheet" crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/@perspective-dev/viewer@5.9.2/dist/css/themes.css">
+<style>
+:root{
+  --paper:#FFF6EA; --card:#FFFDF8; --ink:#1C1A22; --text:#1C1A22; --muted:#5D5767; --soft:#EFE6D8;
+  --butter:#FFE066; --pink:#FFA9BF; --mint:#B4EEC6; --peach:#FFCBA4; --lilac:#CDBBFF; --sky:#AEDFF7;
+  --good:#17803F; --bad:#C4301F; --shadow:#1C1A22;
+  --f-disp:'Bricolage Grotesque','Figtree',ui-sans-serif,system-ui,sans-serif;
+  --f-ui:'Figtree',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-num:'Martian Mono',ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+}
+/* Mismo tema que el Escáner: lo que elegiste ahí (esc-tema) manda; si no, el del sistema. */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#18161F; --card:#24212D; --ink:#07060A; --text:#F2EDF8; --muted:#B3ABC2; --soft:#2F2B3A;
+  --butter:#F5D24F; --pink:#F59AB2; --mint:#93DDAA; --peach:#F2B488; --lilac:#B39DF5; --sky:#8ECFEF;
+  --good:#6FDB95; --bad:#FF8676; --shadow:#000;
+}}
+:root[data-theme="dark"]{
+  --paper:#18161F; --card:#24212D; --ink:#07060A; --text:#F2EDF8; --muted:#B3ABC2; --soft:#2F2B3A;
+  --butter:#F5D24F; --pink:#F59AB2; --mint:#93DDAA; --peach:#F2B488; --lilac:#B39DF5; --sky:#8ECFEF;
+  --good:#6FDB95; --bad:#FF8676; --shadow:#000;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--f-ui);background:var(--paper);color:var(--text)}
+header{padding:16px 16px 10px;max-width:1400px;margin:0 auto}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+h1{font-family:var(--f-disp);font-weight:800;font-size:clamp(22px,3vw,30px);letter-spacing:-.02em;margin:0}
+a{color:inherit}
+.back{font-size:14px;font-weight:600}
+p.nota{margin:6px 0 12px;font-size:14px;color:var(--muted);max-width:80ch}
+.preguntas{display:flex;flex-wrap:wrap;gap:6px}
+.preguntas button{font:inherit;font-size:13.5px;font-weight:600;padding:7px 12px;border:1.5px solid var(--ink);border-radius:99px;background:var(--card);color:var(--text);cursor:pointer}
+.preguntas button:hover{background:var(--soft)}
+.preguntas button[aria-pressed="true"]{background:var(--butter);color:#1C1A22}
+.preguntas button:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+#explica{font-size:14px;margin:10px 0 0;min-height:1.4em;max-width:90ch}
+#n{font-family:var(--f-num);font-size:12.5px;color:var(--muted);margin:4px 0 0;min-height:1.3em}
+#n b.aviso{color:var(--bad);font-family:var(--f-ui)}
+main{padding:0 16px 16px;max-width:1400px;margin:0 auto}
+.marco{border:1.5px solid var(--ink);border-radius:14px;overflow:hidden;background:var(--card);box-shadow:3px 3px 0 var(--shadow)}
+perspective-viewer{height:calc(100vh - 250px);min-height:440px;
+  --psp--background-color:var(--card);--psp--color:var(--text);
+  --psp-interface-monospace--font-family:var(--f-num);
+  --psp-datagrid--pos-cell--color:var(--good);--psp-datagrid--neg-cell--color:var(--bad);
+  --psp-charts--series--color:var(--lilac);
+  --psp-charts--series-1--color:#6A4BE0;--psp-charts--series-2--color:#E2577A;--psp-charts--series-3--color:#17803F;
+  --psp-charts--series-4--color:#1F68B5;--psp-charts--series-5--color:#C2410C;--psp-charts--series-6--color:#8A6A00}
+#estado{padding:24px;font-size:15px}
+@media (max-width:600px){
+  header{padding:12px 12px 8px}main{padding:0 12px 12px}
+  .preguntas{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+  .preguntas button{flex:none}
+  details.mas p.nota{margin-top:4px}
+  perspective-viewer{height:calc(100svh - 230px);min-height:420px}
+}
+details.mas summary{cursor:pointer;font-size:13.5px;color:var(--muted);margin:6px 0}
+@media (min-width:601px){details.mas summary{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="top"><h1>Explorador de candidatas</h1><a class="back" href="/">← Volver al Escáner</a></div>
+  <details class="mas" open><summary>Qué es esta tabla</summary><p class="nota">Una fila por acción y día: lo que el Escáner sabía al verla por primera vez (09:30–10:20 NY) y qué pasó después. Resultados en % brutos salvo donde dice <i>neto</i> (costos con comisión de Racional supuesta). Sin filas "dato rancio". Papel: no predice nada.</p></details>
+  <div class="preguntas" role="group" aria-label="Preguntas guardadas">
+    <button type="button" data-p="todas" aria-pressed="true">Todas</button>
+    <button type="button" data-p="aptas">¿Las aptas rinden distinto?</button>
+    <button type="button" data-p="perfiles">¿Y según cada perfil?</button>
+    <button type="button" data-p="promedio">¿Le ganan a la candidata promedio?</button>
+    <button type="button" data-p="noticia">¿Importa la noticia?</button>
+    <button type="button" data-p="dilucion">¿Y la dilución?</button>
+    <button type="button" data-p="medias">¿Medias 9/20 ordenadas?</button>
+    <button type="button" data-p="ruido">¿Ruido en StockTwits?</button>
+    <button type="button" data-p="dias">Día por día</button>
+    <button type="button" data-p="mapa">Mejor contra peor</button>
+  </div>
+  <p id="explica" aria-live="polite"></p>
+  <p id="n" aria-live="polite"></p>
+</header>
+<main><div class="marco"><perspective-viewer></perspective-viewer><div id="estado" hidden></div></div></main>
+<script>try { const t = localStorage.getItem("esc-tema"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+<script type="module">
+const CDN = "https://cdn.jsdelivr.net/npm/@perspective-dev";
+const q = new URLSearchParams(location.search);
+const DATOS = q.get("datos") || "https://raw.githubusercontent.com/jotaunospa/mesa/datos/";
+const estado = document.getElementById("estado");
+function falla(t) { estado.hidden = false; estado.textContent = t; document.querySelector("perspective-viewer").hidden = true; }
+
+const PROM = { hasta_1015: "avg", hasta_1015_neto: "avg", mejor_hasta_1015: "avg", peor_hasta_1015: "avg", hasta_cierre: "avg", vs_promedio_dia: "avg", ticker: "count" };
+const RES = ["ticker", "hasta_1015", "hasta_1015_neto", "mejor_hasta_1015", "peor_hasta_1015", "hasta_cierre"];
+const g = (campo, cols = RES) => ({ plugin: "Datagrid", group_by: [campo], split_by: [], filter: [], sort: [], columns: cols, aggregates: PROM });
+const PREGUNTAS = {
+  todas: { t: "Todas las candidatas. Toca un encabezado para ordenar.", c: { plugin: "Datagrid", group_by: [], split_by: [], filter: [], sort: [["dia", "desc"], ["visto", "asc"]], columns: ["dia", "ticker", "visto", "precio", "cambio_dia", "float_M", "dilucion", "noticia", "apta", "perfil_conservador", "perfil_momentum", "medias_9_20_vwap", "ruido_stocktwits", "hasta_1015", "hasta_1015_neto", "vs_promedio_dia", "hasta_cierre"], aggregates: {} } },
+  aptas: { t: "Promedio por dictamen del Escáner al primer avistamiento. La columna 'ticker' es cuántas hay en cada grupo.", campo: "apta", c: g("apta") },
+  perfiles: { t: "Veredicto del perfil Conservador en la foto del primer avistamiento (registro del viernes). Los días aún no registrados dicen 'sin dato'.", campo: "perfil_conservador", c: g("perfil_conservador") },
+  promedio: { t: "Diferencia contra la candidata promedio del mismo día hasta las 10:15 (puntos %, bruto). Positivo = le ganó al promedio.", campo: "apta", c: g("apta", ["ticker", "vs_promedio_dia", "hasta_1015", "hasta_1015_neto"]) },
+  noticia: { t: "Noticia confirmada contra no encontrada al primer avistamiento.", campo: "noticia", c: g("noticia") },
+  dilucion: { t: "Riesgo de dilución (SEC) contra lo que pasó después.", campo: "dilucion", c: g("dilucion") },
+  medias: { t: "EMA 9 > EMA 20 > VWAP al primer avistamiento (velas desde el premarket). 'sin dato': menos de 20 velas.", campo: "medias_9_20_vwap", c: g("medias_9_20_vwap") },
+  ruido: { t: "Mensajes de StockTwits en la última hora contra su ritmo normal ('alto' = 2 veces o más). Hay dato desde el 20-11.", campo: "ruido_stocktwits", c: g("ruido_stocktwits") },
+  dias: { t: "Resultado medio hasta las 10:15 de cada día. Un día malo puede mover todo el promedio.", campo: "dia", c: { plugin: "Y Bar", group_by: ["dia"], split_by: [], filter: [], sort: [], columns: ["hasta_1015"], aggregates: { hasta_1015: "avg" } } },
+  mapa: { t: "Cada punto es una candidata: cuánto llegó a dar a favor (vertical) contra cuánto se fue en contra (horizontal), hasta las 10:15.", c: { plugin: "X/Y Scatter", group_by: [], split_by: [], filter: [], sort: [], columns: ["peor_hasta_1015", "mejor_hasta_1015"], aggregates: {} } },
+};
+
+let filas;
+try {
+  await Promise.all([
+    import(`${CDN}/viewer@5.9.2/dist/cdn/perspective-viewer.js`),
+    import(`${CDN}/viewer-datagrid@5.9.2/dist/cdn/perspective-viewer-datagrid.js`),
+    import(`${CDN}/viewer-charts@5.9.2/dist/cdn/perspective-viewer-charts.js`),
+  ]);
+} catch (e) { falla("No se pudo cargar Perspective desde jsDelivr. Revisa la conexión y recarga."); throw e; }
+const perspective = (await import(`${CDN}/client@5.9.2/dist/cdn/perspective.js`)).default;
+try {
+  const r = await fetch(DATOS + "candidatas.json?t=" + Date.now());
+  if (!r.ok) throw new Error(r.status);
+  filas = await r.json();
+} catch (e) { falla("Todavía no hay candidatas.json en los datos (se arma al cierre de cada día)."); throw e; }
+
+const worker = await perspective.worker();
+// Esquema explícito: día y hora como texto (si no, Perspective los convierte a fecha en formato de EE.UU.).
+const tipos = {};
+filas.forEach(f => Object.entries(f).forEach(([k, v]) => { if (v != null && !tipos[k]) tipos[k] = typeof v === "number" ? "float" : "string"; }));
+tipos.dia = tipos.visto = tipos.ticker = "string";
+const tabla = await worker.table(tipos, { name: "candidatas" });
+await tabla.update(filas);
+const viewer = document.querySelector("perspective-viewer");
+const sis = matchMedia("(prefers-color-scheme: dark)");
+const oscuro = { get matches() { const t = document.documentElement.dataset.theme; return t ? t === "dark" : sis.matches; } };
+const tema = () => viewer.setAttribute("theme", oscuro.matches ? "Pro Dark" : "Pro Light");
+tema(); sis.addEventListener("change", tema);
+await viewer.load(worker);
+const explica = document.getElementById("explica"), nEl = document.getElementById("n");
+const dias = new Set(filas.map(f => f.dia));
+
+function cuenta(p) {
+  const P = PREGUNTAS[p];
+  if (!P.campo) { nEl.textContent = `${filas.length} filas · ${dias.size} días`; return; }
+  const c = {};
+  filas.forEach(f => { const k = f[P.campo] ?? "sin dato"; c[k] = (c[k] || 0) + 1; });
+  const partes = Object.entries(c).sort((a, b) => b[1] - a[1]);
+  const chicos = partes.filter(([, n]) => n < 30).map(([k]) => k);
+  nEl.innerHTML = partes.map(([k, n]) => `${k}: n=${n}`).join(" · ") +
+    (chicos.length ? ` — <b class="aviso">primeras lecturas, no concluye</b> en ${chicos.length === partes.length ? "todos los grupos" : chicos.join(", ")} (n &lt; 30)` : "");
+}
+async function abrir(p) {
+  document.querySelectorAll(".preguntas button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.p === p)));
+  explica.textContent = PREGUNTAS[p].t;
+  cuenta(p);
+  await viewer.restore({ table: "candidatas", settings: false, title: document.querySelector(`.preguntas button[data-p="${p}"]`).textContent, theme: oscuro.matches ? "Pro Dark" : "Pro Light", ...PREGUNTAS[p].c });
+}
+document.querySelectorAll(".preguntas button").forEach(b => b.addEventListener("click", () => abrir(b.dataset.p)));
+if (matchMedia("(max-width:600px)").matches) document.querySelector("details.mas").open = false;
+await abrir(PREGUNTAS[q.get("p")] ? q.get("p") : "todas");
+window.__listo = true;
+</script>
+</body>
+</html>

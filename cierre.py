@@ -41,10 +41,37 @@ def primera_aparicion(dia: Path) -> dict:
     return vistas
 
 
+def velas_cboe(tk: str):
+    """Respaldo si Yahoo no trae velas: Cboe 1 min, solo sesión regular.
+
+    Comparado el 19-11 con Yahoo (AAPL y SOFI): Cboe rotula cada vela con el FIN del minuto (su 09:31
+    = la 09:30 de Yahoo, mismos open y close), así que se corre 1 min. El volumen NO es el consolidado
+    (09:30 de AAPL: 0,75 M contra 3,4 M), por eso estas velas sirven para precios, no para VWAP ni RVOL.
+    """
+    import pandas as pd
+    from datetime import timedelta
+    from lib.fuentes_openbb import cboe_velas_1m
+    c = cboe_velas_1m(tk)
+    if not c.get("velas"):
+        return None, c.get("error")
+    idx = [datetime.fromisoformat(x[0]).replace(tzinfo=NY) - timedelta(minutes=1) for x in c["velas"]]
+    df = pd.DataFrame([x[1:] for x in c["velas"]], index=pd.DatetimeIndex(idx),
+                      columns=["Open", "High", "Low", "Close", "Volume"])
+    return df.dropna(subset=["Open", "High", "Low", "Close"]), None
+
+
 def medir(tk: str, desde_iso: str, precio0: float, carpeta_velas: Path) -> dict:
-    v = yf.Ticker(tk).history(period="1d", interval="1m", prepost=True)
+    try:
+        v = yf.Ticker(tk).history(period="1d", interval="1m", prepost=True)
+    except Exception:
+        v = None
     if v is None or v.empty:
-        return {"estado": "sin velas"}
+        cb, motivo = velas_cboe(tk)
+        if cb is None or cb.empty:
+            return {"estado": "sin velas", "motivo": f"Yahoo sin velas; Cboe: {motivo or 'sin velas'}"}
+        res = _resultado(cb, desde_iso, precio0)
+        res["fuente_velas"] = "Cboe (respaldo: Yahoo sin velas; sin premarket, volumen parcial)"
+        return res
     v.index = v.index.tz_convert(NY)
     with gzip.open(carpeta_velas / f"{tk}.json.gz", "wt") as fh:
         json.dump([[i.isoformat(), r(x.Open, 4), r(x.High, 4), r(x.Low, 4), r(x.Close, 4), int(x.Volume)]
@@ -52,6 +79,10 @@ def medir(tk: str, desde_iso: str, precio0: float, carpeta_velas: Path) -> dict:
     # Día completo para el gráfico del dashboard (mismo formato que en la ventana).
     vv = carpeta_velas.parent / "velas_vivo"; vv.mkdir(exist_ok=True)
     (vv / f"{tk}.json").write_text(json.dumps(velas_compactas(v), separators=(",", ":")))
+    return _resultado(v, desde_iso, precio0)
+
+
+def _resultado(v, desde_iso: str, precio0: float) -> dict:
     desde = datetime.fromisoformat(desde_iso)
     reg = solo_regular(v)
     tras = reg[reg.index >= desde]

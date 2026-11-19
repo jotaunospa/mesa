@@ -213,6 +213,8 @@ svg.mini{width:100%;height:38px;display:block}
 .sem.stop i:nth-child(1){background:#FF5B4F}
 .sem.wait i:nth-child(2){background:#FFC83D}
 .sem.ready i:nth-child(3){background:#4CD681;animation:blink 1.8s ease-in-out infinite}
+.sem.nodata i{background:#8A8494}
+.vchip.nd{background:var(--soft);color:var(--text)}
 .verdict small{font-size:11.5px;color:var(--muted);line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .dcell .lab{display:none}
 .verdict small.mas{display:block;font-weight:700}
@@ -585,7 +587,7 @@ function noticiaDeHoy(f) {
   return (f.noticias || []).find(n => esReciente(n, f)) || null;
 }
 const ORIGEN = {google: "Google Noticias", nasdaq: "Nasdaq", yahoo: "Yahoo"};
-function semClase(f) { return f.apto ? "ready" : "stop"; }
+function semClase(f) { return f.apto === true ? "ready" : f.apto === false ? "stop" : "nodata"; }
 
 /* ── lectura en palabras (determinista; nunca dice si va a subir) ── */
 function lecturas(f) {
@@ -620,7 +622,7 @@ function render() {
   const h = tl === "caliente" ? 52 : tl === "tibia" ? 32 : 14;
   const m = $("#merc"); m.setAttribute("y", 62 - h); m.setAttribute("height", h + 8);
   // conteo
-  const ok = s.filas.filter(f => f.apto).length, no = s.filas.length - ok;
+  const ok = s.filas.filter(f => f.apto === true).length, no = s.filas.filter(f => f.apto === false).length;
   $("#n-ok").textContent = ok; $("#n-no").textContent = no;
   $("#b-ok").style.width = (ok / Math.max(1, s.filas.length) * 100) + "%";
   $("#b-no").style.width = (no / Math.max(1, s.filas.length) * 100) + "%";
@@ -631,7 +633,7 @@ function render() {
   $("#live span").textContent = enVivo ? "en vivo" : "historial";
   const mj = $("#mesa-json"); mj.href = dURL(`${S.dia}/mesa.json`); mj.setAttribute("download", `mesa-${S.dia}.json`); mj.hidden = S.dia < "2026-11-06"; $("#mesa-copiar").hidden = mj.hidden;
 
-  const filas = s.filas.filter(f => S.filtro === "todas" || (S.filtro === "aptas" ? f.apto : !f.apto));
+  const filas = s.filas.filter(f => S.filtro === "todas" || (S.filtro === "aptas" ? f.apto === true : f.apto !== true));
   const clave = S.dia + "/" + S.fotos[S.i] + "/" + S.filtro;
   box.classList.toggle("anim", clave !== S.clave); S.clave = clave; box.removeAttribute("aria-busy");
   $("#foto").setAttribute("aria-valuetext", `Foto de las ${hh} NY, ${S.i + 1} de ${S.fotos.length}`);
@@ -645,8 +647,9 @@ function render() {
 function fila(f, i) {
   const fx = f.float_cruce || {}, rng = fx.rango_M;
   const fM = v => fmt(v, v < 10 ? 2 : 1), fl = !rng ? "—" : fM(rng[0]) === fM(rng[1]) ? fM(rng[0]) + " M" : `${fM(rng[0])}–${fM(rng[1])} M`;
-  const motivo = f.apto ? (f.cautela || []).length ? (f.cautela.length + " cautela" + (f.cautela.length > 1 ? "s" : "")) : "sin cautelas" : (f.no_apto_por || [])[0] || "";
-  const motivoLargo = f.apto ? (f.cautela || []).join(" · ") : (f.no_apto_por || []).join(" · ");
+  const sd = f.apto == null && (f.sin_dato_por || []).length;
+  const motivo = f.apto ? (f.cautela || []).length ? (f.cautela.length + " cautela" + (f.cautela.length > 1 ? "s" : "")) : "sin cautelas" : sd ? f.sin_dato_por[0] : (f.no_apto_por || [])[0] || "";
+  const motivoLargo = f.apto ? (f.cautela || []).join(" · ") : sd ? f.sin_dato_por.join(" · ") : (f.no_apto_por || []).join(" · ");
   const hodV = f.dayHigh && f.dayLow && f.dayHigh > f.dayLow ? (f.price - f.dayLow) / (f.dayHigh - f.dayLow) : null;
   const vwV = f.sobre_vwap_pct == null ? null : .5 + Math.max(-10, Math.min(10, f.sobre_vwap_pct)) / 20;
   const dilV = {baja: .17, media: .5, alta: .83}[f.dil];
@@ -670,7 +673,7 @@ function fila(f, i) {
       <span class="c-mini">${mini(f.velas15)}</span>
       <span class="dcell c-sq"><small class="lab">Short</small><small style="font-size:12px;color:var(--text)">${f.short_pct_float == null ? "—" : fmt(f.short_pct_float, 1) + "%"}</small><small>short</small></span>
       <span class="dcell c-dil"><small class="lab">Dilución</small>${dial(dilV, "dil")}<small>${f.dil || "—"}</small></span>
-      <span class="verdict"><span class="vchip ${f.apto ? "ok" : "no"}">${f.apto ? "APTA" : "NO APTA"}</span><small title="${esc(motivoLargo)}">${esc(motivo)}</small>${!f.apto && (f.no_apto_por || []).length > 1 ? `<small class="mas">y ${f.no_apto_por.length - 1} motivo${f.no_apto_por.length > 2 ? "s" : ""} más</small>` : ""}</span>
+      <span class="verdict"><span class="vchip ${f.apto ? "ok" : sd ? "nd" : "no"}">${f.apto ? "APTA" : sd ? "SIN DATO" : "NO APTA"}</span><small title="${esc(motivoLargo)}">${esc(motivo)}</small>${!f.apto && (f.no_apto_por || []).length > 1 ? `<small class="mas">y ${f.no_apto_por.length - 1} motivo${f.no_apto_por.length > 2 ? "s" : ""} más</small>` : ""}</span>
     </button>
     ${hd}
     <div class="det" id="d-${f.ticker}" hidden></div>
@@ -694,7 +697,9 @@ function detalle(f) {
   const fx = f.float_cruce || {}, sec = f.sec || {}, nq = f.nasdaq || {};
   const port = fx.sec_portada || f.acciones_portada_sec;
   const L = lecturas(f);
-  const dic = f.apto
+  const dic = f.apto == null && (f.sin_dato_por || []).length
+    ? `<div class="panel box"><h3><span class="sem nodata"><i></i><i></i><i></i></span> Sin dato</h3><p class="small">Falta un dato que decide una regla, así que no hay dictamen. No es "no apta": es "no se sabe".</p><ul>${f.sin_dato_por.map(c => `<li>${esc(c)}</li>`).join("")}</ul>${(f.cautela || []).length ? `<p class="small muted">Además: ${f.cautela.map(esc).join(" · ")}</p>` : ""}</div>`
+    : f.apto
     ? `<div class="panel box ok"><h3><span class="sem ready"><i></i><i></i><i></i></span> Apta para evaluar</h3><p class="small">Pasó todos los filtros automáticos. Ahora decide la Mesa con tus reglas (perfil, setup, stop).</p>${(f.cautela || []).length ? `<ul>${f.cautela.map(c => `<li>${esc(c)}</li>`).join("")}</ul>` : ""}</div>`
     : `<div class="panel box no"><h3><span class="sem stop"><i></i><i></i><i></i></span> No apta</h3><ul>${(f.no_apto_por || []).map(c => `<li>${esc(c)}</li>`).join("")}</ul>${(f.cautela || []).length ? `<p class="small muted">Además: ${f.cautela.map(esc).join(" · ")}</p>` : ""}</div>`;
   return `<div class="det-g">

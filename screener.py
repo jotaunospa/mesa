@@ -612,12 +612,14 @@ def _min_desde(hhmmss: str, ahora: datetime):
 
 
 def dictamen(f: dict, ahora: datetime) -> dict:
-    no, ojo = [], []
+    # "Sin dato" no es "no apta" (fase 4, 19-11): si falta un dato que decide una regla, la fila queda
+    # SIN DATO (apto = None) con el porqué, nunca NO APTA por defecto.
+    no, ojo, falta = [], [], []
     fx = f["float_cruce"]
     rng = fx.get("rango_M")
     fuentes = f"Yahoo {fx['yahoo_M']} M / TradingView {fx['tradingview_M']} M"
     if not rng:
-        no.append("ninguna fuente informa float")
+        falta.append("ninguna fuente informa el float (Yahoo, TradingView ni la SEC)")
     else:
         bajo = [v * 1e6 < FLOAT_MIN_MESA for v in rng]
         if all(bajo):
@@ -642,7 +644,9 @@ def dictamen(f: dict, ahora: datetime) -> dict:
     if not f["en_filtro_mesa"]:
         no.append("fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)")
     edad = (f.get("meta") or {}).get("edad_s")
-    if edad is None or edad > EDAD_MAX_S:
+    if edad is None:
+        falta.append("Nasdaq no informó la hora de la última operación (no se puede medir la liquidez)")
+    elif edad > EDAD_MAX_S:
         no.append(f"sin operaciones hace {edad} s: poco líquida para entrar")
     if f["spread_pct"] is not None and f["spread_pct"] > SPREAD_MAX:
         no.append(f"spread {f['spread_pct']}% en Nasdaq (> {SPREAD_MAX}%): entrar y salir cuesta demasiado")
@@ -663,10 +667,10 @@ def dictamen(f: dict, ahora: datetime) -> dict:
         ojo.append(f"precio de Yahoo y Nasdaq difieren más de 3% (Yahoo {f['price']}, Nasdaq {f['nasdaq'].get('precio')})")
     if f["rvol_hora"] is None:
         ojo.append("rvol por hora no calculable")
-    apto = not no
-    lectura = ("APTA para evaluar con las reglas de la Mesa." if apto else
-               "NO APTA: " + no[0] + ("" if len(no) == 1 else f" (y {len(no) - 1} motivo(s) más)."))
-    return {"apto": apto, "no_apto_por": no, "cautela": ojo, "lectura": lectura}
+    apto = False if no else (None if falta else True)
+    lectura = ("NO APTA: " + no[0] + ("" if len(no) == 1 else f" (y {len(no) - 1} motivo(s) más).") if no else
+               "SIN DATO: " + "; ".join(falta) + "." if falta else "APTA para evaluar con las reglas de la Mesa.")
+    return {"apto": apto, "no_apto_por": no, "sin_dato_por": falta, "cautela": ojo, "lectura": lectura}
 
 
 # ───────────────────────── temperatura ─────────────────────────

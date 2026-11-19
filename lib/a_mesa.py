@@ -67,7 +67,8 @@ def _noticia(f: dict, ahora: datetime) -> tuple[str, str, bool]:
         if ev.get("validas"):
             t = str(ev["validas"][0].get("titulo") or "")
             return _categoria(t), t, True
-        return "ninguna", "", ev.get("estado") == "sin_dato"
+        # Las fuentes no respondieron: "sin_dato", no "ninguna" (sin dato no es "sin noticia"; 19-11).
+        return ("sin_dato" if ev.get("estado") == "sin_dato" else "ninguna"), "", False
     return _noticia_yahoo(f, ahora)
 
 
@@ -168,11 +169,11 @@ def fila_mesa(f: dict, ahora: datetime, velas: list | None) -> dict:
         "rvol": _s(None if rv is None else round(rv, 1)), "floatM": _s(flo),
         "floatMinM": _s((fx.get("rango_M") or [None, None])[0]), "floatMaxM": _s((fx.get("rango_M") or [None, None])[1]),
         "dayLow": _s(f.get("dayLow")), "dayHigh": _s(f.get("dayHigh")),
-        "dil": {"alta": "alto", "media": "medio", "baja": "bajo"}.get(f.get("dil"), "medio"),
+        "dil": {"alta": "alto", "media": "medio", "baja": "bajo"}.get(f.get("dil"), "sindato"),
         "vwap": "na" if sv is None else ("sobre" if sv >= 0 else "bajo"),
         "news": nw, "deal": "", "headline": hl[:90], "halt": _pausa(f, ahora),
         "unsure": unsure, "confirm": False,
-        "esc": {"apto": None if f.get("apto") is None else bool(f.get("apto")), "motivos": f.get("no_apto_por") or [], "cautela": f.get("cautela") or [],
+        "esc": {"apto": None if f.get("apto") is None else bool(f.get("apto")), "motivos": f.get("no_apto_por") or [], "sinDato": f.get("sin_dato_por") or [], "cautela": f.get("cautela") or [],
                 "foto": ahora.strftime("%H:%M"), "spread": f.get("spread_pct"), "url": URL},
     }
     if f.get("niveles"):

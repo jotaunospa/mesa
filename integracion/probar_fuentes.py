@@ -29,3 +29,15 @@ for t, c in out["cboe"].items():
 print("finra:", json.dumps(out["finra"], ensure_ascii=False)[:400])
 print("screener:", out["screener"].get("error") or out["screener"]["n"], json.dumps(out["screener"].get("muestra"), ensure_ascii=False)[:300])
 print("stocktwits:", json.dumps(out["stocktwits"], ensure_ascii=False)[:400])
+
+# ¿jsDelivr sirve la rama datos? (tope de 50 MB por rama en su CDN de GitHub)
+import urllib.request
+for url in ["https://cdn.jsdelivr.net/gh/jotaunospa/mesa@datos/index.json",
+            "https://data.jsdelivr.com/v1/packages/gh/jotaunospa/mesa@datos"]:
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url, headers=F.UA), timeout=30) as r:
+            cuerpo = r.read()
+            print(f"jsdelivr {url}: {r.status}, {len(cuerpo)} bytes · {cuerpo[:160]!r}")
+    except Exception as e:
+        cuerpo = getattr(e, "read", lambda: b"")()[:200]
+        print(f"jsdelivr {url}: {type(e).__name__} {e} · {cuerpo!r}")

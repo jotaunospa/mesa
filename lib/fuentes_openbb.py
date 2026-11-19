@@ -17,8 +17,9 @@ Cada función devuelve datos con su "fuente" o {"error": motivo}. Nunca un valor
 from __future__ import annotations
 
 import json
+import urllib.error
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 NY = ZoneInfo("America/New_York")
@@ -29,8 +30,16 @@ SESIONES = {"market": "currentMarket", "pre_market": "premarket", "after_hours":
 
 def _get(url: str, data: bytes | None = None, headers: dict | None = None, timeout: int = 20):
     req = urllib.request.Request(url, data=data, headers=dict(UA, **(headers or {})))
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return json.loads(r.read() or b"null"), r.status
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return json.loads(r.read() or b"null"), r.status
+    except urllib.error.HTTPError as e:
+        # El motivo que da el servidor (FINRA explica qué campo rechaza) vale más que solo el código.
+        try:
+            cuerpo = e.read().decode("utf-8", "replace")[:160]
+        except Exception:
+            cuerpo = ""
+        raise RuntimeError(f"HTTP {e.code} {cuerpo}".strip()) from None
 
 
 def _num(x):
@@ -73,7 +82,12 @@ def nasdaq_movers(sesion: str = "pre_market", limite: int = 50) -> dict:
 def cboe_velas_1m(tk: str) -> dict:
     """{"fuente", "velas": [[iso, o, h, l, c, vol], ...]} del día en curso, o {"error"}."""
     try:
-        js, _ = _get(f"https://cdn.cboe.com/api/global/delayed_quotes/charts/intraday/{tk.upper()}.json")
+        url = f"https://cdn.cboe.com/api/global/delayed_quotes/charts/intraday/{tk.upper()}.json"
+        try:
+            js, _ = _get(url)
+        except RuntimeError:
+            # Segundo intento como lo pide su propio sitio (el CDN rechaza pedidos sin origen).
+            js, _ = _get(url, headers={"Referer": "https://www.cboe.com/", "Origin": "https://www.cboe.com"})
         d = (js or {}).get("data") or []
         velas = []
         for x in d:
@@ -94,10 +108,20 @@ def finra_short(tks: list[str]) -> dict:
               "averageDailyVolumeQuantity", "daysToCoverQuantity", "changePercent", "revisionFlag", "stockSplitFlag"]
     syms = ["".join(c for c in t if c.isalnum()).upper() for t in tks]
     try:
-        body = json.dumps({"fields": campos, "domainFilters": [{"fieldName": "symbolCode", "values": syms}],
-                           "sortFields": ["-settlementDate"], "offset": 0, "limit": 5000}).encode()
-        filas, st = _get("https://api.finra.org/data/group/otcMarket/name/consolidatedShortInterest", data=body,
-                         headers={"Accept": "application/json", "Content-Type": "application/json"})
+        # Igual que OpenBB: sin sortFields (FINRA respondió 400 con él); se ordena aquí. Se acota a 120 días
+        # para no pasar el tope de 5.000 filas; si FINRA rechaza el filtro de fecha, se pide sin él.
+        url = "https://api.finra.org/data/group/otcMarket/name/consolidatedShortInterest"
+        hdr = {"Accept": "application/json", "Content-Type": "application/json"}
+        base = {"fields": campos, "domainFilters": [{"fieldName": "symbolCode", "values": syms}], "offset": 0, "limit": 5000}
+        desde = (datetime.now(NY) - timedelta(days=120)).date().isoformat()
+        hasta = datetime.now(NY).date().isoformat()
+        try:
+            filas, st = _get(url, data=json.dumps(dict(base, dateRangeFilters=[
+                {"fieldName": "settlementDate", "startDate": desde, "endDate": hasta}])).encode(), headers=hdr)
+        except RuntimeError as e:
+            if "HTTP 400" not in str(e):
+                raise
+            filas, st = _get(url, data=json.dumps(base).encode(), headers=hdr)
         if st == 204 or not filas:
             return {"error": "FINRA no tiene interés en corto para esas acciones"}
         out: dict = {}

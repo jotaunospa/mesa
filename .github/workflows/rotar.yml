@@ -42,4 +42,5 @@ jobs:
           python analisis/archivo.py rotar "$DATOS" --dias "${{ inputs.dias || '30' }}" ${{ inputs.probar && '--probar' || '' }} | tee rotacion.json
       - name: Índice y push
         if: ${{ !inputs.probar }}
-        run: python -c "import screener as s; s.escribir_indice(); s.publicar('rotación: días viejos a Releases')"
+        run: |
+          python -c "import screener as s; s.escribir_indice(); s.publicar('rotación - días viejos a Releases')"

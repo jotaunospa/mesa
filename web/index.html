@@ -506,7 +506,16 @@ const S = {modo: "dia", pmDisp: false, pmFotos: [], pmI: 0, pmSnap: null, idx: n
 // llegamos a 11 GB de 10 en Vercel). El parámetro t evita el caché de 5 min de GitHub.
 const DATOS = new URLSearchParams(location.search).get("datos") || "https://raw.githubusercontent.com/jotaunospa/mesa/datos/";
 const dURL = (u) => /^https?:/.test(u) ? u : DATOS + u.replace(/^\//, "");
-async function getJSON(u) { u = dURL(u); const r = await fetch(u + (u.includes("?") ? "&" : "?") + "t=" + Date.now()); if (!r.ok) throw new Error(r.status + " " + u); return r.json(); }
+// Días ya cerrados (antes de ayer): jsDelivr, que cachea y aliviana a GitHub. Hoy y ayer: raw, sin caché
+// (cierre.py todavía puede reescribir los resultados de ayer en la noche). Con ?datos= se usa solo esa base.
+const JSD = "https://cdn.jsdelivr.net/gh/jotaunospa/mesa@datos/";
+const diaArchivo = (u) => { const m = /^\/?(20\d\d-\d\d-\d\d)\//.exec(u); return !!m && m[1] <= new Intl.DateTimeFormat("en-CA", {timeZone: "America/New_York"}).format(new Date(Date.now() - 2 * 864e5)); };
+async function getJSON(u) {
+  const cdn = !new URLSearchParams(location.search).get("datos") && !/^https?:/.test(u) && diaArchivo(u);
+  // Si jsDelivr falla una vez (por ejemplo, la rama supera su tope de tamaño), se usa raw el resto de la visita.
+  if (cdn && !getJSON.sinCdn) { try { const r = await fetch(JSD + u.replace(/^\//, "")); if (r.ok) return r.json(); } catch (e) {} getJSON.sinCdn = true; }
+  u = dURL(u); const r = await fetch(u + (u.includes("?") ? "&" : "?") + "t=" + Date.now()); if (!r.ok) throw new Error(r.status + " " + u); return r.json();
+}
 
 async function cargarIndice() {
   S.idx = await getJSON("index.json");

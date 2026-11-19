@@ -5,6 +5,8 @@ set -euo pipefail
 DATOS=$1; MESA=$2; OUT=$3; shift 3
 AQUI=$(cd "$(dirname "$0")" && pwd)
 mkdir -p "$OUT/srv"
+# Días que ya rotaron a los Releases (archivo.py): se traen si faltan. Sin gh o sin red, sigue con lo que hay.
+python3 "$AQUI/archivo.py" completar "$DATOS" >/dev/null 2>&1 || true
 python3 "$AQUI/filas.py" "$DATOS" "$OUT/srv/filas.json" "$@"
 cp "$MESA" "$OUT/srv/mesa-test.html"
 (cd "$OUT/srv" && python3 -m http.server 8766 >/dev/null 2>&1) & SRV=$!

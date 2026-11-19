@@ -106,3 +106,12 @@ dice arriba y no propone ajustes de entrada), "no concluye" (cruza el 0; se revi
 - `rancias.py`: tabla por día en el informe ("Estado del sistema").
 - Recalculo del informe del 13-11: `informes/2026-11-13-correccion.md` (la ventana neta pasa de -5.28% a
   -3.87% promedio; ninguna conclusión cambia).
+
+## Rotación de `datos` (19-11)
+
+- `archivo.py rotar`: deja los últimos 30 días de mercado en `datos`; cada día anterior se sube como
+  `AAAA-MM-DD.tar.gz` al Release `datos-AAAA-MM` y solo se borra de la carpeta si el archivo quedó arriba
+  con el mismo tamaño. Lo corre `.github/workflows/rotar.yml` los sábados (con `probar` para ver qué haría).
+- `archivo.py completar DIR`: trae de los Releases los días que falten. `semana.sh` lo llama al empezar.
+- La historia de git no se reescribe (hay procesos escribiendo en vivo): se achica lo que se clona y lo
+  que lee la web. El Escáner muestra los días que quedan en `datos`.

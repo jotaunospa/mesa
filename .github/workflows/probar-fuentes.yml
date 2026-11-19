@@ -1,0 +1,28 @@
+name: Probar fuentes de OpenBB
+
+# Prueba manual de lib/fuentes_openbb.py (Nasdaq marketmovers, Cboe 1 min, FINRA short, Nasdaq screener).
+# No escribe en datos: deja fuentes.json como artefacto.
+on:
+  workflow_dispatch:
+    inputs:
+      tickers:
+        description: "Acciones para Cboe y FINRA, separadas por espacio"
+        default: "AAPL SOFI GME"
+
+permissions:
+  contents: read
+
+jobs:
+  probar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: python integracion/probar_fuentes.py ${{ inputs.tickers }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fuentes
+          path: fuentes.json

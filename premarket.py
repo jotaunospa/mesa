@@ -32,6 +32,7 @@ from zoneinfo import ZoneInfo
 
 from lib import noticias as N
 from lib.encadenar import lanzar
+from lib import fuentes_openbb as F
 
 NY = ZoneInfo("America/New_York")
 DATOS = Path(os.environ.get("DATOS", "datos"))
@@ -115,7 +116,14 @@ def foto() -> dict:
 
     with ThreadPoolExecutor(6) as ex:
         filas = list(ex.map(lambda x: _seguro(fila, x), lista))
+    # Contraste (fase 3, 19-11): lista "most advanced" de Nasdaq.com para la misma sesión, como la pide OpenBB.
+    # Solo se guarda para medir si coincide con TradingView y si trae precios de premarket reales; no cambia la lista.
+    try:
+        movers = F.nasdaq_movers("pre_market" if SES["nasdaq"] == "pre" else "after_hours", 50)
+    except Exception as e:
+        movers = {"fuente": "Nasdaq marketmovers", "error": f"{type(e).__name__}: {e}"[:200]}
     return {"hora_ny": ahora.isoformat(timespec="seconds"), "version": 1, "sesion": os.environ.get("SESION", "pre"),
+            "nasdaq_movers": movers,
             "aviso": "Lista y precios de TradingView con 15 min de atraso; volumen/máximo/mínimo de Nasdaq al momento de la foto.",
             "criterio": f"{SES['carpeta']} ≥ {CAMBIO_MIN}% y volumen ≥ {VOL_MIN:,}; NASDAQ, NYSE y AMEX; acciones comunes; hasta {N_MAX}",
             "filas": filas, "duracion_s": round(time.time() - t0, 1)}

@@ -42,6 +42,21 @@ from lib.ema import ema
 MIN_N = 30
 GRUPOS = ("ordenado", "no ordenado", "sin dato")
 GRUPOS_CX = ("▲ sobre", "▼ bajo", "sin cruce", "sin dato")
+GRUPOS_ST = ("ruido alto", "ruido normal", "sin dato")
+
+
+def ruido(datos: Path, dia: str, hora: str, tk: str) -> str:
+    """StockTwits en la foto del setup (desde el 20-11): alto = ≥ 2 veces su ritmo normal o flujo saturado."""
+    p = datos / dia / f"snap-{hora.replace(':', '')}.json"
+    if not p.exists():
+        return "sin dato"
+    for f in json.loads(p.read_text()).get("filas", []):
+        if f["ticker"] == tk:
+            st = f.get("stocktwits") or {}
+            if st.get("error") or ("cambio" not in st and not st.get("saturado")):
+                return "sin dato"
+            return "ruido alto" if st.get("saturado") or (st.get("cambio") or 0) >= 2 else "ruido normal"
+    return "sin dato"
 
 
 def ultimo_cruce(v, entra: str):
@@ -132,11 +147,12 @@ def main(verd, datos, sal_json, sal_md):
         vistos.add((r["dia"], r["tk"]))
         grupo, val = estado_medias(v, o["entra"])
         cx, hcx = ultimo_cruce(v, o["entra"])
+        rd = ruido(datos, r["dia"], r["hora"], r["tk"])
         sp = X.spread(datos, r["dia"], r["hora"], r["tk"])
         cost = C.ida_y_vuelta(o["e"], o["x"], sp)
         R = o["e0"] - o["stop"]
         ops.append({"dia": r["dia"], "hora": r["hora"], "tk": r["tk"], "entra": o["entra"], "motivo": o["motivo"],
-                    "grupo": grupo, "medias": val, "cruce": cx,
+                    "grupo": grupo, "medias": val, "cruce": cx, "ruido": rd,
                     "cruce_min_antes": None if hcx is None else minutos(hcx, o["entra"]), "cumple_reglas": bool(s.get("ok")), "R_bruto": o["R_bruto"],
                     "R_neto": None if cost is None else round(o["R_bruto"] - cost / 100 * o["e"] / R, 2)})
     res = {}
@@ -151,10 +167,12 @@ def main(verd, datos, sal_json, sal_md):
         res_cx[g] = {"bruto": metricas([x["R_bruto"] for x in L]),
                      "neto": metricas([x["R_neto"] for x in L if x["R_neto"] is not None]),
                      "min_antes_mediana": mins[len(mins) // 2] if mins else None}
+    res_st = {g: {"bruto": metricas([x["R_bruto"] for x in ops if x["ruido"] == g]),
+                  "neto": metricas([x["R_neto"] for x in ops if x["ruido"] == g and x["R_neto"] is not None])} for g in GRUPOS_ST}
     dias = sorted({x["dia"] for x in ops})
     mes = (dias[-1] if dias else "")[:7]
     nh = contador(mes) if mes else 0
-    json.dump({"variante": "ema-ordenada", "ops": ops, "resumen": res, "resumen_cruce": res_cx, "hipotesis_mes": nh}, open(sal_json, "w"),
+    json.dump({"variante": "ema-ordenada", "ops": ops, "resumen": res, "resumen_cruce": res_cx, "resumen_ruido": res_st, "hipotesis_mes": nh}, open(sal_json, "w"),
               ensure_ascii=False, indent=1)
 
     chica = any(0 < res[g]["bruto"]["n"] < MIN_N for g in ("ordenado", "no ordenado"))
@@ -185,6 +203,16 @@ def main(verd, datos, sal_json, sal_md):
         mm = res_cx[g]["min_antes_mediana"]
         md.append(f"| {g} | {fmt(res_cx[g]['bruto'])} | {fmt(res_cx[g]['neto'])} | {'—' if mm is None else mm} |")
     md += ["", "\"sin cruce\": no hubo cruce desde que existe la EMA 20 ese día. \"sin dato\": menos de 20 velas antes de entrar.", ""]
+    md += ["### Ruido social de StockTwits al momento del setup", "",
+           "Mensajes de la última hora contra el ritmo normal de esa acción (lib/stocktwits.py). \"ruido alto\": 2 veces o más, "
+           "o flujo saturado. Solo se mide: no dice nada de calidad. Hay dato desde el 20-11.", ""]
+    if any(0 < res_st[g]["bruto"]["n"] < MIN_N for g in GRUPOS_ST[:2]) or not any(res_st[g]["bruto"]["n"] for g in GRUPOS_ST[:2]):
+        md += ["**Primeras lecturas, no concluye** (n < 30 en algún grupo).", ""]
+    md += ["| Ruido | n bruto | acierto | R medio | factor de ganancia | n neto | acierto | R medio | factor de ganancia |",
+           "|---|---|---|---|---|---|---|---|---|"]
+    for g in GRUPOS_ST:
+        md.append(f"| {g} | {fmt(res_st[g]['bruto'])} | {fmt(res_st[g]['neto'])} |")
+    md.append("")
     cnt = Counter(x["grupo"] for x in ops)
     if ops:
         md.append("<details><summary>Operaciones (" + ", ".join(f"{g}: {cnt[g]}" for g in GRUPOS) + ")</summary>\n")

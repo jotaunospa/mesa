@@ -1,19 +1,9 @@
 {
   "cleanUrls": true,
-  "headers": [
-    {
-      "source": "/(.*)\\.json",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- .",
+  "git": {
+    "deploymentEnabled": {
+      "datos": false
     }
-  ],
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- index.html api.html vercel.json .vercelignore"
+  }
 }

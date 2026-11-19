@@ -1,0 +1,32 @@
+name: Separar la web de los datos (una vez)
+
+# Saca de la rama datos las copias viejas de la página (index.html, api.html, vercel.json, .vercelignore en la
+# raíz) y deja datos/web/vercel.json, que le dice a Vercel que no despliegue esta rama. Se corre una vez,
+# después de cambiar en Vercel la rama de producción a main y la carpeta raíz a web.
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: datos-push
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  separar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      DATOS: ${{ github.workspace }}/datos
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: .github/actions-datos.sh
+      - run: git -C datos rm -q --ignore-unmatch index.html api.html vercel.json .vercelignore
+      - run: python -c "import screener as s; s.publicar('web separada de los datos')"

@@ -54,7 +54,6 @@ RANCIA_S = 900            # cotización con más de 15 min se descarta de la fot
 MAX_FILAS = 20            # filas con detalle completo por foto
 INICIO, FIN, PASO_MIN = (9, 31), (10, 20), 3   # ventana 09:35–10:15 NY + margen (antes de 9:30 Yahoo muestra el % de ayer)
 DIA_FIN, PASO_DIA = (15, 58), 10
-WEB_ARCHIVOS = sorted(p.name for p in (Path(__file__).parent / "web").iterdir() if p.is_file()) if (Path(__file__).parent / "web").exists() else []
 class FotoTrabada(Exception):
     pass
 
@@ -815,9 +814,6 @@ def publicar(msg: str) -> None:
         return
     g = ["git", "-C", str(DATOS)]
     subprocess.run(g + ["add", "-A"], check=False)
-    if not os.environ.get("PUBLICAR_WEB"):  # el dashboard (web/) lo sube solo publicar-web.yml
-        for f in WEB_ARCHIVOS:
-            subprocess.run(g + ["reset", "-q", "--", f], capture_output=True)
     if subprocess.run(g + ["diff", "--cached", "--quiet"]).returncode == 0:
         return
     subprocess.run(g + ["commit", "-qm", msg], check=False)

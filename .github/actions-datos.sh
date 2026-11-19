@@ -9,7 +9,8 @@ else
 fi
 git -C datos config user.name "mesa-bot"
 git -C datos config user.email "mesa-bot@users.noreply.github.com"
-# El dashboard vive en main/web y se publica junto a los datos (Vercel sirve la rama datos).
-# El dashboard (web/) lo copia solo publicar-web.yml (PUBLICAR_WEB=1): un proceso largo con una copia vieja
-# lo pisaría y además chocaría en el rebase con la versión nueva.
-if [ -n "${PUBLICAR_WEB:-}" ]; then cp -r web/. datos/; fi
+# La web ya no vive en datos: Vercel publica main/web (rama de producción main, carpeta raíz web) y solo
+# cuando cambia la página. datos/web/vercel.json le dice a Vercel que no despliegue nada de esta rama.
+if [ ! -f datos/web/vercel.json ]; then
+  mkdir -p datos/web && printf '{\n  "git": {"deploymentEnabled": {"datos": false}}\n}\n' > datos/web/vercel.json
+fi

@@ -17,7 +17,11 @@ p,li{margin:0}.muted{color:var(--muted)} a{color:inherit}
 </style></head><body><main>
 <p><a href="/">← Escáner</a></p>
 <h1>Endpoints del Escáner (versión 1)</h1>
-<p class="muted">JSON estático, con CORS abierto (<code>Access-Control-Allow-Origin: *</code>) y sin caché. Lo escribe solo el bot de GitHub Actions; nadie lo edita a mano. Horas en Nueva York.</p>
+<p class="muted">JSON estático, con CORS abierto. Lo escribe solo el bot de GitHub Actions en la rama <code>datos</code>; nadie lo edita a mano. Horas en Nueva York.</p>
+<div class="card"><h2>Dónde están</h2><p>Desde el 19-11 los datos no se sirven desde este sitio (así Vercel publica solo cuando cambia la página). Las rutas de abajo van sobre una de estas bases:</p>
+<ul><li><b>En vivo (hoy y ayer):</b> <code>https://raw.githubusercontent.com/jotaunospa/mesa/datos</code> — GitHub lo cachea hasta 5 min; agrega <code>?t=</code> con la hora para forzar lo último.</li>
+<li><b>Días cerrados:</b> <code>https://cdn.jsdelivr.net/gh/jotaunospa/mesa@datos</code> (con caché). Si jsDelivr no responde, usa la base de arriba.</li>
+<li><b>Más de 30 días de mercado:</b> ya no están en <code>datos</code>; cada día es un <code>AAAA-MM-DD.tar.gz</code> en el Release <code>datos-AAAA-MM</code> del repo.</li></ul></div>
 <div class="card"><h2><code class="p">/index.json</code></h2><p>Punto de entrada: qué días y fotos existen.</p>
 <pre>{ "version": 1, "actualizado_ny": "2026-11-05T14:27:18-05:00", "ultimo_dia": "2026-11-05",
   "dias": [ { "fecha": "2026-11-05", "fotos": ["0931","0934",…], "resultados": true } ] }</pre></div>

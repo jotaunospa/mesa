@@ -37,11 +37,6 @@ jobs:
       - run: pip install -r requirements.txt
       - run: .github/actions-datos.sh
       - run: python cierre.py
-
-  grandes:
-    uses: ./.github/workflows/grandes.yml
-    with:
-      modo: cierre
       # Explorador (fase 5, 19-11): tabla acumulada de candidatas para web/explorador. Si falla, no toca el cierre.
       - name: Tabla del explorador
         if: always()
@@ -49,3 +44,8 @@ jobs:
         run: |
           python analisis/armar_tabla.py "$DATOS" "$DATOS/candidatas.json"
           python -c "import screener as s; s.publicar('candidatas.json (explorador)')"
+
+  grandes:
+    uses: ./.github/workflows/grandes.yml
+    with:
+      modo: cierre

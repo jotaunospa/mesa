@@ -95,3 +95,14 @@ dice arriba y no propone ajustes de entrada), "no concluye" (cruza el 0; se revi
   desde el cruce. Mide la convención "cruce = compra / venta"; no la aplica.
 - Prueba del 16-11 con la semana 09–13: 36 setups (22 ordenados, 8 no ordenados, 6 sin dato; por cruce:
   20 ▲, 2 ▼, 8 sin cruce, 6 sin dato).
+
+## Filas "dato rancio" (19-11)
+
+- `lib/rancio.py`: una fila es "dato rancio" si Yahoo la listó con un % viejo (a la hora de la foto va
+  menos de 5%), si con el precio de Nasdaq y el cierre de ayer va menos de 5%, o si ambos cambios no
+  calzan (diferencia > 8 puntos y > 25%). No son candidatas.
+- El bot las saca de la foto desde el 19-11 (quedan en `dato_rancio` con su motivo). `filas.py`,
+  `tramos.py`, `detencion.py` y `cierre.py` las apartan también de fotos anteriores.
+- `rancias.py`: tabla por día en el informe ("Estado del sistema").
+- Recalculo del informe del 13-11: `informes/2026-11-13-correccion.md` (la ventana neta pasa de -5.28% a
+  -3.87% promedio; ninguna conclusión cambia).

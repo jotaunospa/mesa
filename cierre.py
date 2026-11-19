@@ -24,6 +24,7 @@ from zoneinfo import ZoneInfo
 
 import yfinance as yf
 
+from lib import rancio
 from screener import DATOS, NY, escribir_indice, publicar, r, solo_regular, velas_compactas
 
 
@@ -31,7 +32,7 @@ def primera_aparicion(dia: Path) -> dict:
     vistas: dict = {}
     for p in sorted(dia.glob("snap-*.json")):
         s = json.loads(p.read_text())
-        for f in s.get("filas", []):
+        for f in rancio.separar(s.get("filas", []))[0]:   # sin "dato rancio" (lib/rancio.py)
             tk = f["ticker"]
             if tk not in vistas:
                 vistas[tk] = {"hora": s["hora_ny"], "precio": f["price"], "fila": f,

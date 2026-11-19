@@ -31,7 +31,9 @@ from datetime import date, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import costos as C
+from lib import rancio
 
 TRAMOS = ["noche", "premarket", "apertura", "ventana", "resto"]
 MIN_N = 30
@@ -56,11 +58,12 @@ def precio_antes(v, hhmm: str):
 
 
 def fotos_por_ticker(dia: Path) -> dict:
+    """Filas válidas por acción (sin "dato rancio"), en orden de foto, con la hora de cada foto."""
     out: dict = {}
     for p in sorted(dia.glob("snap-*.json")):
         s = json.loads(p.read_text())
-        for f in s.get("filas", []):
-            out.setdefault(f["ticker"], []).append(f)
+        for f in rancio.separar(s.get("filas", []))[0]:
+            out.setdefault(f["ticker"], []).append({**f, "_hora": s["hora_ny"]})
     return out
 
 
@@ -107,12 +110,19 @@ def medir_dia(dia: Path) -> list[dict]:
     fotos = fotos_por_ticker(dia)
     out = []
     for c in res["candidatas"]:
-        if c["primera_hora"][11:16] > "10:20":
-            continue  # apareció después de la ventana (fotos de la tarde, solo para mirar)
         tk = c["ticker"]
         filas = fotos.get(tk, [])
+        # Primera aparición VÁLIDA: resultados.json anterior al 19-11 cuenta también filas "dato rancio".
+        if not filas:
+            continue  # solo apareció como dato rancio: no fue candidata
+        primera = filas[0]["_hora"]
+        if primera[11:16] > "10:20":
+            continue  # apareció después de la ventana (fotos de la tarde, solo para mirar)
         al = c.get("al_aparecer") or {}
-        row = {"dia": dia.name, "tk": tk, "primera_hora": c["primera_hora"][11:16],
+        if primera != c["primera_hora"]:
+            f0 = filas[0]
+            al = {k: f0.get(k) for k in (al or {"apto": 0, "floatM": 0, "spread_pct": 0})}
+        row = {"dia": dia.name, "tk": tk, "primera_hora": primera[11:16],
                "noticia": noticia(filas) if filas else "sin dato",
                "float": tramo_float(al.get("floatM")), "temperatura": c.get("temperatura") or "sin dato",
                "dictamen": "apta" if al.get("apto") is True else "no apta" if al.get("apto") is False else "sin dictamen",

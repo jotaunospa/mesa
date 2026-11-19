@@ -35,6 +35,7 @@ from yfinance import EquityQuery as Q
 
 from lib import sec_mesa
 from lib.encadenar import lanzar
+from lib import rancio
 from lib.git_datos import empujar
 from lib import noticias as noticias_mod
 
@@ -735,6 +736,9 @@ def foto() -> dict:
         except Exception as e:
             errores.append({"ticker": qt.get("symbol"), "error": f"{type(e).__name__}: {e}"[:200]})
     filas.sort(key=lambda f: -(f["chg"] or -1e9))   # orden del scanner: % del día al momento de la fila
+    # Dato rancio (lib/rancio.py): Yahoo listó la acción con un % viejo o el cambio no calza con Nasdaq.
+    # No son candidatas: quedan fuera de filas (Escáner, Mesa y mediciones) y se anotan con su motivo.
+    filas, dato_rancio = rancio.separar(filas)
     sin_float = [f["ticker"] for f in filas if f["floatM"] is None]
     return {
         "hora_ny": ahora.isoformat(timespec="seconds"),
@@ -743,6 +747,7 @@ def foto() -> dict:
         "universo_yahoo": len(quotes), "con_float_bajo": len(candidatas),
         "sin_float_conocido": sin_float,
         "descartadas_rancias": rancias,
+        "dato_rancio": dato_rancio,
         "universo_completo": universo_completo,
         "fuentes": {"pausas_nasdaq": estado_halts, "sec_en_vivo": estado_vivo},
         "temperatura": temperatura(filas, halts),

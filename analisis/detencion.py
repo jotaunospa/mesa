@@ -23,6 +23,9 @@ import json
 import statistics as st
 from datetime import date, timedelta
 from pathlib import Path
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from lib import rancio
 
 SEMANAS_MIN, SEMANAS_REVISION = 4, 8
 FOTO_MAX = "0935"
@@ -76,7 +79,7 @@ def aptas_hasta(datos: Path, dia: str) -> set[str]:
     for p in sorted((datos / dia).glob("snap-*.json")):
         if not ("0931" <= p.stem[5:] <= FOTO_MAX):
             continue
-        for f in json.loads(p.read_text()).get("filas", []):
+        for f in rancio.separar(json.loads(p.read_text()).get("filas", []))[0]:
             if f.get("apto") is True:
                 out.add(f["ticker"])
     return out

@@ -21,6 +21,7 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+      - run: pip install -q yfinance
       - run: python integracion/probar_fuentes.py ${{ inputs.tickers }}
       - uses: actions/upload-artifact@v4
         with:

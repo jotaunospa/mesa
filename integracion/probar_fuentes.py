@@ -41,3 +41,17 @@ for url in ["https://cdn.jsdelivr.net/gh/jotaunospa/mesa@datos/index.json",
     except Exception as e:
         cuerpo = getattr(e, "read", lambda: b"")()[:200]
         print(f"jsdelivr {url}: {type(e).__name__} {e} · {cuerpo!r}")
+
+# Cboe contra Yahoo: ¿la hora de cada vela marca el inicio o el fin del minuto? (decide si sirve de respaldo)
+try:
+    import yfinance as yf
+    from zoneinfo import ZoneInfo
+    for t in tks[:2]:
+        y = yf.Ticker(t).history(period="1d", interval="1m", prepost=False)
+        y.index = y.index.tz_convert(ZoneInfo("America/New_York"))
+        yv = {i.strftime("%H:%M"): (round(x.Open, 4), round(x.Close, 4), int(x.Volume)) for i, x in y.iterrows()}
+        cv = {v[0][11:16]: (v[1], v[4], v[5]) for v in (out["cboe"].get(t) or {}).get("velas") or []}
+        for hh in ["09:30", "09:31", "09:32", "12:00", "15:59"]:
+            print(f"cboe-vs-yahoo {t} {hh}: yahoo {yv.get(hh)} · cboe {cv.get(hh)}")
+except Exception as e:
+    print("cboe-vs-yahoo: error", e)

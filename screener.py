@@ -35,7 +35,7 @@ from yfinance import EquityQuery as Q
 
 from lib import sec_mesa
 from lib.encadenar import lanzar
-from lib import rancio
+from lib import rancio, stocktwits
 from lib.git_datos import empujar
 from lib import noticias as noticias_mod
 
@@ -739,6 +739,15 @@ def foto() -> dict:
     # Dato rancio (lib/rancio.py): Yahoo listó la acción con un % viejo o el cambio no calza con Nasdaq.
     # No son candidatas: quedan fuera de filas (Escáner, Mesa y mediciones) y se anotan con su motivo.
     filas, dato_rancio = rancio.separar(filas)
+    # Ruido social de StockTwits (fase 4, 19-11): solo registro para medir; no cambia nada. En paralelo, 5 s por consulta.
+    try:
+        from concurrent.futures import ThreadPoolExecutor
+        with ThreadPoolExecutor(8) as ex:
+            for f, st in zip(filas, ex.map(lambda f: stocktwits.medir(f["ticker"]), filas)):
+                f["stocktwits"] = st
+    except Exception as e:
+        for f in filas:
+            f.setdefault("stocktwits", {"fuente": "StockTwits", "error": f"{type(e).__name__}"[:60]})
     sin_float = [f["ticker"] for f in filas if f["floatM"] is None]
     return {
         "hora_ny": ahora.isoformat(timespec="seconds"),

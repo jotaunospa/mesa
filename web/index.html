@@ -1051,7 +1051,7 @@ function proxima() {
   if (S.modo === "pm" && S.pmSnap && S.pmI === S.pmFotos.length - 1 && !finde() && (S.ses === "post" ? m >= 16 * 60 && m < 20 * 60 : m < 9 * 60 + 31)) { ult = S.pmSnap.hora_ny; paso = sx().paso; }
   else if (S.modo !== "pm" && S.snap && S.dia === diaNY() && S.i === S.fotos.length - 1 && m >= 9 * 60 + 31 && m <= 16 * 60 + 3) { ult = S.snap.hora_ny; paso = m <= 10 * 60 + 22 ? 3 : 10; }
   const hoyD = (S.idx?.dias || []).find(x => x.fecha === diaNY());
-  if (!ult && S.modo !== "pm" && !finde() && m >= 9 * 60 + 31 && m <= 16 * 60 && !(hoyD && hoyD.fotos && hoyD.fotos.length)) {
+  if (!ult && !finde() && m >= 9 * 60 + 31 && m <= 16 * 60 && !(hoyD && hoyD.fotos && hoyD.fotos.length)) {
     nx.hidden = false; nx.classList.add("tarde");
     $("#nx-t").innerHTML = `Esperando la primera foto de la ventana, <b>09:31</b> NY · se publica con 2 a 3 min de demora`;
     return;
@@ -1063,7 +1063,7 @@ function proxima() {
     nx.hidden = false; nx.classList.remove("tarde"); $("#nx-i").style.width = "0%";
     const wd = new Intl.DateTimeFormat("en-US", {timeZone: "America/New_York", weekday: "short"}).format(new Date());
     const hoyHabil = !finde();
-    const cuando = hoyHabil && m < 7 * 60 ? "hoy" : (wd === "Fri" || wd === "Sat") ? "el lunes" : "mañana";
+    const cuando = hoyHabil && m < 9 * 60 + 31 ? "hoy" : (wd === "Fri" || wd === "Sat") ? "el lunes" : "mañana";
     const scl = (h, mi) => { const off = (() => { const a = hora("America/Santiago").split(":").map(Number), b = hora("America/New_York").split(":").map(Number); return ((a[0] * 60 + a[1]) - (b[0] * 60 + b[1]) + 1440) % 1440; })(); const t = (h * 60 + mi + off) % 1440; return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`; };
     const ahAun = !finde() && m >= 16 * 60 && m < 16 * 60 + 25 && S.modo !== "pm";
     if (ahAun) { $("#nx-t").innerHTML = `Mercado cerrado · el after-hours llega desde las <b>16:05</b> NY (${scl(16, 5)} Stgo), una foto cada 20 min`; return; }

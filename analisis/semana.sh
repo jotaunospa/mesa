@@ -20,6 +20,8 @@ python3 "$AQUI/excursiones.py" "$OUT/veredictos.json" "$DATOS" "$OUT/excursiones
 python3 "$AQUI/contra_promedio.py" "$OUT/excursiones.json" "$DATOS" "$OUT/contra_promedio.json" "$OUT/contra_promedio.md"
 python3 "$AQUI/rancias.py" "$DATOS" "$OUT/rancias.md" "$@"
 python3 "$AQUI/variantes.py" "$OUT/veredictos.json" "$DATOS" "$OUT/variantes.json" "$OUT/variantes.md"
-{ echo; cat "$OUT/contra_promedio.md"; echo; cat "$OUT/rancias.md"; echo; cat "$OUT/tramos.md"; echo; cat "$OUT/excursiones.md"; echo; cat "$OUT/variantes.md"; } >> "$OUT/informe.md"
+git -C "$DATOS" log --format='%cI|%s' --since="30 days ago" > "$OUT/commits.txt" 2>/dev/null || true
+python3 "$AQUI/atraso.py" "$OUT/veredictos.json" "$DATOS" "$OUT/commits.txt" > "$OUT/atraso.md"
+{ echo; cat "$OUT/contra_promedio.md"; echo; cat "$OUT/rancias.md"; echo; cat "$OUT/tramos.md"; echo; cat "$OUT/excursiones.md"; echo; cat "$OUT/variantes.md"; echo; cat "$OUT/atraso.md"; } >> "$OUT/informe.md"
 python3 "$AQUI/registro.py" "$OUT/veredictos.json" "$DATOS" "${RULES_V:-?}" "$AQUI/registro"
 echo "listo: $OUT/informe.md (registro en analisis/registro/)"

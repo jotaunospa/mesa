@@ -1,26 +1,39 @@
 {
- "hora_ny": "2026-11-23T13:29:00-05:00",
+ "hora_ny": "2026-11-23T13:39:00-05:00",
  "criterio": "top gainers del día sin OTC, precio ≤ 50 USD (hipótesis), volumen ≥ 30 mil y (float < 18 M o volumen ≥ 14 M); deducido del scanner GreenOrDieTrying el 05-11; float desconocido se incluye y queda en unsure",
- "universo_yahoo": 46,
- "con_float_bajo": 28,
+ "universo_yahoo": 45,
+ "con_float_bajo": 25,
  "sin_float_conocido": [
   "AVZO"
  ],
  "descartadas_rancias": [
   "RLYB",
-  "MACI"
+  "MACI",
+  "SER",
+  "JYD"
  ],
  "dato_rancio": [],
  "universo_completo": [
   {
    "ticker": "WETO",
-   "chg": 239.14,
-   "price": 0.584,
-   "volM": 273.15,
+   "chg": 218.23,
+   "price": 0.548,
+   "volM": 275.054,
    "float_yahoo_M": 14.735,
    "float_tv_M": 0.915,
    "bolsa": "NasdaqCM",
    "pais": "United States",
+   "en_lista": true
+  },
+  {
+   "ticker": "OTLY",
+   "chg": 109.23,
+   "price": 14.5101,
+   "volM": 10.164,
+   "float_yahoo_M": 12.151,
+   "float_tv_M": 29.924,
+   "bolsa": "NasdaqGS",
+   "pais": "Sweden",
    "en_lista": true
   },
   {
@@ -35,32 +48,10 @@
    "en_lista": false
   },
   {
-   "ticker": "OTLY",
-   "chg": 96.4,
-   "price": 13.62,
-   "volM": 9.853,
-   "float_yahoo_M": 12.151,
-   "float_tv_M": 29.924,
-   "bolsa": "NasdaqGS",
-   "pais": "Sweden",
-   "en_lista": true
-  },
-  {
-   "ticker": "SCAG",
-   "chg": 81.24,
-   "price": 1.2325,
-   "volM": 8.258,
-   "float_yahoo_M": 1.365,
-   "float_tv_M": null,
-   "bolsa": "NasdaqGM",
-   "pais": "China",
-   "en_lista": true
-  },
-  {
    "ticker": "BNAI",
-   "chg": 74.54,
-   "price": 5.85,
-   "volM": 29.216,
+   "chg": 79.17,
+   "price": 6.02,
+   "volM": 29.623,
    "float_yahoo_M": 4.794,
    "float_tv_M": 5.102,
    "bolsa": "NasdaqCM",
@@ -69,13 +60,24 @@
   },
   {
    "ticker": "DCGO",
-   "chg": 70.83,
-   "price": 0.2986,
-   "volM": 80.266,
+   "chg": 68.11,
+   "price": 0.2942,
+   "volM": 81.324,
    "float_yahoo_M": 96.186,
    "float_tv_M": 92.545,
    "bolsa": "NasdaqCM",
    "pais": "United States",
+   "en_lista": true
+  },
+  {
+   "ticker": "SCAG",
+   "chg": 57.53,
+   "price": 1.08,
+   "volM": 10.966,
+   "float_yahoo_M": 1.365,
+   "float_tv_M": null,
+   "bolsa": "NasdaqGM",
+   "pais": "China",
    "en_lista": true
   },
   {
@@ -91,9 +93,9 @@
   },
   {
    "ticker": "BRAI",
-   "chg": 58.78,
-   "price": 2.35,
-   "volM": 10.051,
+   "chg": 59.6,
+   "price": 2.365,
+   "volM": 10.209,
    "float_yahoo_M": 64.021,
    "float_tv_M": 206.088,
    "bolsa": "NasdaqGM",
@@ -102,9 +104,9 @@
   },
   {
    "ticker": "PAAI",
-   "chg": 53.88,
-   "price": 0.5586,
-   "volM": 92.861,
+   "chg": 66.7,
+   "price": 0.6062,
+   "volM": 94.373,
    "float_yahoo_M": 13.144,
    "float_tv_M": 13.145,
    "bolsa": "NYSE American",
@@ -112,32 +114,10 @@
    "en_lista": true
   },
   {
-   "ticker": "FFR",
-   "chg": 48.56,
-   "price": 0.5301,
-   "volM": 16.666,
-   "float_yahoo_M": 22.043,
-   "float_tv_M": 10.07,
-   "bolsa": "NasdaqCM",
-   "pais": "United States",
-   "en_lista": true
-  },
-  {
-   "ticker": "RSSS",
-   "chg": 46.74,
-   "price": 3.155,
-   "volM": 8.878,
-   "float_yahoo_M": 27.171,
-   "float_tv_M": 29.443,
-   "bolsa": "NasdaqCM",
-   "pais": "United States",
-   "en_lista": false
-  },
-  {
    "ticker": "CUE",
-   "chg": 49.76,
-   "price": 6.24,
-   "volM": 8.696,
+   "chg": 49.88,
+   "price": 6.22,
+   "volM": 8.771,
    "float_yahoo_M": 6.774,
    "float_tv_M": 6.707,
    "bolsa": "NasdaqCM",
@@ -145,10 +125,21 @@
    "en_lista": true
   },
   {
+   "ticker": "FFR",
+   "chg": 49.89,
+   "price": 0.5351,
+   "volM": 16.759,
+   "float_yahoo_M": 22.043,
+   "float_tv_M": 10.07,
+   "bolsa": "NasdaqCM",
+   "pais": "United States",
+   "en_lista": true
+  },
+  {
    "ticker": "AEON",
-   "chg": 46.42,
-   "price": 0.1801,
-   "volM": 4.242,
+   "chg": 43.74,
+   "price": 0.1765,
+   "volM": 4.449,
    "float_yahoo_M": 13.1,
    "float_tv_M": 40.11,
    "bolsa": "NYSE American",
@@ -156,10 +147,21 @@
    "en_lista": true
   },
   {
+   "ticker": "RSSS",
+   "chg": 46.74,
+   "price": 3.155,
+   "volM": 8.904,
+   "float_yahoo_M": 27.171,
+   "float_tv_M": 29.443,
+   "bolsa": "NasdaqCM",
+   "pais": "United States",
+   "en_lista": false
+  },
+  {
    "ticker": "MRM",
-   "chg": 39.33,
-   "price": 0.3198,
-   "volM": 54.151,
+   "chg": 43.52,
+   "price": 0.3301,
+   "volM": 54.308,
    "float_yahoo_M": 5.692,
    "float_tv_M": null,
    "bolsa": "NasdaqCM",
@@ -167,32 +169,32 @@
    "en_lista": true
   },
   {
+   "ticker": "BYSI",
+   "chg": 40.0,
+   "price": 0.462,
+   "volM": 0.323,
+   "float_yahoo_M": 32.974,
+   "float_tv_M": 32.172,
+   "bolsa": "NasdaqCM",
+   "pais": "United States",
+   "en_lista": false
+  },
+  {
    "ticker": "XCH",
-   "chg": 40.51,
-   "price": 3.85,
-   "volM": 0.029,
+   "chg": 40.32,
+   "price": 3.875,
+   "volM": 0.031,
    "float_yahoo_M": 1.627,
    "float_tv_M": 3.046,
    "bolsa": "NasdaqGM",
    "pais": "Germany",
-   "en_lista": false
-  },
-  {
-   "ticker": "TRAW",
-   "chg": 39.32,
-   "price": 0.24,
-   "volM": 0.182,
-   "float_yahoo_M": 11.779,
-   "float_tv_M": 10.864,
-   "bolsa": "NasdaqCM",
-   "pais": "United States",
    "en_lista": true
   },
   {
    "ticker": "BUUU",
    "chg": 38.45,
    "price": 4.555,
-   "volM": 0.858,
+   "volM": 0.861,
    "float_yahoo_M": 63.381,
    "float_tv_M": null,
    "bolsa": "NasdaqCM",
@@ -211,21 +213,10 @@
    "en_lista": false
   },
   {
-   "ticker": "YOUL",
-   "chg": 36.11,
-   "price": 0.196,
-   "volM": 3.726,
-   "float_yahoo_M": 54.311,
-   "float_tv_M": 23.548,
-   "bolsa": "NasdaqCM",
-   "pais": "China",
-   "en_lista": false
-  },
-  {
    "ticker": "AIIO",
-   "chg": 34.19,
-   "price": 6.24,
-   "volM": 0.072,
+   "chg": 35.45,
+   "price": 6.2984,
+   "volM": 0.073,
    "float_yahoo_M": 0.042,
    "float_tv_M": null,
    "bolsa": "NasdaqCM",
@@ -233,37 +224,70 @@
    "en_lista": true
   },
   {
-   "ticker": "BYSI",
-   "chg": 33.03,
-   "price": 0.439,
-   "volM": 0.32,
-   "float_yahoo_M": 32.974,
-   "float_tv_M": 32.172,
+   "ticker": "TRAW",
+   "chg": 34.39,
+   "price": 0.2377,
+   "volM": 0.191,
+   "float_yahoo_M": 11.779,
+   "float_tv_M": 10.864,
+   "bolsa": "NasdaqCM",
+   "pais": "United States",
+   "en_lista": true
+  },
+  {
+   "ticker": "PTHS",
+   "chg": 33.78,
+   "price": 8.535,
+   "volM": 0.045,
+   "float_yahoo_M": 1.535,
+   "float_tv_M": 1.73,
+   "bolsa": "NYSE American",
+   "pais": "United States",
+   "en_lista": true
+  },
+  {
+   "ticker": "SRTM",
+   "chg": 27.45,
+   "price": 0.9601,
+   "volM": 0.479,
+   "float_yahoo_M": 0.061,
+   "float_tv_M": 0.435,
+   "bolsa": "NasdaqCM",
+   "pais": "United States",
+   "en_lista": true
+  },
+  {
+   "ticker": "CNTY",
+   "chg": 32.82,
+   "price": 0.2667,
+   "volM": 0.723,
+   "float_yahoo_M": 21.311,
+   "float_tv_M": 23.572,
    "bolsa": "NasdaqCM",
    "pais": "United States",
    "en_lista": false
   },
   {
-   "ticker": "NVDA",
-   "chg": 31.75,
-   "price": 165.38,
-   "volM": 571.468,
-   "float_yahoo_M": 23138.626,
-   "float_tv_M": 23188.514,
-   "bolsa": "NasdaqGS",
-   "pais": "United States",
+   "ticker": "YOUL",
+   "chg": 26.39,
+   "price": 0.182,
+   "volM": 4.071,
+   "float_yahoo_M": 54.311,
+   "float_tv_M": 23.548,
+   "bolsa": "NasdaqCM",
+   "pais": "China",
    "en_lista": false
   },
   {
-   "ticker": "KYMR",
-   "chg": 31.82,
-   "price": 152.0,
-   "volM": 5.904,
-   "float_yahoo_M": 68.261,
-   "float_tv_M": 76.681,
-   "bolsa": "NasdaqGM",
-   "pais": "United States",
-   "en_lista": false
+   "ticker": "HUHU",
+   "chg": 29.68,
+   "price": 0.1892,
+   "volM": 78.796,
+   "float_yahoo_M": 8.246,
+   "float_tv_M": 7.306,
+   "bolsa": "NasdaqCM",
+   "pais": "China",
+   "en_lista": true
   },
   {
    "ticker": "PRFX",
@@ -277,57 +301,35 @@
    "en_lista": true
   },
   {
-   "ticker": "IMNN",
-   "chg": 30.31,
-   "price": 0.6978,
-   "volM": 1.985,
-   "float_yahoo_M": 6.022,
-   "float_tv_M": 5.56,
-   "bolsa": "NasdaqCM",
+   "ticker": "NVDA",
+   "chg": 31.14,
+   "price": 164.62,
+   "volM": 578.376,
+   "float_yahoo_M": 23138.626,
+   "float_tv_M": 23188.514,
+   "bolsa": "NasdaqGS",
    "pais": "United States",
-   "en_lista": true
+   "en_lista": false
   },
   {
-   "ticker": "SRTM",
-   "chg": 30.11,
-   "price": 0.9801,
-   "volM": 0.476,
-   "float_yahoo_M": 0.061,
-   "float_tv_M": 0.435,
-   "bolsa": "NasdaqCM",
-   "pais": "United States",
-   "en_lista": true
-  },
-  {
-   "ticker": "CNTY",
-   "chg": 29.56,
-   "price": 0.2601,
-   "volM": 0.718,
-   "float_yahoo_M": 21.311,
-   "float_tv_M": 23.572,
-   "bolsa": "NasdaqCM",
+   "ticker": "KYMR",
+   "chg": 31.57,
+   "price": 151.715,
+   "volM": 6.002,
+   "float_yahoo_M": 68.261,
+   "float_tv_M": 76.681,
+   "bolsa": "NasdaqGM",
    "pais": "United States",
    "en_lista": false
   },
   {
    "ticker": "MEDS",
-   "chg": 29.72,
-   "price": 1.7383,
-   "volM": 53.851,
+   "chg": 29.48,
+   "price": 1.735,
+   "volM": 53.948,
    "float_yahoo_M": 4.112,
    "float_tv_M": 2.88,
    "bolsa": "NasdaqCM",
-   "pais": "United States",
-   "en_lista": true
-  },
-  {
-   "ticker": "PTHS",
-   "chg": 29.19,
-   "price": 8.3501,
-   "volM": 0.045,
-   "float_yahoo_M": 1.535,
-   "float_tv_M": 1.73,
-   "bolsa": "NYSE American",
    "pais": "United States",
    "en_lista": true
   },
@@ -344,9 +346,9 @@
   },
   {
    "ticker": "AVZO",
-   "chg": 28.96,
-   "price": 4.0495,
-   "volM": 0.113,
+   "chg": 27.07,
+   "price": 3.99,
+   "volM": 0.116,
    "float_yahoo_M": null,
    "float_tv_M": 2.067,
    "bolsa": "NasdaqGM",
@@ -354,10 +356,65 @@
    "en_lista": true
   },
   {
+   "ticker": "IMNN",
+   "chg": 20.87,
+   "price": 0.653,
+   "volM": 1.994,
+   "float_yahoo_M": 6.022,
+   "float_tv_M": 5.56,
+   "bolsa": "NasdaqCM",
+   "pais": "United States",
+   "en_lista": true
+  },
+  {
+   "ticker": "SOAR",
+   "chg": 26.0,
+   "price": 0.2079,
+   "volM": 140.627,
+   "float_yahoo_M": 38.406,
+   "float_tv_M": 40.544,
+   "bolsa": "NYSE American",
+   "pais": "United States",
+   "en_lista": false
+  },
+  {
+   "ticker": "JUNS",
+   "chg": 21.46,
+   "price": 1.5,
+   "volM": 0.392,
+   "float_yahoo_M": 0.564,
+   "float_tv_M": 0.909,
+   "bolsa": "NasdaqCM",
+   "pais": "United States",
+   "en_lista": false
+  },
+  {
+   "ticker": "DTSS",
+   "chg": 27.28,
+   "price": 0.4684,
+   "volM": 0.849,
+   "float_yahoo_M": 8.692,
+   "float_tv_M": 8.22,
+   "bolsa": "NasdaqCM",
+   "pais": "China",
+   "en_lista": false
+  },
+  {
+   "ticker": "LASE",
+   "chg": 26.58,
+   "price": 0.5177,
+   "volM": 1.107,
+   "float_yahoo_M": 52.929,
+   "float_tv_M": 48.493,
+   "bolsa": "NasdaqCM",
+   "pais": "United States",
+   "en_lista": false
+  },
+  {
    "ticker": "WNW",
-   "chg": 28.88,
-   "price": 2.12,
-   "volM": 0.087,
+   "chg": 27.08,
+   "price": 2.0904,
+   "volM": 0.089,
    "float_yahoo_M": 26.195,
    "float_tv_M": 26.195,
    "bolsa": "NasdaqCM",
@@ -365,21 +422,10 @@
    "en_lista": false
   },
   {
-   "ticker": "SAFX",
-   "chg": 28.33,
-   "price": 0.0539,
-   "volM": 9.33,
-   "float_yahoo_M": 49.855,
-   "float_tv_M": 134.22,
-   "bolsa": "NasdaqCM",
-   "pais": "United States",
-   "en_lista": false
-  },
-  {
    "ticker": "JELD",
-   "chg": 26.34,
-   "price": 0.883,
-   "volM": 1.439,
+   "chg": 26.77,
+   "price": 0.886,
+   "volM": 1.45,
    "float_yahoo_M": 80.096,
    "float_tv_M": 83.167,
    "bolsa": "NYSE",
@@ -387,42 +433,53 @@
    "en_lista": false
   },
   {
-   "ticker": "JUNS",
-   "chg": 27.12,
-   "price": 1.5699,
-   "volM": 0.383,
-   "float_yahoo_M": 0.564,
-   "float_tv_M": 0.909,
+   "ticker": "BMR",
+   "chg": 26.68,
+   "price": 0.9388,
+   "volM": 0.072,
+   "float_yahoo_M": 10.828,
+   "float_tv_M": 10.828,
    "bolsa": "NasdaqCM",
-   "pais": "United States",
-   "en_lista": true
+   "pais": "Israel",
+   "en_lista": false
   },
   {
-   "ticker": "SOAR",
-   "chg": 27.74,
-   "price": 0.211,
-   "volM": 140.242,
-   "float_yahoo_M": 38.406,
-   "float_tv_M": 40.544,
-   "bolsa": "NYSE American",
+   "ticker": "SAFX",
+   "chg": 28.1,
+   "price": 0.0538,
+   "volM": 9.514,
+   "float_yahoo_M": 49.855,
+   "float_tv_M": 134.22,
+   "bolsa": "NasdaqCM",
    "pais": "United States",
-   "en_lista": true
+   "en_lista": false
   },
   {
-   "ticker": "HUHU",
-   "chg": 25.21,
-   "price": 0.1826,
-   "volM": 78.362,
-   "float_yahoo_M": 8.246,
-   "float_tv_M": 7.306,
+   "ticker": "SVRN",
+   "chg": 26.47,
+   "price": 13.595,
+   "volM": 0.03,
+   "float_yahoo_M": 0.586,
+   "float_tv_M": 1.374,
    "bolsa": "NasdaqCM",
-   "pais": "China",
+   "pais": "United States",
+   "en_lista": false
+  },
+  {
+   "ticker": "BAK",
+   "chg": 25.87,
+   "price": 0.93,
+   "volM": 2.153,
+   "float_yahoo_M": 110.684,
+   "float_tv_M": null,
+   "bolsa": "NYSE",
+   "pais": "Brazil",
    "en_lista": false
   },
   {
    "ticker": "SER",
-   "chg": 25.0,
-   "price": 1.4,
+   "chg": 28.57,
+   "price": 1.44,
    "volM": 0.031,
    "float_yahoo_M": 10.317,
    "float_tv_M": 12.966,
@@ -431,34 +488,12 @@
    "en_lista": false
   },
   {
-   "ticker": "IREN",
-   "chg": 24.74,
-   "price": 14.745,
-   "volM": 92.802,
-   "float_yahoo_M": 383.241,
-   "float_tv_M": 372.323,
-   "bolsa": "NasdaqGS",
-   "pais": "Australia",
-   "en_lista": false
-  },
-  {
-   "ticker": "YMAT",
+   "ticker": "CRVO",
    "chg": 24.98,
-   "price": 1.0,
-   "volM": 0.86,
-   "float_yahoo_M": 1.49,
-   "float_tv_M": 1.867,
-   "bolsa": "NasdaqCM",
-   "pais": "Taiwan",
-   "en_lista": false
-  },
-  {
-   "ticker": "TAOX",
-   "chg": 24.87,
-   "price": 1.9355,
-   "volM": 0.198,
-   "float_yahoo_M": 7.674,
-   "float_tv_M": 7.86,
+   "price": 1.8247,
+   "volM": 0.491,
+   "float_yahoo_M": 9.514,
+   "float_tv_M": 9.707,
    "bolsa": "NasdaqCM",
    "pais": "United States",
    "en_lista": false
@@ -473,50 +508,6 @@
    "bolsa": "NasdaqCM",
    "pais": "China",
    "en_lista": false
-  },
-  {
-   "ticker": "CRVO",
-   "chg": 24.66,
-   "price": 1.82,
-   "volM": 0.484,
-   "float_yahoo_M": 9.514,
-   "float_tv_M": 9.707,
-   "bolsa": "NasdaqCM",
-   "pais": "United States",
-   "en_lista": false
-  },
-  {
-   "ticker": "LASE",
-   "chg": 26.83,
-   "price": 0.5166,
-   "volM": 1.04,
-   "float_yahoo_M": 52.929,
-   "float_tv_M": 48.493,
-   "bolsa": "NasdaqCM",
-   "pais": "United States",
-   "en_lista": false
-  },
-  {
-   "ticker": "DOGZ",
-   "chg": 24.39,
-   "price": 0.2638,
-   "volM": 0.151,
-   "float_yahoo_M": 7.477,
-   "float_tv_M": 1.37,
-   "bolsa": "NasdaqCM",
-   "pais": "China",
-   "en_lista": false
-  },
-  {
-   "ticker": "SVRN",
-   "chg": 24.19,
-   "price": 13.35,
-   "volM": 0.029,
-   "float_yahoo_M": 0.586,
-   "float_tv_M": 1.374,
-   "bolsa": "NasdaqCM",
-   "pais": "United States",
-   "en_lista": false
   }
  ],
  "fuentes": {
@@ -527,16 +518,16 @@
   "nivel": "caliente",
   "umbral": "provisional (≥5 caliente, 2–4 tibia, ≤1 fría)",
   "suben_20_float_bajo": 20,
-  "iwm_chg": 2.88,
-  "pausas_hoy_total": 209
+  "iwm_chg": 2.63,
+  "pausas_hoy_total": 210
  },
  "filas": [
   {
    "ticker": "WETO",
-   "price": 0.584,
-   "chg": 239.14,
-   "volM": 273.15,
-   "rvol": 40.41,
+   "price": 0.548,
+   "chg": 218.23,
+   "volM": 275.054,
+   "rvol": 40.69,
    "floatM": 14.735,
    "dayHigh": 0.898,
    "dayLow": 0.5113,
@@ -549,9 +540,9 @@
    "unsure": [
     "floatM"
    ],
-   "rvol_hora": 414.05,
+   "rvol_hora": 407.21,
    "actividad": 0.0,
-   "rotaciones": 18.54,
+   "rotaciones": 18.67,
    "float_muy_bajo": false,
    "float_confianza": "baja",
    "float_motivos": [
@@ -580,10 +571,10 @@
     ]
    },
    "nasdaq": {
-    "precio": 0.5838,
-    "bid": 0.5702,
-    "ask": 0.5879,
-    "hora": "Nov 23, 2026 1:29 PM ET"
+    "precio": 0.5477,
+    "bid": 0.5475,
+    "ask": 0.5501,
+    "hora": "Nov 23, 2026 1:39 PM ET"
    },
    "precio_cuadra": true,
    "acciones_portada_sec": {
@@ -597,91 +588,11 @@
      "ratio": 0.01
     }
    ],
-   "hod_dist_pct": -34.97,
-   "vwap": 0.6718,
-   "sobre_vwap_pct": -13.07,
-   "surge5m": 0.36,
+   "hod_dist_pct": -38.98,
+   "vwap": 0.671,
+   "sobre_vwap_pct": -18.33,
+   "surge5m": -0.09,
    "velas15": [
-    [
-     "13:15",
-     0.5531,
-     0.5549,
-     0.5452,
-     0.5454,
-     122260
-    ],
-    [
-     "13:16",
-     0.5459,
-     0.5459,
-     0.5453,
-     0.5457,
-     34391
-    ],
-    [
-     "13:17",
-     0.5454,
-     0.5455,
-     0.54,
-     0.541,
-     210862
-    ],
-    [
-     "13:18",
-     0.5426,
-     0.5434,
-     0.5365,
-     0.5368,
-     64944
-    ],
-    [
-     "13:19",
-     0.5365,
-     0.5367,
-     0.5332,
-     0.5336,
-     64046
-    ],
-    [
-     "13:20",
-     0.5334,
-     0.5353,
-     0.5315,
-     0.5352,
-     73207
-    ],
-    [
-     "13:21",
-     0.5347,
-     0.57,
-     0.5347,
-     0.57,
-     437497
-    ],
-    [
-     "13:22",
-     0.57,
-     0.57,
-     0.56,
-     0.5613,
-     267254
-    ],
-    [
-     "13:23",
-     0.5613,
-     0.58,
-     0.5604,
-     0.5783,
-     545632
-    ],
-    [
-     "13:24",
-     0.5778,
-     0.589,
-     0.5769,
-     0.5819,
-     578425
-    ],
     [
      "13:25",
      0.5819,
@@ -716,10 +627,90 @@
     ],
     [
      "13:29",
-     0.584,
-     0.584,
-     0.584,
-     0.584,
+     0.5878,
+     0.5879,
+     0.5774,
+     0.5775,
+     147224
+    ],
+    [
+     "13:30",
+     0.5775,
+     0.5775,
+     0.555,
+     0.5605,
+     359764
+    ],
+    [
+     "13:31",
+     0.5605,
+     0.5605,
+     0.555,
+     0.5588,
+     215371
+    ],
+    [
+     "13:32",
+     0.5588,
+     0.5592,
+     0.5489,
+     0.5499,
+     266660
+    ],
+    [
+     "13:33",
+     0.55,
+     0.5517,
+     0.548,
+     0.5481,
+     112093
+    ],
+    [
+     "13:34",
+     0.5481,
+     0.5546,
+     0.548,
+     0.5485,
+     213230
+    ],
+    [
+     "13:35",
+     0.5486,
+     0.5523,
+     0.5485,
+     0.552,
+     69029
+    ],
+    [
+     "13:36",
+     0.5517,
+     0.56,
+     0.5517,
+     0.5542,
+     237332
+    ],
+    [
+     "13:37",
+     0.5558,
+     0.5599,
+     0.55,
+     0.55,
+     149570
+    ],
+    [
+     "13:38",
+     0.5501,
+     0.5501,
+     0.5475,
+     0.5475,
+     154170
+    ],
+    [
+     "13:39",
+     0.548,
+     0.548,
+     0.548,
+     0.548,
      0
     ]
    ],
@@ -793,7 +784,7 @@
     "vol": 143706162,
     "fuente": "nasdaq"
    },
-   "spread_pct": 3.06,
+   "spread_pct": 0.47,
    "sec": {
     "dil_motivo": [
      "venta de acciones en 90 días",
@@ -833,15 +824,14 @@
    "apto": false,
    "no_apto_por": [
     "float en disputa y la regla de 1 M cambia según la fuente (Yahoo 14.735 M / TradingView 0.915 M)",
-    "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)",
-    "spread 3.06% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
+    "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)"
    ],
    "sin_dato_por": [],
    "cautela": [
     "dilución media",
     "SSR activo (no se puede vender en corto a la baja)"
    ],
-   "lectura": "NO APTA: float en disputa y la regla de 1 M cambia según la fuente (Yahoo 14.735 M / TradingView 0.915 M) (y 2 motivo(s) más).",
+   "lectura": "NO APTA: float en disputa y la regla de 1 M cambia según la fuente (Yahoo 14.735 M / TradingView 0.915 M) (y 1 motivo(s) más).",
    "stocktwits": {
     "fuente": "StockTwits",
     "mensajes_1h": 21,
@@ -864,10 +854,10 @@
   },
   {
    "ticker": "OTLY",
-   "price": 13.62,
-   "chg": 96.4,
-   "volM": 9.853,
-   "rvol": 97.06,
+   "price": 14.5101,
+   "chg": 109.23,
+   "volM": 10.164,
+   "rvol": 100.12,
    "floatM": 12.151,
    "dayHigh": 14.66,
    "dayLow": 6.87,
@@ -880,9 +870,9 @@
    "unsure": [
     "floatM"
    ],
-   "rvol_hora": 206.08,
+   "rvol_hora": 201.01,
    "actividad": 0.0,
-   "rotaciones": 0.81,
+   "rotaciones": 0.84,
    "float_muy_bajo": false,
    "float_confianza": "baja",
    "float_motivos": [
@@ -907,10 +897,10 @@
     ]
    },
    "nasdaq": {
-    "precio": 13.65,
-    "bid": 13.6,
-    "ask": 13.69,
-    "hora": "Nov 23, 2026 1:29 PM ET"
+    "precio": 14.5007,
+    "bid": 14.5,
+    "ask": 14.53,
+    "hora": "Nov 23, 2026 1:39 PM ET"
    },
    "precio_cuadra": true,
    "acciones_portada_sec": {
@@ -919,91 +909,11 @@
     "form": "20-F"
    },
    "split_inverso_12m": [],
-   "hod_dist_pct": -7.09,
-   "vwap": 12.3129,
-   "sobre_vwap_pct": 10.62,
-   "surge5m": -3.53,
+   "hod_dist_pct": -1.02,
+   "vwap": 12.3734,
+   "sobre_vwap_pct": 17.27,
+   "surge5m": 1.28,
    "velas15": [
-    [
-     "13:15",
-     13.84,
-     13.9026,
-     13.76,
-     13.9026,
-     16040
-    ],
-    [
-     "13:16",
-     13.85,
-     13.9099,
-     13.7832,
-     13.86,
-     15872
-    ],
-    [
-     "13:17",
-     13.86,
-     13.91,
-     13.7959,
-     13.8896,
-     11324
-    ],
-    [
-     "13:18",
-     13.88,
-     14.0,
-     13.8155,
-     13.8999,
-     46787
-    ],
-    [
-     "13:19",
-     13.89,
-     13.982,
-     13.865,
-     13.97,
-     11762
-    ],
-    [
-     "13:20",
-     14.0,
-     14.0,
-     13.82,
-     13.9172,
-     17702
-    ],
-    [
-     "13:21",
-     13.8991,
-     13.8991,
-     13.8,
-     13.8601,
-     11437
-    ],
-    [
-     "13:22",
-     13.905,
-     14.01,
-     13.86,
-     13.95,
-     24539
-    ],
-    [
-     "13:23",
-     13.999,
-     14.13,
-     13.9737,
-     14.0841,
-     30616
-    ],
-    [
-     "13:24",
-     14.05,
-     14.2431,
-     14.05,
-     14.1885,
-     36264
-    ],
     [
      "13:25",
      14.155,
@@ -1038,10 +948,90 @@
     ],
     [
      "13:29",
+     13.5128,
      13.6871,
-     13.6871,
-     13.6871,
-     13.6871,
+     13.5101,
+     13.66,
+     5805
+    ],
+    [
+     "13:30",
+     13.6705,
+     13.9,
+     13.635,
+     13.86,
+     16981
+    ],
+    [
+     "13:31",
+     13.95,
+     14.0899,
+     13.91,
+     14.05,
+     24201
+    ],
+    [
+     "13:32",
+     14.0261,
+     14.5799,
+     14.0261,
+     14.26,
+     74464
+    ],
+    [
+     "13:33",
+     14.33,
+     14.5999,
+     14.29,
+     14.45,
+     71421
+    ],
+    [
+     "13:34",
+     14.41,
+     14.47,
+     14.21,
+     14.345,
+     23650
+    ],
+    [
+     "13:35",
+     14.345,
+     14.49,
+     14.3,
+     14.4083,
+     20966
+    ],
+    [
+     "13:36",
+     14.3697,
+     14.5462,
+     14.36,
+     14.52,
+     14800
+    ],
+    [
+     "13:37",
+     14.51,
+     14.535,
+     14.3001,
+     14.415,
+     24759
+    ],
+    [
+     "13:38",
+     14.44,
+     14.62,
+     14.42,
+     14.5109,
+     29517
+    ],
+    [
+     "13:39",
+     14.5288,
+     14.5288,
+     14.5288,
+     14.5288,
      0
     ]
    ],
@@ -1148,7 +1138,7 @@
     "vol": 11122,
     "fuente": "nasdaq"
    },
-   "spread_pct": 0.66,
+   "spread_pct": 0.21,
    "sec": {
     "dil_motivo": [
      "emisor extranjero: información limitada (no presenta 8-K)"
@@ -1177,7 +1167,7 @@
    ],
    "meta": {
     "src": "yahoo-gratis",
-    "edad_s": 21,
+    "edad_s": 8,
     "bolsa": "NasdaqGS",
     "nombre": "Oatly Group AB (publ)"
    },
@@ -1209,346 +1199,11 @@
    }
   },
   {
-   "ticker": "SCAG",
-   "price": 1.2325,
-   "chg": 81.24,
-   "volM": 8.258,
-   "rvol": 186.12,
-   "floatM": 1.365,
-   "dayHigh": 1.5,
-   "dayLow": 0.6403,
-   "dayHigh_regular": 1.5,
-   "dayLow_regular": 0.6403,
-   "halt": false,
-   "news": false,
-   "headline": null,
-   "dil": "alta",
-   "unsure": [
-    "floatM"
-   ],
-   "rvol_hora": 279.57,
-   "actividad": 0.0,
-   "rotaciones": 6.05,
-   "float_muy_bajo": true,
-   "float_confianza": "baja",
-   "float_motivos": [
-    "emisor extranjero o sin CIK: sin portada trimestral en la SEC",
-    "1 split(s) inverso(s) en 12 meses sin portada SEC posterior (último 2026-10-27)"
-   ],
-   "float_cruce": {
-    "yahoo_M": 1.365,
-    "tradingview_M": null,
-    "sec_portada": {
-     "valor": 72243992,
-     "fecha": "2025-11-12",
-     "form": "20-F"
-    },
-    "chequeo_sec": "baja",
-    "motivos_sec": [
-     "emisor extranjero o sin CIK: sin portada trimestral en la SEC",
-     "1 split(s) inverso(s) en 12 meses sin portada SEC posterior (último 2026-10-27)"
-    ],
-    "estado": "una_fuente",
-    "rango_M": [
-     1.365,
-     1.365
-    ]
-   },
-   "nasdaq": {
-    "precio": 1.235,
-    "bid": 1.23,
-    "ask": 1.24,
-    "hora": "Nov 23, 2026 1:29 PM ET"
-   },
-   "precio_cuadra": true,
-   "acciones_portada_sec": {
-    "valor": 72243992,
-    "fecha": "2025-11-12",
-    "form": "20-F"
-   },
-   "split_inverso_12m": [
-    {
-     "fecha": "2026-10-27",
-     "ratio": 0.06666666666666667
-    }
-   ],
-   "hod_dist_pct": -17.83,
-   "vwap": 1.2179,
-   "sobre_vwap_pct": 1.2,
-   "surge5m": -10.18,
-   "velas15": [
-    [
-     "13:03",
-     1.0301,
-     1.04,
-     1.0238,
-     1.0397,
-     13040
-    ],
-    [
-     "13:04",
-     1.0399,
-     1.1,
-     1.0301,
-     1.09,
-     64140
-    ],
-    [
-     "13:05",
-     1.0894,
-     1.2,
-     1.0801,
-     1.2,
-     195450
-    ],
-    [
-     "13:06",
-     1.2,
-     1.2,
-     1.2,
-     1.2,
-     33316
-    ],
-    [
-     "13:11",
-     1.22,
-     1.37,
-     1.17,
-     1.37,
-     249978
-    ],
-    [
-     "13:16",
-     1.3195,
-     1.44,
-     1.27,
-     1.3195,
-     556436
-    ],
-    [
-     "13:17",
-     1.32,
-     1.3399,
-     1.2,
-     1.3,
-     536719
-    ],
-    [
-     "13:18",
-     1.3,
-     1.48,
-     1.2601,
-     1.4774,
-     845762
-    ],
-    [
-     "13:19",
-     1.47,
-     1.5,
-     1.41,
-     1.45,
-     681493
-    ],
-    [
-     "13:20",
-     1.42,
-     1.46,
-     1.32,
-     1.375,
-     475803
-    ],
-    [
-     "13:21",
-     1.375,
-     1.3799,
-     1.27,
-     1.3,
-     416029
-    ],
-    [
-     "13:22",
-     1.295,
-     1.3,
-     1.22,
-     1.22,
-     182338
-    ],
-    [
-     "13:27",
-     1.3187,
-     1.35,
-     1.17,
-     1.29,
-     484591
-    ],
-    [
-     "13:28",
-     1.2999,
-     1.33,
-     1.23,
-     1.3199,
-     443060
-    ],
-    [
-     "13:29",
-     1.235,
-     1.235,
-     1.235,
-     1.235,
-     0
-    ]
-   ],
-   "ssr": true,
-   "ssr_motivo": "arrastrado de ayer",
-   "short_pct_float": 0.05,
-   "short_fecha": "2026-10-29",
-   "pais": "China",
-   "pais_riesgo": true,
-   "split_reciente": [
-    {
-     "fecha": "2026-10-27",
-     "ratio": 0.06666666666666667
-    }
-   ],
-   "halts_hoy": [
-    {
-     "hora": "13:22:27.830",
-     "codigo": "LUDP",
-     "reanuda": "13:27:27",
-     "direccion": null
-    },
-    {
-     "hora": "13:11:38.976",
-     "codigo": "LUDP",
-     "reanuda": "13:16:38",
-     "direccion": null
-    },
-    {
-     "hora": "13:06:12.296",
-     "codigo": "LUDP",
-     "reanuda": "13:11:12",
-     "direccion": null
-    },
-    {
-     "hora": "12:28:26.326",
-     "codigo": "LUDP",
-     "reanuda": "12:33:26",
-     "direccion": null
-    }
-   ],
-   "noticias": [],
-   "noticias_eval": {
-    "estado": "no_encontrada",
-    "fuentes": [
-     "google",
-     "nasdaq",
-     "yahoo"
-    ],
-    "validas": []
-   },
-   "niveles": {
-    "cierre_ayer": {
-     "precio": 0.6856,
-     "fuente": "Yahoo (cierre anterior oficial)"
-    },
-    "pm_max": {
-     "precio": 0.85,
-     "fuente": "Nasdaq"
-    },
-    "pm_min": {
-     "precio": 0.7142,
-     "fuente": "Nasdaq"
-    },
-    "ayer_max": {
-     "precio": 0.843,
-     "fuente": "vela diaria de Yahoo del 2026-11-20"
-    },
-    "ayer_min": {
-     "precio": 0.658,
-     "fuente": "vela diaria de Yahoo del 2026-11-20"
-    }
-   },
-   "premarket": {
-    "max": 0.85,
-    "min": 0.7142,
-    "vol": 13083,
-    "fuente": "nasdaq"
-   },
-   "spread_pct": 0.81,
-   "sec": {
-    "dil_motivo": [
-     "registro S-1/S-3/F-1/F-3 en 12 meses",
-     "autonomía de caja 0.1 trimestres (sustituto de going concern; dato al 2025-06-30)",
-     "emisor extranjero: información limitada (no presenta 8-K)"
-    ],
-    "veto_venta": false,
-    "veto_quiebra": false,
-    "extranjero": true,
-    "runway_q": 0.1,
-    "caja_periodo": "2025-06-30",
-    "filings_recientes": [],
-    "estado": "ok",
-    "dil_puntaje": "2/7",
-    "dil_factores_si": [
-     "caja para menos de 4 trimestres",
-     "split inverso en 12 meses"
-    ]
-   },
-   "sec_hoy": [],
-   "veto": false,
-   "en_filtro_mesa": true,
-   "calc": [
-    "vwap",
-    "surge5m",
-    "actividad",
-    "rvol_hora",
-    "ssr"
-   ],
-   "meta": {
-    "src": "yahoo-gratis",
-    "edad_s": 24,
-    "bolsa": "NasdaqGM",
-    "nombre": "Scage Future"
-   },
-   "apto": false,
-   "no_apto_por": [
-    "dilución alta según la SEC",
-    "pausa reanudada hace 2 min"
-   ],
-   "sin_dato_por": [],
-   "cautela": [
-    "float de una sola fuente (Yahoo 1.365 M / TradingView None M; emisor extranjero o sin CIK: sin portada trimestral en la SEC; 1 split(s) inverso(s) en 12 meses sin portada SEC posterior (último 2026-10-27))",
-    "SSR activo (no se puede vender en corto a la baja)",
-    "país de riesgo (China)",
-    "split en los últimos 30 días"
-   ],
-   "lectura": "NO APTA: dilución alta según la SEC (y 1 motivo(s) más).",
-   "stocktwits": {
-    "fuente": "StockTwits",
-    "mensajes_1h": 27,
-    "muestra": 30,
-    "ritmo_normal_h": 27.71,
-    "horas_cubiertas": 1.1,
-    "cambio": 0.97,
-    "saturado": false,
-    "alcistas": 11,
-    "bajistas": 2,
-    "hora_utc": "2026-11-23T18:31:50+00:00"
-   },
-   "short_finra": {
-    "short": 2356,
-    "anterior": 36850,
-    "fecha": "2026-10-30",
-    "dias_cubrir": 1,
-    "fuente": "FINRA (interés en corto consolidado)"
-   }
-  },
-  {
    "ticker": "BNAI",
-   "price": 5.85,
-   "chg": 74.54,
-   "volM": 29.216,
-   "rvol": 155.85,
+   "price": 6.02,
+   "chg": 79.17,
+   "volM": 29.623,
+   "rvol": 158.02,
    "floatM": 4.794,
    "dayHigh": 7.1699,
    "dayLow": 3.27,
@@ -1559,9 +1214,9 @@
    "headline": "Brand Engagement Network reports $1.96 million revenue",
    "dil": "alta",
    "unsure": [],
-   "rvol_hora": 94.52,
+   "rvol_hora": 94.55,
    "actividad": 0.0,
-   "rotaciones": 6.09,
+   "rotaciones": 6.18,
    "float_muy_bajo": false,
    "float_confianza": "alta",
    "float_motivos": [
@@ -1586,10 +1241,10 @@
     ]
    },
    "nasdaq": {
-    "precio": 5.8984,
-    "bid": 5.89,
-    "ask": 5.9,
-    "hora": "Nov 23, 2026 1:29 PM ET"
+    "precio": 6.015,
+    "bid": 6.0,
+    "ask": 6.03,
+    "hora": "Nov 23, 2026 1:39 PM ET"
    },
    "precio_cuadra": true,
    "acciones_portada_sec": {
@@ -1603,91 +1258,11 @@
      "ratio": 0.1
     }
    ],
-   "hod_dist_pct": -18.41,
-   "vwap": 5.9582,
-   "sobre_vwap_pct": -1.82,
-   "surge5m": 1.03,
+   "hod_dist_pct": -16.04,
+   "vwap": 5.958,
+   "sobre_vwap_pct": 1.04,
+   "surge5m": 4.0,
    "velas15": [
-    [
-     "13:15",
-     5.86,
-     5.8789,
-     5.79,
-     5.8499,
-     44080
-    ],
-    [
-     "13:16",
-     5.8446,
-     5.8608,
-     5.78,
-     5.805,
-     54192
-    ],
-    [
-     "13:17",
-     5.82,
-     5.82,
-     5.72,
-     5.7822,
-     60187
-    ],
-    [
-     "13:18",
-     5.7794,
-     5.85,
-     5.75,
-     5.765,
-     25318
-    ],
-    [
-     "13:19",
-     5.78,
-     5.78,
-     5.7002,
-     5.7404,
-     48004
-    ],
-    [
-     "13:20",
-     5.797,
-     5.81,
-     5.64,
-     5.7213,
-     51969
-    ],
-    [
-     "13:21",
-     5.68,
-     5.84,
-     5.68,
-     5.82,
-     45490
-    ],
-    [
-     "13:22",
-     5.81,
-     5.85,
-     5.8,
-     5.835,
-     32850
-    ],
-    [
-     "13:23",
-     5.8488,
-     5.8647,
-     5.8,
-     5.8301,
-     27173
-    ],
-    [
-     "13:24",
-     5.8479,
-     5.8479,
-     5.82,
-     5.83,
-     13647
-    ],
     [
      "13:25",
      5.835,
@@ -1722,10 +1297,90 @@
     ],
     [
      "13:29",
-     5.8899,
-     5.8899,
-     5.8899,
-     5.8899,
+     5.873,
+     5.8984,
+     5.8303,
+     5.8984,
+     18949
+    ],
+    [
+     "13:30",
+     5.89,
+     5.93,
+     5.8101,
+     5.825,
+     53893
+    ],
+    [
+     "13:31",
+     5.85,
+     5.8586,
+     5.7806,
+     5.81,
+     37053
+    ],
+    [
+     "13:32",
+     5.82,
+     5.82,
+     5.76,
+     5.8,
+     20386
+    ],
+    [
+     "13:33",
+     5.8519,
+     5.8519,
+     5.795,
+     5.795,
+     10792
+    ],
+    [
+     "13:34",
+     5.8,
+     5.8,
+     5.76,
+     5.79,
+     16660
+    ],
+    [
+     "13:35",
+     5.7967,
+     5.8267,
+     5.78,
+     5.79,
+     5700
+    ],
+    [
+     "13:36",
+     5.7814,
+     6.04,
+     5.7814,
+     6.0048,
+     54579
+    ],
+    [
+     "13:37",
+     6.01,
+     6.0999,
+     6.0004,
+     6.04,
+     130257
+    ],
+    [
+     "13:38",
+     6.0499,
+     6.0798,
+     6.01,
+     6.02,
+     54093
+    ],
+    [
+     "13:39",
+     6.0215,
+     6.0215,
+     6.0215,
+     6.0215,
      0
     ]
    ],
@@ -1844,7 +1499,7 @@
     "vol": 85663,
     "fuente": "nasdaq"
    },
-   "spread_pct": 0.17,
+   "spread_pct": 0.5,
    "sec": {
     "dil_motivo": [
      "venta de acciones en 90 días",
@@ -1884,7 +1539,7 @@
    ],
    "meta": {
     "src": "yahoo-gratis",
-    "edad_s": 33,
+    "edad_s": 10,
     "bolsa": "NasdaqCM",
     "nombre": "Brand Engagement Network, Inc."
    },
@@ -1917,10 +1572,10 @@
   },
   {
    "ticker": "DCGO",
-   "price": 0.2986,
-   "chg": 70.83,
-   "volM": 80.266,
-   "rvol": 110.03,
+   "price": 0.2942,
+   "chg": 68.11,
+   "volM": 81.324,
+   "rvol": 111.48,
    "floatM": 96.186,
    "dayHigh": 0.318,
    "dayLow": 0.1639,
@@ -1931,9 +1586,9 @@
    "headline": "DocGo Agrees to Sell Cardiac Device Monitoring Business for Up to $25 Million",
    "dil": "alta",
    "unsure": [],
-   "rvol_hora": 137.95,
+   "rvol_hora": 135.22,
    "actividad": 0.0,
-   "rotaciones": 0.83,
+   "rotaciones": 0.85,
    "float_muy_bajo": false,
    "float_confianza": "alta",
    "float_motivos": [
@@ -1958,10 +1613,10 @@
     ]
    },
    "nasdaq": {
-    "precio": 0.298,
-    "bid": 0.295,
-    "ask": 0.2999,
-    "hora": "Nov 23, 2026 1:30 PM ET"
+    "precio": 0.2964,
+    "bid": 0.2941,
+    "ask": 0.2987,
+    "hora": "Nov 23, 2026 1:39 PM ET"
    },
    "precio_cuadra": true,
    "acciones_portada_sec": {
@@ -1970,91 +1625,11 @@
     "form": "10-Q"
    },
    "split_inverso_12m": [],
-   "hod_dist_pct": -6.1,
-   "vwap": 0.2495,
-   "sobre_vwap_pct": 19.68,
-   "surge5m": -0.67,
+   "hod_dist_pct": -7.48,
+   "vwap": 0.2502,
+   "sobre_vwap_pct": 17.61,
+   "surge5m": -0.64,
    "velas15": [
-    [
-     "13:15",
-     0.3105,
-     0.318,
-     0.3105,
-     0.313,
-     582798
-    ],
-    [
-     "13:16",
-     0.313,
-     0.318,
-     0.31,
-     0.3122,
-     674825
-    ],
-    [
-     "13:17",
-     0.3121,
-     0.316,
-     0.3098,
-     0.3125,
-     521879
-    ],
-    [
-     "13:18",
-     0.3114,
-     0.3126,
-     0.3051,
-     0.3071,
-     360422
-    ],
-    [
-     "13:19",
-     0.3074,
-     0.315,
-     0.3066,
-     0.3067,
-     271708
-    ],
-    [
-     "13:20",
-     0.3066,
-     0.3099,
-     0.3027,
-     0.3052,
-     224949
-    ],
-    [
-     "13:21",
-     0.3053,
-     0.3066,
-     0.3037,
-     0.3066,
-     129443
-    ],
-    [
-     "13:22",
-     0.3053,
-     0.3075,
-     0.303,
-     0.3049,
-     162049
-    ],
-    [
-     "13:23",
-     0.3051,
-     0.3053,
-     0.2968,
-     0.2968,
-     369812
-    ],
-    [
-     "13:24",
-     0.2977,
-     0.302,
-     0.297,
-     0.3,
-     323806
-    ],
     [
      "13:25",
      0.2999,
@@ -2089,10 +1664,90 @@
     ],
     [
      "13:29",
+     0.2981,
+     0.3,
      0.298,
      0.298,
+     106642
+    ],
+    [
+     "13:30",
      0.298,
+     0.299,
+     0.294,
+     0.2948,
+     227510
+    ],
+    [
+     "13:31",
+     0.2953,
+     0.2992,
+     0.2951,
+     0.2992,
+     97143
+    ],
+    [
+     "13:32",
+     0.2994,
+     0.3,
+     0.2981,
+     0.2986,
+     32914
+    ],
+    [
+     "13:33",
+     0.2999,
+     0.3,
+     0.2981,
+     0.2996,
+     39008
+    ],
+    [
+     "13:34",
+     0.299,
+     0.299,
      0.298,
+     0.2983,
+     121187
+    ],
+    [
+     "13:35",
+     0.2983,
+     0.2987,
+     0.295,
+     0.2971,
+     70685
+    ],
+    [
+     "13:36",
+     0.298,
+     0.2985,
+     0.2971,
+     0.2983,
+     26698
+    ],
+    [
+     "13:37",
+     0.299,
+     0.3029,
+     0.2977,
+     0.3023,
+     108140
+    ],
+    [
+     "13:38",
+     0.3026,
+     0.3035,
+     0.2931,
+     0.2966,
+     294520
+    ],
+    [
+     "13:39",
+     0.2964,
+     0.2964,
+     0.2964,
+     0.2964,
      0
     ]
    ],
@@ -2180,7 +1835,7 @@
     "vol": 30539674,
     "fuente": "nasdaq"
    },
-   "spread_pct": 1.65,
+   "spread_pct": 1.55,
    "sec": {
     "dil_motivo": [
      "venta de acciones en 90 días",
@@ -2223,7 +1878,7 @@
    ],
    "meta": {
     "src": "yahoo-gratis",
-    "edad_s": 41,
+    "edad_s": 14,
     "bolsa": "NasdaqCM",
     "nombre": "DocGo Inc."
    },
@@ -2257,10 +1912,10 @@
   },
   {
    "ticker": "PAAI",
-   "price": 0.5586,
-   "chg": 53.88,
-   "volM": 92.861,
-   "rvol": 41.74,
+   "price": 0.6062,
+   "chg": 66.7,
+   "volM": 94.373,
+   "rvol": 42.42,
    "floatM": 13.144,
    "dayHigh": 0.9787,
    "dayLow": 0.363,
@@ -2271,9 +1926,9 @@
    "headline": "The Arena Group Holdings, Inc. Q3 2026 Earnings Call Summary",
    "dil": "baja",
    "unsure": [],
-   "rvol_hora": 617.91,
-   "actividad": 0.06,
-   "rotaciones": 7.06,
+   "rvol_hora": 612.68,
+   "actividad": 0.0,
+   "rotaciones": 7.18,
    "float_muy_bajo": false,
    "float_confianza": "alta",
    "float_motivos": [
@@ -2298,10 +1953,10 @@
     ]
    },
    "nasdaq": {
-    "precio": 0.5579,
-    "bid": 0.5516,
-    "ask": 0.5623,
-    "hora": "Nov 23, 2026 1:30 PM ET"
+    "precio": 0.6009,
+    "bid": 0.585,
+    "ask": 0.6062,
+    "hora": "Nov 23, 2026 1:39 PM ET"
    },
    "precio_cuadra": true,
    "acciones_portada_sec": {
@@ -2310,91 +1965,11 @@
     "form": "10-Q"
    },
    "split_inverso_12m": [],
-   "hod_dist_pct": -42.92,
-   "vwap": 0.7362,
-   "sobre_vwap_pct": -24.13,
-   "surge5m": -0.79,
+   "hod_dist_pct": -38.06,
+   "vwap": 0.7339,
+   "sobre_vwap_pct": -17.4,
+   "surge5m": 3.84,
    "velas15": [
-    [
-     "13:15",
-     0.5844,
-     0.6024,
-     0.5844,
-     0.589,
-     0
-    ],
-    [
-     "13:16",
-     0.586,
-     0.588,
-     0.5659,
-     0.5733,
-     238876
-    ],
-    [
-     "13:17",
-     0.5733,
-     0.5757,
-     0.567,
-     0.5702,
-     81189
-    ],
-    [
-     "13:18",
-     0.567,
-     0.5705,
-     0.5471,
-     0.5565,
-     246974
-    ],
-    [
-     "13:19",
-     0.5565,
-     0.564,
-     0.5564,
-     0.5564,
-     59883
-    ],
-    [
-     "13:20",
-     0.5571,
-     0.5639,
-     0.5519,
-     0.558,
-     142310
-    ],
-    [
-     "13:21",
-     0.5588,
-     0.567,
-     0.5581,
-     0.5651,
-     74182
-    ],
-    [
-     "13:22",
-     0.564,
-     0.5663,
-     0.5571,
-     0.5573,
-     48194
-    ],
-    [
-     "13:23",
-     0.5575,
-     0.5666,
-     0.5519,
-     0.5577,
-     73421
-    ],
-    [
-     "13:24",
-     0.56,
-     0.564,
-     0.5519,
-     0.5595,
-     106333
-    ],
     [
      "13:25",
      0.5595,
@@ -2434,6 +2009,86 @@
      0.5551,
      0.5551,
      32574
+    ],
+    [
+     "13:30",
+     0.5558,
+     0.5705,
+     0.5539,
+     0.5662,
+     149180
+    ],
+    [
+     "13:31",
+     0.5698,
+     0.5795,
+     0.5671,
+     0.5788,
+     152129
+    ],
+    [
+     "13:32",
+     0.5763,
+     0.5795,
+     0.57,
+     0.5746,
+     179644
+    ],
+    [
+     "13:33",
+     0.5746,
+     0.5772,
+     0.5719,
+     0.573,
+     47082
+    ],
+    [
+     "13:34",
+     0.57,
+     0.5795,
+     0.57,
+     0.5787,
+     92548
+    ],
+    [
+     "13:35",
+     0.5771,
+     0.5786,
+     0.5702,
+     0.5703,
+     84899
+    ],
+    [
+     "13:36",
+     0.5741,
+     0.588,
+     0.5635,
+     0.588,
+     115000
+    ],
+    [
+     "13:37",
+     0.5919,
+     0.5919,
+     0.57,
+     0.5826,
+     154540
+    ],
+    [
+     "13:38",
+     0.5825,
+     0.6022,
+     0.5825,
+     0.6022,
+     380793
+    ],
+    [
+     "13:39",
+     0.6009,
+     0.6009,
+     0.6009,
+     0.6009,
+     0
     ]
    ],
    "ssr": true,
@@ -2512,7 +2167,7 @@
     "vol": 35838,
     "fuente": "nasdaq"
    },
-   "spread_pct": 1.92,
+   "spread_pct": 3.56,
    "sec": {
     "dil_motivo": [],
     "veto_venta": false,
@@ -2543,30 +2198,31 @@
    ],
    "meta": {
     "src": "yahoo-gratis",
-    "edad_s": 48,
+    "edad_s": 17,
     "bolsa": "NYSE American",
     "nombre": "Paradium AI, Inc."
    },
    "apto": false,
    "no_apto_por": [
-    "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)"
+    "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)",
+    "spread 3.56% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
    ],
    "sin_dato_por": [],
    "cautela": [
     "SSR activo (no se puede vender en corto a la baja)"
    ],
-   "lectura": "NO APTA: fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)",
+   "lectura": "NO APTA: fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M) (y 1 motivo(s) más).",
    "stocktwits": {
     "fuente": "StockTwits",
-    "mensajes_1h": 26,
+    "mensajes_1h": 17,
     "muestra": 30,
-    "ritmo_normal_h": 25.52,
-    "horas_cubiertas": 1.2,
-    "cambio": 1.02,
+    "ritmo_normal_h": 22.23,
+    "horas_cubiertas": 1.3,
+    "cambio": 0.76,
     "saturado": false,
     "alcistas": 15,
     "bajistas": 3,
-    "hora_utc": "2026-11-23T18:20:06+00:00"
+    "hora_utc": "2026-11-23T18:40:12+00:00"
    },
    "short_finra": {
     "short": 914561,
@@ -2577,11 +2233,689 @@
    }
   },
   {
+   "ticker": "SCAG",
+   "price": 1.08,
+   "chg": 57.53,
+   "volM": 10.966,
+   "rvol": 247.14,
+   "floatM": 1.365,
+   "dayHigh": 1.5,
+   "dayLow": 0.6403,
+   "dayHigh_regular": 1.5,
+   "dayLow_regular": 0.6403,
+   "halt": true,
+   "news": false,
+   "headline": null,
+   "dil": "alta",
+   "unsure": [
+    "floatM",
+    "spread_pct"
+   ],
+   "rvol_hora": 359.09,
+   "actividad": 0.0,
+   "rotaciones": 8.04,
+   "float_muy_bajo": true,
+   "float_confianza": "baja",
+   "float_motivos": [
+    "emisor extranjero o sin CIK: sin portada trimestral en la SEC",
+    "1 split(s) inverso(s) en 12 meses sin portada SEC posterior (último 2026-10-27)"
+   ],
+   "float_cruce": {
+    "yahoo_M": 1.365,
+    "tradingview_M": null,
+    "sec_portada": {
+     "valor": 72243992,
+     "fecha": "2025-11-12",
+     "form": "20-F"
+    },
+    "chequeo_sec": "baja",
+    "motivos_sec": [
+     "emisor extranjero o sin CIK: sin portada trimestral en la SEC",
+     "1 split(s) inverso(s) en 12 meses sin portada SEC posterior (último 2026-10-27)"
+    ],
+    "estado": "una_fuente",
+    "rango_M": [
+     1.365,
+     1.365
+    ]
+   },
+   "nasdaq": {
+    "precio": 1.08,
+    "bid": 1.08,
+    "ask": 1.08,
+    "hora": "Nov 23, 2026 1:39 PM ET"
+   },
+   "precio_cuadra": true,
+   "acciones_portada_sec": {
+    "valor": 72243992,
+    "fecha": "2025-11-12",
+    "form": "20-F"
+   },
+   "split_inverso_12m": [
+    {
+     "fecha": "2026-10-27",
+     "ratio": 0.06666666666666667
+    }
+   ],
+   "hod_dist_pct": -28.0,
+   "vwap": 1.221,
+   "sobre_vwap_pct": -11.55,
+   "surge5m": -14.22,
+   "velas15": [
+    [
+     "13:20",
+     1.42,
+     1.46,
+     1.32,
+     1.375,
+     475803
+    ],
+    [
+     "13:21",
+     1.375,
+     1.3799,
+     1.27,
+     1.3,
+     416029
+    ],
+    [
+     "13:22",
+     1.295,
+     1.3,
+     1.22,
+     1.22,
+     182338
+    ],
+    [
+     "13:27",
+     1.3187,
+     1.35,
+     1.17,
+     1.29,
+     484591
+    ],
+    [
+     "13:28",
+     1.2999,
+     1.33,
+     1.23,
+     1.3199,
+     443060
+    ],
+    [
+     "13:29",
+     1.3112,
+     1.3195,
+     1.21,
+     1.251,
+     353104
+    ],
+    [
+     "13:30",
+     1.26,
+     1.3,
+     1.13,
+     1.28,
+     654453
+    ],
+    [
+     "13:31",
+     1.2793,
+     1.3,
+     1.21,
+     1.2601,
+     260382
+    ],
+    [
+     "13:32",
+     1.2601,
+     1.28,
+     1.22,
+     1.255,
+     150596
+    ],
+    [
+     "13:33",
+     1.245,
+     1.32,
+     1.19,
+     1.259,
+     364751
+    ],
+    [
+     "13:34",
+     1.259,
+     1.3,
+     1.25,
+     1.26,
+     208723
+    ],
+    [
+     "13:35",
+     1.2585,
+     1.2857,
+     1.235,
+     1.2498,
+     139248
+    ],
+    [
+     "13:36",
+     1.2499,
+     1.27,
+     1.16,
+     1.195,
+     306013
+    ],
+    [
+     "13:37",
+     1.1998,
+     1.2165,
+     1.08,
+     1.08,
+     390084
+    ],
+    [
+     "13:38",
+     1.08,
+     1.08,
+     1.08,
+     1.08,
+     0
+    ]
+   ],
+   "ssr": true,
+   "ssr_motivo": "arrastrado de ayer",
+   "short_pct_float": 0.05,
+   "short_fecha": "2026-10-29",
+   "pais": "China",
+   "pais_riesgo": true,
+   "split_reciente": [
+    {
+     "fecha": "2026-10-27",
+     "ratio": 0.06666666666666667
+    }
+   ],
+   "halts_hoy": [
+    {
+     "hora": "13:38:16.783",
+     "codigo": "LUDP",
+     "reanuda": null,
+     "direccion": null
+    },
+    {
+     "hora": "13:22:27.830",
+     "codigo": "LUDP",
+     "reanuda": "13:27:27",
+     "direccion": null
+    },
+    {
+     "hora": "13:11:38.976",
+     "codigo": "LUDP",
+     "reanuda": "13:16:38",
+     "direccion": null
+    },
+    {
+     "hora": "13:06:12.296",
+     "codigo": "LUDP",
+     "reanuda": "13:11:12",
+     "direccion": null
+    },
+    {
+     "hora": "12:28:26.326",
+     "codigo": "LUDP",
+     "reanuda": "12:33:26",
+     "direccion": null
+    }
+   ],
+   "noticias": [],
+   "noticias_eval": {
+    "estado": "no_encontrada",
+    "fuentes": [
+     "google",
+     "nasdaq",
+     "yahoo"
+    ],
+    "validas": []
+   },
+   "niveles": {
+    "cierre_ayer": {
+     "precio": 0.6856,
+     "fuente": "Yahoo (cierre anterior oficial)"
+    },
+    "pm_max": {
+     "precio": 0.85,
+     "fuente": "Nasdaq"
+    },
+    "pm_min": {
+     "precio": 0.7142,
+     "fuente": "Nasdaq"
+    },
+    "ayer_max": {
+     "precio": 0.843,
+     "fuente": "vela diaria de Yahoo del 2026-11-20"
+    },
+    "ayer_min": {
+     "precio": 0.658,
+     "fuente": "vela diaria de Yahoo del 2026-11-20"
+    }
+   },
+   "premarket": {
+    "max": 0.85,
+    "min": 0.7142,
+    "vol": 13083,
+    "fuente": "nasdaq"
+   },
+   "spread_pct": null,
+   "sec": {
+    "dil_motivo": [
+     "registro S-1/S-3/F-1/F-3 en 12 meses",
+     "autonomía de caja 0.1 trimestres (sustituto de going concern; dato al 2025-06-30)",
+     "emisor extranjero: información limitada (no presenta 8-K)"
+    ],
+    "veto_venta": false,
+    "veto_quiebra": false,
+    "extranjero": true,
+    "runway_q": 0.1,
+    "caja_periodo": "2025-06-30",
+    "filings_recientes": [],
+    "estado": "ok",
+    "dil_puntaje": "2/7",
+    "dil_factores_si": [
+     "caja para menos de 4 trimestres",
+     "split inverso en 12 meses"
+    ]
+   },
+   "sec_hoy": [],
+   "veto": false,
+   "en_filtro_mesa": true,
+   "calc": [
+    "vwap",
+    "surge5m",
+    "actividad",
+    "rvol_hora",
+    "ssr"
+   ],
+   "meta": {
+    "src": "yahoo-gratis",
+    "edad_s": 74,
+    "bolsa": "NasdaqGM",
+    "nombre": "Scage Future"
+   },
+   "apto": false,
+   "no_apto_por": [
+    "dilución alta según la SEC",
+    "en pausa ahora",
+    "pausa reanudada hace 12 min"
+   ],
+   "sin_dato_por": [],
+   "cautela": [
+    "float de una sola fuente (Yahoo 1.365 M / TradingView None M; emisor extranjero o sin CIK: sin portada trimestral en la SEC; 1 split(s) inverso(s) en 12 meses sin portada SEC posterior (último 2026-10-27))",
+    "SSR activo (no se puede vender en corto a la baja)",
+    "país de riesgo (China)",
+    "split en los últimos 30 días",
+    "spread desconocido (Nasdaq no respondió)"
+   ],
+   "lectura": "NO APTA: dilución alta según la SEC (y 2 motivo(s) más).",
+   "stocktwits": {
+    "fuente": "StockTwits",
+    "mensajes_1h": 27,
+    "muestra": 30,
+    "ritmo_normal_h": 27.71,
+    "horas_cubiertas": 1.1,
+    "cambio": 0.97,
+    "saturado": false,
+    "alcistas": 11,
+    "bajistas": 2,
+    "hora_utc": "2026-11-23T18:31:50+00:00"
+   },
+   "short_finra": {
+    "short": 2356,
+    "anterior": 36850,
+    "fecha": "2026-10-30",
+    "dias_cubrir": 1,
+    "fuente": "FINRA (interés en corto consolidado)"
+   }
+  },
+  {
+   "ticker": "FFR",
+   "price": 0.5351,
+   "chg": 49.89,
+   "volM": 16.759,
+   "rvol": 14.23,
+   "floatM": 22.043,
+   "dayHigh": 0.611,
+   "dayLow": 0.37,
+   "dayHigh_regular": 0.611,
+   "dayLow_regular": 0.3927,
+   "halt": false,
+   "news": true,
+   "headline": "FF EAI Robotics Ecosystem (FFR) Stock Analysis Report | Financials & Insights",
+   "dil": "alta",
+   "unsure": [],
+   "rvol_hora": 111.35,
+   "actividad": 0.0,
+   "rotaciones": 0.76,
+   "float_muy_bajo": false,
+   "float_confianza": "alta",
+   "float_motivos": [
+    "EE.UU., float ≤ acciones de portada SEC (27,674,296 al 2026-11-16, 10-Q)"
+   ],
+   "float_cruce": {
+    "yahoo_M": 22.043,
+    "tradingview_M": 10.07,
+    "sec_portada": {
+     "valor": 27674296,
+     "fecha": "2026-11-16",
+     "form": "10-Q"
+    },
+    "chequeo_sec": "alta",
+    "motivos_sec": [
+     "EE.UU., float ≤ acciones de portada SEC (27,674,296 al 2026-11-16, 10-Q)"
+    ],
+    "estado": "confirmado",
+    "rango_M": [
+     10.07,
+     22.043
+    ]
+   },
+   "nasdaq": {
+    "precio": 0.5378,
+    "bid": 0.5315,
+    "ask": 0.5379,
+    "hora": "Nov 23, 2026 1:39 PM ET"
+   },
+   "precio_cuadra": true,
+   "acciones_portada_sec": {
+    "valor": 27674296,
+    "fecha": "2026-11-16",
+    "form": "10-Q"
+   },
+   "split_inverso_12m": [],
+   "hod_dist_pct": -12.42,
+   "vwap": 0.4941,
+   "sobre_vwap_pct": 8.29,
+   "surge5m": 0.77,
+   "velas15": [
+    [
+     "13:24",
+     0.5326,
+     0.5553,
+     0.5326,
+     0.5542,
+     38799
+    ],
+    [
+     "13:25",
+     0.5511,
+     0.5511,
+     0.52,
+     0.5278,
+     33991
+    ],
+    [
+     "13:26",
+     0.525,
+     0.5335,
+     0.525,
+     0.5293,
+     1749
+    ],
+    [
+     "13:27",
+     0.53,
+     0.5329,
+     0.5251,
+     0.5329,
+     13108
+    ],
+    [
+     "13:28",
+     0.5448,
+     0.5448,
+     0.5296,
+     0.5296,
+     1531
+    ],
+    [
+     "13:29",
+     0.5301,
+     0.536,
+     0.53,
+     0.536,
+     3647
+    ],
+    [
+     "13:30",
+     0.5319,
+     0.5363,
+     0.5307,
+     0.5316,
+     5484
+    ],
+    [
+     "13:31",
+     0.5301,
+     0.5401,
+     0.53,
+     0.54,
+     11940
+    ],
+    [
+     "13:32",
+     0.535,
+     0.535,
+     0.53,
+     0.5317,
+     8975
+    ],
+    [
+     "13:33",
+     0.5307,
+     0.5337,
+     0.53,
+     0.5337,
+     15077
+    ],
+    [
+     "13:34",
+     0.5341,
+     0.5341,
+     0.5328,
+     0.5328,
+     4301
+    ],
+    [
+     "13:35",
+     0.5329,
+     0.534,
+     0.5329,
+     0.534,
+     1556
+    ],
+    [
+     "13:36",
+     0.5393,
+     0.5416,
+     0.5322,
+     0.5322,
+     31817
+    ],
+    [
+     "13:38",
+     0.5397,
+     0.5399,
+     0.5351,
+     0.5351,
+     11100
+    ],
+    [
+     "13:39",
+     0.5378,
+     0.5378,
+     0.5378,
+     0.5378,
+     0
+    ]
+   ],
+   "ssr": true,
+   "ssr_motivo": "arrastrado de ayer",
+   "short_pct_float": 1.17,
+   "short_fecha": "2026-10-29",
+   "pais": "United States",
+   "pais_riesgo": false,
+   "split_reciente": [],
+   "halts_hoy": [],
+   "noticias": [
+    {
+     "titulo": "Former biotech dumps $10M crypto treasury for robots",
+     "fecha": "2026-11-23T12:00:00Z",
+     "fuente": "TheStreet"
+    },
+    {
+     "titulo": "Faraday Future Robotics Subsidiary Approved as Supplier to California Schools, Expands Education Partnerships",
+     "fecha": "2026-11-23T11:25:00Z",
+     "fuente": "InvestorsHub"
+    },
+    {
+     "titulo": "FF EAI Robotics Reports $2.3 Million in Nine-Month Revenue and Expands University Robotics Sales",
+     "fecha": "2026-11-16T11:34:49Z",
+     "fuente": "InvestorsHub"
+    }
+   ],
+   "noticias_eval": {
+    "estado": "confirmada",
+    "fuentes": [
+     "google",
+     "nasdaq",
+     "yahoo"
+    ],
+    "validas": [
+     {
+      "titulo": "FF EAI Robotics Ecosystem (FFR) Stock Analysis Report | Financials & Insights",
+      "fuente": "Benzinga",
+      "fecha": "2026-11-23T17:47:55+00:00",
+      "url": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE1EdXN1YUtEbGNUVHdKRFZYcDZheFQtMVg1WFU0WGhhNnF1cFF5MTNTcWZYRjluYWdUX2JwS2xZd2pXeGtUWjYzVkFXS0hzYXgtWE5R?oc=5",
+      "origen": "google"
+     }
+    ]
+   },
+   "niveles": {
+    "cierre_ayer": {
+     "precio": 0.357,
+     "fuente": "Yahoo (cierre anterior oficial)"
+    },
+    "pm_max": {
+     "precio": 0.4951,
+     "fuente": "Nasdaq"
+    },
+    "pm_min": {
+     "precio": 0.37,
+     "fuente": "Nasdaq"
+    },
+    "ayer_max": {
+     "precio": 0.427,
+     "fuente": "vela diaria de Yahoo del 2026-11-20"
+    },
+    "ayer_min": {
+     "precio": 0.325,
+     "fuente": "vela diaria de Yahoo del 2026-11-20"
+    }
+   },
+   "premarket": {
+    "max": 0.4951,
+    "min": 0.37,
+    "vol": 5176830,
+    "fuente": "nasdaq"
+   },
+   "spread_pct": 1.2,
+   "sec": {
+    "dil_motivo": [
+     "venta de acciones en 90 días",
+     "registro S-1/S-3/F-1/F-3 en 12 meses",
+     "autonomía de caja 1.0 trimestres (sustituto de going concern; dato al 2026-09-30)"
+    ],
+    "veto_venta": false,
+    "veto_quiebra": false,
+    "extranjero": false,
+    "runway_q": 1.0,
+    "caja_periodo": "2026-09-30",
+    "filings_recientes": [
+     {
+      "form": "8-K",
+      "fecha": "2026-11-13",
+      "items": "2.02,7.01,9.01"
+     },
+     {
+      "form": "8-K",
+      "fecha": "2026-10-26",
+      "items": "7.01,9.01"
+     },
+     {
+      "form": "8-K",
+      "fecha": "2026-10-26",
+      "items": "1.01,2.01,3.02,5.02,5.03,7.01,9.01"
+     }
+    ],
+    "estado": "ok",
+    "dil_puntaje": "3/7",
+    "dil_factores_si": [
+     "caja para menos de 4 trimestres",
+     "venta de acciones en 6 meses",
+     "deuda convertible"
+    ]
+   },
+   "sec_hoy": [],
+   "veto": false,
+   "en_filtro_mesa": false,
+   "calc": [
+    "vwap",
+    "surge5m",
+    "actividad",
+    "rvol_hora",
+    "ssr"
+   ],
+   "meta": {
+    "src": "yahoo-gratis",
+    "edad_s": 59,
+    "bolsa": "NasdaqCM",
+    "nombre": "FF EAI Robotics Ecosystem Inc."
+   },
+   "apto": false,
+   "no_apto_por": [
+    "dilución alta según la SEC",
+    "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)"
+   ],
+   "sin_dato_por": [],
+   "cautela": [
+    "SSR activo (no se puede vender en corto a la baja)"
+   ],
+   "lectura": "NO APTA: dilución alta según la SEC (y 1 motivo(s) más).",
+   "stocktwits": {
+    "fuente": "StockTwits",
+    "mensajes_1h": 2,
+    "muestra": 30,
+    "ritmo_normal_h": 0.32,
+    "horas_cubiertas": 92.5,
+    "cambio": 6.16,
+    "saturado": false,
+    "alcistas": 22,
+    "bajistas": 0,
+    "hora_utc": "2026-11-23T18:31:50+00:00"
+   },
+   "short_finra": {
+    "short": 257996,
+    "anterior": 299405,
+    "fecha": "2026-10-30",
+    "dias_cubrir": 1,
+    "fuente": "FINRA (interés en corto consolidado)"
+   }
+  },
+  {
    "ticker": "CUE",
-   "price": 6.24,
-   "chg": 49.76,
-   "volM": 8.696,
-   "rvol": 15.34,
+   "price": 6.22,
+   "chg": 49.88,
+   "volM": 8.771,
+   "rvol": 15.47,
    "floatM": 6.774,
    "dayHigh": 10.24,
    "dayLow": 4.25,
@@ -2592,9 +2926,9 @@
    "headline": "What Lifted Cue Biopharma (NASDAQ:CUE) 33.49% Higher After Its Steep Slide?",
    "dil": "alta",
    "unsure": [],
-   "rvol_hora": 5.73,
+   "rvol_hora": 5.69,
    "actividad": 0.0,
-   "rotaciones": 1.28,
+   "rotaciones": 1.29,
    "float_muy_bajo": false,
    "float_confianza": "alta",
    "float_motivos": [
@@ -2619,10 +2953,10 @@
     ]
    },
    "nasdaq": {
-    "precio": 6.14,
-    "bid": 6.12,
-    "ask": 6.23,
-    "hora": "Nov 23, 2026 1:30 PM ET"
+    "precio": 6.16,
+    "bid": 6.09,
+    "ask": 6.28,
+    "hora": "Nov 23, 2026 1:39 PM ET"
    },
    "precio_cuadra": true,
    "acciones_portada_sec": {
@@ -2636,83 +2970,11 @@
      "ratio": 0.03333333333333333
     }
    ],
-   "hod_dist_pct": -39.06,
-   "vwap": 7.7346,
-   "sobre_vwap_pct": -19.32,
-   "surge5m": 1.48,
+   "hod_dist_pct": -39.26,
+   "vwap": 7.7215,
+   "sobre_vwap_pct": -19.45,
+   "surge5m": 0.81,
    "velas15": [
-    [
-     "13:16",
-     6.5011,
-     6.6133,
-     6.5011,
-     6.5011,
-     14261
-    ],
-    [
-     "13:17",
-     6.57,
-     6.7,
-     6.4,
-     6.4001,
-     21447
-    ],
-    [
-     "13:18",
-     6.401,
-     6.4988,
-     6.3,
-     6.3813,
-     11136
-    ],
-    [
-     "13:19",
-     6.395,
-     6.45,
-     6.35,
-     6.45,
-     15986
-    ],
-    [
-     "13:20",
-     6.38,
-     6.38,
-     6.06,
-     6.0677,
-     16283
-    ],
-    [
-     "13:21",
-     6.06,
-     6.15,
-     6.0,
-     6.08,
-     25474
-    ],
-    [
-     "13:22",
-     6.045,
-     6.0792,
-     5.89,
-     5.9501,
-     27881
-    ],
-    [
-     "13:23",
-     6.0,
-     6.07,
-     6.0,
-     6.0538,
-     6400
-    ],
-    [
-     "13:24",
-     6.08,
-     6.18,
-     6.08,
-     6.11,
-     9786
-    ],
     [
      "13:25",
      6.1101,
@@ -2755,10 +3017,82 @@
     ],
     [
      "13:30",
-     6.17,
-     6.17,
-     6.17,
-     6.17,
+     6.175,
+     6.29,
+     6.11,
+     6.175,
+     8590
+    ],
+    [
+     "13:31",
+     6.12,
+     6.12,
+     6.01,
+     6.07,
+     26222
+    ],
+    [
+     "13:32",
+     6.03,
+     6.1,
+     6.0112,
+     6.085,
+     6700
+    ],
+    [
+     "13:33",
+     6.095,
+     6.095,
+     6.06,
+     6.06,
+     1446
+    ],
+    [
+     "13:34",
+     6.0996,
+     6.1103,
+     6.08,
+     6.1103,
+     2744
+    ],
+    [
+     "13:35",
+     6.14,
+     6.14,
+     6.1203,
+     6.135,
+     1924
+    ],
+    [
+     "13:36",
+     6.165,
+     6.2,
+     6.15,
+     6.2,
+     2895
+    ],
+    [
+     "13:37",
+     6.1999,
+     6.37,
+     6.164,
+     6.19,
+     17996
+    ],
+    [
+     "13:38",
+     6.22,
+     6.22,
+     6.22,
+     6.22,
+     3364
+    ],
+    [
+     "13:39",
+     6.16,
+     6.16,
+     6.16,
+     6.16,
      0
     ]
    ],
@@ -2863,7 +3197,7 @@
     "vol": 13079,
     "fuente": "nasdaq"
    },
-   "spread_pct": 1.78,
+   "spread_pct": 3.07,
    "sec": {
     "dil_motivo": [
      "registro S-1/S-3/F-1/F-3 en 12 meses",
@@ -2902,19 +3236,20 @@
    ],
    "meta": {
     "src": "yahoo-gratis",
-    "edad_s": 64,
+    "edad_s": 39,
     "bolsa": "NasdaqCM",
     "nombre": "Cue Biopharma, Inc."
    },
    "apto": false,
    "no_apto_por": [
-    "dilución alta según la SEC"
+    "dilución alta según la SEC",
+    "spread 3.07% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
    ],
    "sin_dato_por": [],
    "cautela": [
     "SSR activo (no se puede vender en corto a la baja)"
    ],
-   "lectura": "NO APTA: dilución alta según la SEC",
+   "lectura": "NO APTA: dilución alta según la SEC (y 1 motivo(s) más).",
    "stocktwits": {
     "fuente": "StockTwits",
     "mensajes_1h": 17,
@@ -2936,346 +3271,11 @@
    }
   },
   {
-   "ticker": "FFR",
-   "price": 0.5301,
-   "chg": 48.56,
-   "volM": 16.666,
-   "rvol": 14.15,
-   "floatM": 22.043,
-   "dayHigh": 0.611,
-   "dayLow": 0.37,
-   "dayHigh_regular": 0.611,
-   "dayLow_regular": 0.3927,
-   "halt": false,
-   "news": true,
-   "headline": "FF EAI Robotics Ecosystem (FFR) Stock Analysis Report | Financials & Insights",
-   "dil": "alta",
-   "unsure": [],
-   "rvol_hora": 111.68,
-   "actividad": 0.0,
-   "rotaciones": 0.76,
-   "float_muy_bajo": false,
-   "float_confianza": "alta",
-   "float_motivos": [
-    "EE.UU., float ≤ acciones de portada SEC (27,674,296 al 2026-11-16, 10-Q)"
-   ],
-   "float_cruce": {
-    "yahoo_M": 22.043,
-    "tradingview_M": 10.07,
-    "sec_portada": {
-     "valor": 27674296,
-     "fecha": "2026-11-16",
-     "form": "10-Q"
-    },
-    "chequeo_sec": "alta",
-    "motivos_sec": [
-     "EE.UU., float ≤ acciones de portada SEC (27,674,296 al 2026-11-16, 10-Q)"
-    ],
-    "estado": "confirmado",
-    "rango_M": [
-     10.07,
-     22.043
-    ]
-   },
-   "nasdaq": {
-    "precio": 0.5319,
-    "bid": 0.5,
-    "ask": 0.542,
-    "hora": "Nov 23, 2026 1:30 PM ET"
-   },
-   "precio_cuadra": true,
-   "acciones_portada_sec": {
-    "valor": 27674296,
-    "fecha": "2026-11-16",
-    "form": "10-Q"
-   },
-   "split_inverso_12m": [],
-   "hod_dist_pct": -13.24,
-   "vwap": 0.4939,
-   "sobre_vwap_pct": 7.32,
-   "surge5m": 0.78,
-   "velas15": [
-    [
-     "13:16",
-     0.5237,
-     0.5294,
-     0.5191,
-     0.5242,
-     13708
-    ],
-    [
-     "13:17",
-     0.5238,
-     0.5238,
-     0.5238,
-     0.5238,
-     772
-    ],
-    [
-     "13:18",
-     0.5211,
-     0.5211,
-     0.5102,
-     0.5144,
-     11214
-    ],
-    [
-     "13:19",
-     0.5131,
-     0.5198,
-     0.513,
-     0.5149,
-     1403
-    ],
-    [
-     "13:20",
-     0.5199,
-     0.53,
-     0.515,
-     0.525,
-     31688
-    ],
-    [
-     "13:21",
-     0.5295,
-     0.5295,
-     0.5247,
-     0.5295,
-     5088
-    ],
-    [
-     "13:22",
-     0.5262,
-     0.5295,
-     0.5262,
-     0.5295,
-     1632
-    ],
-    [
-     "13:23",
-     0.5263,
-     0.54,
-     0.5263,
-     0.54,
-     13566
-    ],
-    [
-     "13:24",
-     0.5326,
-     0.5553,
-     0.5326,
-     0.5542,
-     38799
-    ],
-    [
-     "13:25",
-     0.5511,
-     0.5511,
-     0.52,
-     0.5278,
-     33991
-    ],
-    [
-     "13:26",
-     0.525,
-     0.5335,
-     0.525,
-     0.5293,
-     1749
-    ],
-    [
-     "13:27",
-     0.53,
-     0.5329,
-     0.5251,
-     0.5329,
-     13108
-    ],
-    [
-     "13:28",
-     0.5448,
-     0.5448,
-     0.5296,
-     0.5296,
-     1531
-    ],
-    [
-     "13:29",
-     0.5301,
-     0.536,
-     0.53,
-     0.536,
-     3647
-    ],
-    [
-     "13:30",
-     0.5319,
-     0.5319,
-     0.5319,
-     0.5319,
-     0
-    ]
-   ],
-   "ssr": true,
-   "ssr_motivo": "arrastrado de ayer",
-   "short_pct_float": 1.17,
-   "short_fecha": "2026-10-29",
-   "pais": "United States",
-   "pais_riesgo": false,
-   "split_reciente": [],
-   "halts_hoy": [],
-   "noticias": [
-    {
-     "titulo": "Former biotech dumps $10M crypto treasury for robots",
-     "fecha": "2026-11-23T12:00:00Z",
-     "fuente": "TheStreet"
-    },
-    {
-     "titulo": "Faraday Future Robotics Subsidiary Approved as Supplier to California Schools, Expands Education Partnerships",
-     "fecha": "2026-11-23T11:25:00Z",
-     "fuente": "InvestorsHub"
-    },
-    {
-     "titulo": "FF EAI Robotics Reports $2.3 Million in Nine-Month Revenue and Expands University Robotics Sales",
-     "fecha": "2026-11-16T11:34:49Z",
-     "fuente": "InvestorsHub"
-    }
-   ],
-   "noticias_eval": {
-    "estado": "confirmada",
-    "fuentes": [
-     "google",
-     "nasdaq",
-     "yahoo"
-    ],
-    "validas": [
-     {
-      "titulo": "FF EAI Robotics Ecosystem (FFR) Stock Analysis Report | Financials & Insights",
-      "fuente": "Benzinga",
-      "fecha": "2026-11-23T17:47:55+00:00",
-      "url": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE1EdXN1YUtEbGNUVHdKRFZYcDZheFQtMVg1WFU0WGhhNnF1cFF5MTNTcWZYRjluYWdUX2JwS2xZd2pXeGtUWjYzVkFXS0hzYXgtWE5R?oc=5",
-      "origen": "google"
-     }
-    ]
-   },
-   "niveles": {
-    "cierre_ayer": {
-     "precio": 0.357,
-     "fuente": "Yahoo (cierre anterior oficial)"
-    },
-    "pm_max": {
-     "precio": 0.4951,
-     "fuente": "Nasdaq"
-    },
-    "pm_min": {
-     "precio": 0.37,
-     "fuente": "Nasdaq"
-    },
-    "ayer_max": {
-     "precio": 0.427,
-     "fuente": "vela diaria de Yahoo del 2026-11-20"
-    },
-    "ayer_min": {
-     "precio": 0.325,
-     "fuente": "vela diaria de Yahoo del 2026-11-20"
-    }
-   },
-   "premarket": {
-    "max": 0.4951,
-    "min": 0.37,
-    "vol": 5176830,
-    "fuente": "nasdaq"
-   },
-   "spread_pct": 8.06,
-   "sec": {
-    "dil_motivo": [
-     "venta de acciones en 90 días",
-     "registro S-1/S-3/F-1/F-3 en 12 meses",
-     "autonomía de caja 1.0 trimestres (sustituto de going concern; dato al 2026-09-30)"
-    ],
-    "veto_venta": false,
-    "veto_quiebra": false,
-    "extranjero": false,
-    "runway_q": 1.0,
-    "caja_periodo": "2026-09-30",
-    "filings_recientes": [
-     {
-      "form": "8-K",
-      "fecha": "2026-11-13",
-      "items": "2.02,7.01,9.01"
-     },
-     {
-      "form": "8-K",
-      "fecha": "2026-10-26",
-      "items": "7.01,9.01"
-     },
-     {
-      "form": "8-K",
-      "fecha": "2026-10-26",
-      "items": "1.01,2.01,3.02,5.02,5.03,7.01,9.01"
-     }
-    ],
-    "estado": "ok",
-    "dil_puntaje": "3/7",
-    "dil_factores_si": [
-     "caja para menos de 4 trimestres",
-     "venta de acciones en 6 meses",
-     "deuda convertible"
-    ]
-   },
-   "sec_hoy": [],
-   "veto": false,
-   "en_filtro_mesa": false,
-   "calc": [
-    "vwap",
-    "surge5m",
-    "actividad",
-    "rvol_hora",
-    "ssr"
-   ],
-   "meta": {
-    "src": "yahoo-gratis",
-    "edad_s": 60,
-    "bolsa": "NasdaqCM",
-    "nombre": "FF EAI Robotics Ecosystem Inc."
-   },
-   "apto": false,
-   "no_apto_por": [
-    "dilución alta según la SEC",
-    "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)",
-    "spread 8.06% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
-   ],
-   "sin_dato_por": [],
-   "cautela": [
-    "SSR activo (no se puede vender en corto a la baja)"
-   ],
-   "lectura": "NO APTA: dilución alta según la SEC (y 2 motivo(s) más).",
-   "stocktwits": {
-    "fuente": "StockTwits",
-    "mensajes_1h": 2,
-    "muestra": 30,
-    "ritmo_normal_h": 0.32,
-    "horas_cubiertas": 92.5,
-    "cambio": 6.16,
-    "saturado": false,
-    "alcistas": 22,
-    "bajistas": 0,
-    "hora_utc": "2026-11-23T18:31:50+00:00"
-   },
-   "short_finra": {
-    "short": 257996,
-    "anterior": 299405,
-    "fecha": "2026-10-30",
-    "dias_cubrir": 1,
-    "fuente": "FINRA (interés en corto consolidado)"
-   }
-  },
-  {
    "ticker": "AEON",
-   "price": 0.1801,
-   "chg": 46.42,
-   "volM": 4.242,
-   "rvol": 0.57,
+   "price": 0.1765,
+   "chg": 43.74,
+   "volM": 4.449,
+   "rvol": 0.6,
    "floatM": 13.1,
    "dayHigh": 0.1869,
    "dayLow": 0.1212,
@@ -3286,9 +3286,9 @@
    "headline": "AEON Ha Long welcomed nearly 160,000 visitors after 3 days of opening.",
    "dil": "alta",
    "unsure": [],
-   "rvol_hora": 4.16,
+   "rvol_hora": 4.34,
    "actividad": 0.0,
-   "rotaciones": 0.32,
+   "rotaciones": 0.34,
    "float_muy_bajo": false,
    "float_confianza": "alta",
    "float_motivos": [
@@ -3313,10 +3313,10 @@
     ]
    },
    "nasdaq": {
-    "precio": 0.1823,
+    "precio": 0.1765,
     "bid": 0.17,
-    "ask": 0.1934,
-    "hora": "Nov 23, 2026 1:30 PM ET"
+    "ask": 0.1894,
+    "hora": "Nov 23, 2026 1:39 PM ET"
    },
    "precio_cuadra": true,
    "acciones_portada_sec": {
@@ -3325,82 +3325,18 @@
     "form": "10-Q"
    },
    "split_inverso_12m": [],
-   "hod_dist_pct": -3.64,
-   "vwap": 0.1558,
-   "sobre_vwap_pct": 15.62,
-   "surge5m": -1.94,
+   "hod_dist_pct": -5.56,
+   "vwap": 0.1561,
+   "sobre_vwap_pct": 13.04,
+   "surge5m": -2.92,
    "velas15": [
-    [
-     "13:16",
-     0.1775,
-     0.1776,
-     0.1775,
-     0.1776,
-     2226
-    ],
-    [
-     "13:17",
-     0.1797,
-     0.1797,
-     0.179,
-     0.179,
-     7028
-    ],
-    [
-     "13:18",
-     0.1795,
-     0.1796,
-     0.1794,
-     0.1795,
-     8532
-    ],
-    [
-     "13:19",
-     0.1796,
-     0.1796,
-     0.1795,
-     0.1796,
-     9569
-    ],
-    [
-     "13:20",
-     0.1796,
-     0.1796,
-     0.1741,
-     0.1748,
-     11366
-    ],
-    [
-     "13:21",
-     0.1793,
-     0.1836,
-     0.1793,
-     0.1836,
-     108061
-    ],
-    [
-     "13:22",
-     0.1846,
-     0.1869,
-     0.1761,
-     0.1815,
-     191171
-    ],
-    [
-     "13:23",
-     0.1799,
-     0.1865,
-     0.1799,
-     0.1841,
-     46217
-    ],
     [
      "13:24",
      0.185,
      0.1855,
      0.1822,
      0.1855,
-     79616
+     0
     ],
     [
      "13:25",
@@ -3446,8 +3382,72 @@
      "13:30",
      0.1824,
      0.1824,
-     0.1824,
-     0.1824,
+     0.1801,
+     0.1821,
+     17064
+    ],
+    [
+     "13:31",
+     0.1837,
+     0.1837,
+     0.1802,
+     0.1803,
+     11069
+    ],
+    [
+     "13:32",
+     0.1807,
+     0.1807,
+     0.18,
+     0.18,
+     50925
+    ],
+    [
+     "13:33",
+     0.1787,
+     0.1818,
+     0.1781,
+     0.1818,
+     51539
+    ],
+    [
+     "13:34",
+     0.1819,
+     0.1819,
+     0.1798,
+     0.1819,
+     15764
+    ],
+    [
+     "13:35",
+     0.1803,
+     0.1806,
+     0.1797,
+     0.1806,
+     2226
+    ],
+    [
+     "13:36",
+     0.1813,
+     0.1813,
+     0.17,
+     0.1701,
+     26635
+    ],
+    [
+     "13:37",
+     0.17,
+     0.1775,
+     0.17,
+     0.1757,
+     12872
+    ],
+    [
+     "13:38",
+     0.1765,
+     0.1765,
+     0.1765,
+     0.1765,
      0
     ]
    ],
@@ -3535,7 +3535,7 @@
     "vol": 484340,
     "fuente": "nasdaq"
    },
-   "spread_pct": 12.88,
+   "spread_pct": 10.8,
    "sec": {
     "dil_motivo": [
      "venta de acciones en 90 días",
@@ -3586,7 +3586,7 @@
    ],
    "meta": {
     "src": "yahoo-gratis",
-    "edad_s": 73,
+    "edad_s": 39,
     "bolsa": "NYSE American",
     "nombre": "AEON Biopharma, Inc."
    },
@@ -3594,22 +3594,22 @@
    "no_apto_por": [
     "dilución alta según la SEC",
     "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)",
-    "spread 12.88% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
+    "spread 10.8% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
    ],
    "sin_dato_por": [],
    "cautela": [],
    "lectura": "NO APTA: dilución alta según la SEC (y 2 motivo(s) más).",
    "stocktwits": {
     "fuente": "StockTwits",
-    "mensajes_1h": 23,
+    "mensajes_1h": 15,
     "muestra": 30,
-    "ritmo_normal_h": 1.1,
-    "horas_cubiertas": 27.3,
-    "cambio": 20.92,
+    "ritmo_normal_h": 12.27,
+    "horas_cubiertas": 2.4,
+    "cambio": 1.22,
     "saturado": false,
     "alcistas": 23,
     "bajistas": 0,
-    "hora_utc": "2026-11-23T18:20:06+00:00"
+    "hora_utc": "2026-11-23T18:40:12+00:00"
    },
    "short_finra": {
     "short": 2661529,
@@ -3621,10 +3621,10 @@
   },
   {
    "ticker": "MRM",
-   "price": 0.3198,
-   "chg": 39.33,
-   "volM": 54.151,
-   "rvol": 313.91,
+   "price": 0.3301,
+   "chg": 43.52,
+   "volM": 54.308,
+   "rvol": 314.82,
    "floatM": 5.692,
    "dayHigh": 0.52,
    "dayLow": 0.2814,
@@ -3637,9 +3637,9 @@
    "unsure": [
     "floatM"
    ],
-   "rvol_hora": 366.19,
+   "rvol_hora": 366.99,
    "actividad": 0.0,
-   "rotaciones": 9.51,
+   "rotaciones": 9.54,
    "float_muy_bajo": false,
    "float_confianza": "baja",
    "float_motivos": [
@@ -3664,71 +3664,23 @@
     ]
    },
    "nasdaq": {
-    "precio": 0.332,
+    "precio": 0.3301,
     "bid": 0.3229,
-    "ask": 0.3525,
-    "hora": "Nov 23, 2026 1:30 PM ET"
+    "ask": 0.3524,
+    "hora": "Nov 23, 2026 1:39 PM ET"
    },
-   "precio_cuadra": false,
+   "precio_cuadra": true,
    "acciones_portada_sec": {
     "valor": 7901950,
     "fecha": "2025-12-31",
     "form": "20-F"
    },
    "split_inverso_12m": [],
-   "hod_dist_pct": -38.5,
+   "hod_dist_pct": -36.52,
    "vwap": 0.3067,
-   "sobre_vwap_pct": 4.27,
-   "surge5m": 2.53,
+   "sobre_vwap_pct": 7.62,
+   "surge5m": -1.32,
    "velas15": [
-    [
-     "13:16",
-     0.3381,
-     0.3421,
-     0.3381,
-     0.3421,
-     2660
-    ],
-    [
-     "13:17",
-     0.3416,
-     0.3416,
-     0.3316,
-     0.3316,
-     15902
-    ],
-    [
-     "13:18",
-     0.3316,
-     0.3373,
-     0.3316,
-     0.3373,
-     3121
-    ],
-    [
-     "13:19",
-     0.3373,
-     0.3373,
-     0.3331,
-     0.3364,
-     931
-    ],
-    [
-     "13:20",
-     0.3352,
-     0.3353,
-     0.3341,
-     0.3341,
-     3204
-    ],
-    [
-     "13:21",
-     0.3351,
-     0.3351,
-     0.3341,
-     0.3341,
-     22389
-    ],
     [
      "13:22",
      0.3341,
@@ -3795,10 +3747,58 @@
     ],
     [
      "13:30",
+     0.3228,
+     0.3321,
+     0.3228,
+     0.3318,
+     30815
+    ],
+    [
+     "13:31",
+     0.3376,
+     0.3385,
+     0.332,
+     0.3345,
+     18584
+    ],
+    [
+     "13:32",
+     0.3328,
+     0.3328,
+     0.3229,
+     0.3229,
+     3266
+    ],
+    [
+     "13:33",
+     0.3359,
+     0.3359,
+     0.3313,
+     0.3348,
+     36270
+    ],
+    [
+     "13:34",
+     0.3334,
+     0.3334,
      0.332,
      0.332,
-     0.332,
-     0.332,
+     3559
+    ],
+    [
+     "13:35",
+     0.3314,
+     0.3324,
+     0.3313,
+     0.3324,
+     2970
+    ],
+    [
+     "13:36",
+     0.3301,
+     0.3301,
+     0.3301,
+     0.3301,
      0
     ]
    ],
@@ -3863,7 +3863,7 @@
     "vol": 38866377,
     "fuente": "nasdaq"
    },
-   "spread_pct": 8.77,
+   "spread_pct": 8.74,
    "sec": {
     "dil_motivo": [
      "autonomía de caja 0.3 trimestres (sustituto de going concern; dato al 2025-12-31)",
@@ -3893,21 +3893,21 @@
    ],
    "meta": {
     "src": "yahoo-gratis",
-    "edad_s": 80,
+    "edad_s": 192,
     "bolsa": "NasdaqCM",
     "nombre": "MEDIROM Healthcare Technologies Inc."
    },
    "apto": false,
    "no_apto_por": [
     "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)",
-    "spread 8.77% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
+    "sin operaciones hace 192 s: poco líquida para entrar",
+    "spread 8.74% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
    ],
    "sin_dato_por": [],
    "cautela": [
-    "float de una sola fuente (Yahoo 5.692 M / TradingView None M; emisor extranjero o sin CIK: sin portada trimestral en la SEC)",
-    "precio de Yahoo y Nasdaq difieren más de 3% (Yahoo 0.3198, Nasdaq 0.332)"
+    "float de una sola fuente (Yahoo 5.692 M / TradingView None M; emisor extranjero o sin CIK: sin portada trimestral en la SEC)"
    ],
-   "lectura": "NO APTA: fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M) (y 1 motivo(s) más).",
+   "lectura": "NO APTA: fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M) (y 2 motivo(s) más).",
    "stocktwits": {
     "fuente": "StockTwits",
     "mensajes_1h": 3,
@@ -3929,22 +3929,672 @@
    }
   },
   {
-   "ticker": "TRAW",
-   "price": 0.24,
-   "chg": 39.32,
-   "volM": 0.182,
+   "ticker": "XCH",
+   "price": 3.875,
+   "chg": 40.32,
+   "volM": 0.031,
    "rvol": 0.3,
+   "floatM": 1.627,
+   "dayHigh": 4.1,
+   "dayLow": 3.2,
+   "dayHigh_regular": 4.1,
+   "dayLow_regular": 3.39,
+   "halt": false,
+   "news": true,
+   "headline": "Analysts Expect Breakeven For XCHG Limited (NASDAQ:XCH) Before Long",
+   "dil": "media",
+   "unsure": [
+    "floatM"
+   ],
+   "rvol_hora": 1.89,
+   "actividad": 0.0,
+   "rotaciones": 0.02,
+   "float_muy_bajo": true,
+   "float_confianza": "baja",
+   "float_motivos": [
+    "emisor extranjero o sin CIK: sin portada trimestral en la SEC",
+    "1 split(s) inverso(s) en 12 meses sin portada SEC posterior (último 2026-08-21)"
+   ],
+   "float_cruce": {
+    "yahoo_M": 1.627,
+    "tradingview_M": 3.046,
+    "sec_portada": null,
+    "chequeo_sec": "baja",
+    "motivos_sec": [
+     "emisor extranjero o sin CIK: sin portada trimestral en la SEC",
+     "1 split(s) inverso(s) en 12 meses sin portada SEC posterior (último 2026-08-21)"
+    ],
+    "estado": "en_disputa",
+    "rango_M": [
+     1.627,
+     3.046
+    ]
+   },
+   "nasdaq": {
+    "precio": 3.875,
+    "bid": 3.8,
+    "ask": 4.15,
+    "hora": "Nov 23, 2026 1:39 PM ET"
+   },
+   "precio_cuadra": true,
+   "acciones_portada_sec": null,
+   "split_inverso_12m": [
+    {
+     "fecha": "2026-08-21",
+     "ratio": 0.05
+    }
+   ],
+   "hod_dist_pct": -5.49,
+   "vwap": 3.6421,
+   "sobre_vwap_pct": 6.4,
+   "surge5m": 0.65,
+   "velas15": [
+    [
+     "11:15",
+     3.72,
+     3.815,
+     3.72,
+     3.815,
+     449
+    ],
+    [
+     "11:16",
+     3.67,
+     3.67,
+     3.67,
+     3.67,
+     162
+    ],
+    [
+     "11:19",
+     3.6565,
+     3.6565,
+     3.6565,
+     3.6565,
+     108
+    ],
+    [
+     "11:32",
+     3.6,
+     3.6,
+     3.6,
+     3.6,
+     621
+    ],
+    [
+     "11:37",
+     3.71,
+     3.71,
+     3.71,
+     3.71,
+     1383
+    ],
+    [
+     "12:38",
+     3.88,
+     3.88,
+     3.88,
+     3.88,
+     154
+    ],
+    [
+     "12:44",
+     3.8207,
+     3.8207,
+     3.805,
+     3.805,
+     886
+    ],
+    [
+     "12:45",
+     3.805,
+     3.805,
+     3.805,
+     3.805,
+     1212
+    ],
+    [
+     "13:16",
+     3.8031,
+     3.8031,
+     3.8031,
+     3.8031,
+     316
+    ],
+    [
+     "13:25",
+     3.84,
+     3.85,
+     3.84,
+     3.85,
+     1805
+    ],
+    [
+     "13:30",
+     3.86,
+     3.86,
+     3.86,
+     3.86,
+     1154
+    ],
+    [
+     "13:34",
+     3.975,
+     3.975,
+     3.975,
+     3.975,
+     184
+    ],
+    [
+     "13:35",
+     4.1,
+     4.1,
+     4.1,
+     4.1,
+     145
+    ],
+    [
+     "13:36",
+     3.95,
+     3.95,
+     3.95,
+     3.95,
+     498
+    ],
+    [
+     "13:37",
+     3.875,
+     3.875,
+     3.875,
+     3.875,
+     0
+    ]
+   ],
+   "ssr": true,
+   "ssr_motivo": "arrastrado de ayer",
+   "short_pct_float": 1.3,
+   "short_fecha": "2026-10-29",
+   "pais": "Germany",
+   "pais_riesgo": false,
+   "split_reciente": [],
+   "halts_hoy": [],
+   "noticias": [
+    {
+     "titulo": "Analysts Expect Breakeven For XCHG Limited (NASDAQ:XCH) Before Long",
+     "fecha": "2026-05-04T12:23:19Z",
+     "fuente": "Simply Wall St."
+    },
+    {
+     "titulo": "3 Promising Penny Stocks With At Least $600M Market Cap",
+     "fecha": "2026-02-12T12:04:56Z",
+     "fuente": "Simply Wall St."
+    }
+   ],
+   "noticias_eval": {
+    "estado": "no_encontrada",
+    "fuentes": [
+     "google",
+     "nasdaq",
+     "yahoo"
+    ],
+    "validas": []
+   },
+   "niveles": {
+    "cierre_ayer": {
+     "precio": 2.74,
+     "fuente": "Yahoo (cierre anterior oficial)"
+    },
+    "pm_max": {
+     "precio": 4.0,
+     "fuente": "Nasdaq"
+    },
+    "pm_min": {
+     "precio": 3.2,
+     "fuente": "Nasdaq"
+    },
+    "ayer_max": {
+     "precio": 3.24,
+     "fuente": "vela diaria de Yahoo del 2026-11-20"
+    },
+    "ayer_min": {
+     "precio": 2.74,
+     "fuente": "vela diaria de Yahoo del 2026-11-20"
+    }
+   },
+   "premarket": {
+    "max": 4.0,
+    "min": 3.2,
+    "vol": 7108,
+    "fuente": "nasdaq"
+   },
+   "spread_pct": 8.81,
+   "sec": {
+    "dil_motivo": [
+     "registro S-1/S-3/F-1/F-3 en 12 meses",
+     "emisor extranjero: información limitada (no presenta 8-K)"
+    ],
+    "veto_venta": false,
+    "veto_quiebra": false,
+    "extranjero": true,
+    "runway_q": 6.1,
+    "caja_periodo": "2025-12-31",
+    "filings_recientes": [],
+    "estado": "ok",
+    "dil_puntaje": "3/7",
+    "dil_factores_si": [
+     "shelf S-3/F-3 vigente",
+     "venta de acciones en 6 meses",
+     "split inverso en 12 meses"
+    ]
+   },
+   "sec_hoy": [],
+   "veto": false,
+   "en_filtro_mesa": false,
+   "calc": [
+    "vwap",
+    "surge5m",
+    "actividad",
+    "rvol_hora",
+    "ssr"
+   ],
+   "meta": {
+    "src": "yahoo-gratis",
+    "edad_s": 125,
+    "bolsa": "NasdaqGM",
+    "nombre": "XCHG Limited"
+   },
+   "apto": false,
+   "no_apto_por": [
+    "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)",
+    "sin operaciones hace 125 s: poco líquida para entrar",
+    "spread 8.81% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
+   ],
+   "sin_dato_por": [],
+   "cautela": [
+    "float en disputa (Yahoo 1.627 M / TradingView 3.046 M), pero ambas cumplen las reglas",
+    "dilución media",
+    "SSR activo (no se puede vender en corto a la baja)"
+   ],
+   "lectura": "NO APTA: fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M) (y 2 motivo(s) más).",
+   "stocktwits": {
+    "fuente": "StockTwits",
+    "mensajes_1h": 0,
+    "muestra": 30,
+    "ritmo_normal_h": 0.05,
+    "horas_cubiertas": 574.1,
+    "cambio": 0.0,
+    "saturado": false,
+    "alcistas": 10,
+    "bajistas": 0,
+    "hora_utc": "2026-11-23T18:40:12+00:00"
+   },
+   "short_finra": {
+    "short": 39867,
+    "anterior": 29959,
+    "fecha": "2026-10-30",
+    "dias_cubrir": 1,
+    "fuente": "FINRA (interés en corto consolidado)"
+   }
+  },
+  {
+   "ticker": "AIIO",
+   "price": 6.2984,
+   "chg": 35.45,
+   "volM": 0.073,
+   "rvol": 1.28,
+   "floatM": 0.042,
+   "dayHigh": 6.35,
+   "dayLow": 4.65,
+   "dayHigh_regular": 6.35,
+   "dayLow_regular": 5.15,
+   "halt": false,
+   "news": true,
+   "headline": "Robo.ai Reports October Revenue Above $100 Million and Maintains $600 Million 2026 Forecast",
+   "dil": "alta",
+   "unsure": [
+    "floatM"
+   ],
+   "rvol_hora": 1.71,
+   "actividad": 0.0,
+   "rotaciones": 1.74,
+   "float_muy_bajo": true,
+   "float_confianza": "baja",
+   "float_motivos": [
+    "emisor extranjero o sin CIK: sin portada trimestral en la SEC",
+    "2 split(s) inverso(s) en 12 meses sin portada SEC posterior (último 2026-11-06)"
+   ],
+   "float_cruce": {
+    "yahoo_M": 0.042,
+    "tradingview_M": null,
+    "sec_portada": null,
+    "chequeo_sec": "baja",
+    "motivos_sec": [
+     "emisor extranjero o sin CIK: sin portada trimestral en la SEC",
+     "2 split(s) inverso(s) en 12 meses sin portada SEC posterior (último 2026-11-06)"
+    ],
+    "estado": "una_fuente",
+    "rango_M": [
+     0.042,
+     0.042
+    ]
+   },
+   "nasdaq": {
+    "precio": 6.2984,
+    "bid": 6.13,
+    "ask": 6.34,
+    "hora": "Nov 23, 2026 1:39 PM ET"
+   },
+   "precio_cuadra": true,
+   "acciones_portada_sec": null,
+   "split_inverso_12m": [
+    {
+     "fecha": "2026-04-06",
+     "ratio": 0.05
+    },
+    {
+     "fecha": "2026-11-06",
+     "ratio": 0.04
+    }
+   ],
+   "hod_dist_pct": -0.81,
+   "vwap": 5.9284,
+   "sobre_vwap_pct": 6.24,
+   "surge5m": -0.81,
+   "velas15": [
+    [
+     "12:13",
+     6.19,
+     6.19,
+     6.19,
+     6.19,
+     431
+    ],
+    [
+     "12:14",
+     6.13,
+     6.13,
+     6.13,
+     6.13,
+     493
+    ],
+    [
+     "12:21",
+     6.1421,
+     6.2,
+     6.1421,
+     6.2,
+     3336
+    ],
+    [
+     "12:24",
+     6.23,
+     6.23,
+     6.23,
+     6.23,
+     598
+    ],
+    [
+     "12:26",
+     6.19,
+     6.19,
+     6.185,
+     6.185,
+     1325
+    ],
+    [
+     "12:42",
+     6.095,
+     6.095,
+     6.095,
+     6.095,
+     172
+    ],
+    [
+     "12:44",
+     6.075,
+     6.1,
+     6.075,
+     6.1,
+     976
+    ],
+    [
+     "12:51",
+     6.19,
+     6.19,
+     6.19,
+     6.19,
+     1299
+    ],
+    [
+     "13:05",
+     6.3499,
+     6.3499,
+     6.3499,
+     6.3499,
+     396
+    ],
+    [
+     "13:07",
+     6.35,
+     6.35,
+     6.35,
+     6.35,
+     1256
+    ],
+    [
+     "13:21",
+     6.13,
+     6.1301,
+     6.13,
+     6.1301,
+     670
+    ],
+    [
+     "13:24",
+     6.1484,
+     6.1484,
+     6.1484,
+     6.1484,
+     123
+    ],
+    [
+     "13:27",
+     6.24,
+     6.24,
+     6.24,
+     6.24,
+     304
+    ],
+    [
+     "13:30",
+     6.3368,
+     6.3368,
+     6.3368,
+     6.3368,
+     354
+    ],
+    [
+     "13:34",
+     6.2984,
+     6.2984,
+     6.2984,
+     6.2984,
+     0
+    ]
+   ],
+   "ssr": false,
+   "ssr_motivo": null,
+   "short_pct_float": 0.74,
+   "short_fecha": "2026-10-29",
+   "pais": "United Arab Emirates",
+   "pais_riesgo": false,
+   "split_reciente": [
+    {
+     "fecha": "2026-11-06",
+     "ratio": 0.04
+    }
+   ],
+   "halts_hoy": [],
+   "noticias": [
+    {
+     "titulo": "Robo.ai Reports October Revenue Above $100 Million and Maintains $600 Million 2026 Forecast",
+     "fecha": "2026-11-09T11:57:20Z",
+     "fuente": "InvestorsHub"
+    },
+    {
+     "titulo": "Robo.ai Reports Over $280 Million in Revenue and Targets $600 Million for 2026",
+     "fecha": "2026-11-06T13:11:34Z",
+     "fuente": "InvestorsHub"
+    },
+    {
+     "titulo": "Robo.ai September Revenue Exceeds $100 Million as 2026 Outlook Reaches About $600 Million",
+     "fecha": "2026-10-06T14:37:47Z",
+     "fuente": "InvestorsHub"
+    }
+   ],
+   "noticias_eval": {
+    "estado": "no_encontrada",
+    "fuentes": [
+     "google",
+     "nasdaq",
+     "yahoo"
+    ],
+    "validas": []
+   },
+   "niveles": {
+    "cierre_ayer": {
+     "precio": 4.65,
+     "fuente": "Yahoo (cierre anterior oficial)"
+    },
+    "pm_max": {
+     "precio": 5.07,
+     "fuente": "Nasdaq"
+    },
+    "pm_min": {
+     "precio": 4.65,
+     "fuente": "Nasdaq"
+    },
+    "ayer_max": {
+     "precio": 5.04,
+     "fuente": "vela diaria de Yahoo del 2026-11-20"
+    },
+    "ayer_min": {
+     "precio": 4.53,
+     "fuente": "vela diaria de Yahoo del 2026-11-20"
+    }
+   },
+   "premarket": {
+    "max": 5.07,
+    "min": 4.65,
+    "vol": 2666,
+    "fuente": "nasdaq"
+   },
+   "spread_pct": 3.37,
+   "sec": {
+    "dil_motivo": [
+     "venta de acciones en 90 días",
+     "registro S-1/S-3/F-1/F-3 en 12 meses",
+     "autonomía de caja 3.3 trimestres (sustituto de going concern; dato al 2025-12-31)",
+     "emisor extranjero: información limitada (no presenta 8-K)"
+    ],
+    "veto_venta": false,
+    "veto_quiebra": false,
+    "extranjero": true,
+    "runway_q": 3.3,
+    "caja_periodo": "2025-12-31",
+    "filings_recientes": [
+     {
+      "form": "424B3",
+      "fecha": "2026-11-09",
+      "items": ""
+     },
+     {
+      "form": "424B3",
+      "fecha": "2026-11-04",
+      "items": ""
+     },
+     {
+      "form": "424B3",
+      "fecha": "2026-10-27",
+      "items": ""
+     }
+    ],
+    "estado": "ok",
+    "dil_puntaje": "5/7",
+    "dil_factores_si": [
+     "caja para menos de 4 trimestres",
+     "shelf S-3/F-3 vigente",
+     "venta de acciones en 6 meses",
+     "deuda convertible",
+     "split inverso en 12 meses"
+    ]
+   },
+   "sec_hoy": [],
+   "veto": false,
+   "en_filtro_mesa": false,
+   "calc": [
+    "vwap",
+    "surge5m",
+    "actividad",
+    "rvol_hora",
+    "ssr"
+   ],
+   "meta": {
+    "src": "yahoo-gratis",
+    "edad_s": 294,
+    "bolsa": "NasdaqCM",
+    "nombre": "Robo.ai Inc."
+   },
+   "apto": false,
+   "no_apto_por": [
+    "float bajo el mínimo de 1 M de la Mesa (Yahoo 0.042 M / TradingView None M)",
+    "dilución alta según la SEC",
+    "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)",
+    "sin operaciones hace 294 s: poco líquida para entrar",
+    "spread 3.37% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
+   ],
+   "sin_dato_por": [],
+   "cautela": [
+    "split en los últimos 30 días"
+   ],
+   "lectura": "NO APTA: float bajo el mínimo de 1 M de la Mesa (Yahoo 0.042 M / TradingView None M) (y 4 motivo(s) más).",
+   "stocktwits": {
+    "fuente": "StockTwits",
+    "mensajes_1h": 2,
+    "muestra": 30,
+    "ritmo_normal_h": 0.11,
+    "horas_cubiertas": 267.7,
+    "cambio": 17.85,
+    "saturado": false,
+    "alcistas": 21,
+    "bajistas": 0,
+    "hora_utc": "2026-11-23T18:40:12+00:00"
+   },
+   "short_finra": {
+    "short": 1637027,
+    "anterior": 1507121,
+    "fecha": "2026-10-30",
+    "dias_cubrir": 1.87,
+    "fuente": "FINRA (interés en corto consolidado)"
+   }
+  },
+  {
+   "ticker": "TRAW",
+   "price": 0.2377,
+   "chg": 34.39,
+   "volM": 0.191,
+   "rvol": 0.31,
    "floatM": 11.779,
-   "dayHigh": 0.24,
+   "dayHigh": 0.245,
    "dayLow": 0.1475,
-   "dayHigh_regular": 0.24,
+   "dayHigh_regular": 0.245,
    "dayLow_regular": 0.1863,
    "halt": false,
    "news": true,
    "headline": "Traws Pharma shares rise after Q2 loss comes in better than expected",
    "dil": "alta",
    "unsure": [],
-   "rvol_hora": 0.98,
+   "rvol_hora": 1.02,
    "actividad": 0.0,
    "rotaciones": 0.02,
    "float_muy_bajo": false,
@@ -3971,10 +4621,10 @@
     ]
    },
    "nasdaq": {
-    "precio": 0.24,
+    "precio": 0.2355,
     "bid": 0.2303,
     "ask": 0.24,
-    "hora": "Nov 23, 2026 1:30 PM ET"
+    "hora": "Nov 23, 2026 1:39 PM ET"
    },
    "precio_cuadra": true,
    "acciones_portada_sec": {
@@ -3983,43 +4633,11 @@
     "form": "10-Q"
    },
    "split_inverso_12m": [],
-   "hod_dist_pct": 0.0,
-   "vwap": 0.2122,
-   "sobre_vwap_pct": 13.1,
-   "surge5m": 0.97,
+   "hod_dist_pct": -2.98,
+   "vwap": 0.2128,
+   "sobre_vwap_pct": 11.71,
+   "surge5m": -1.12,
    "velas15": [
-    [
-     "12:29",
-     0.22,
-     0.22,
-     0.2182,
-     0.2182,
-     5388
-    ],
-    [
-     "13:00",
-     0.22,
-     0.2221,
-     0.218,
-     0.2221,
-     17610
-    ],
-    [
-     "13:01",
-     0.2266,
-     0.2266,
-     0.2266,
-     0.2266,
-     204
-    ],
-    [
-     "13:10",
-     0.2266,
-     0.2266,
-     0.2266,
-     0.2266,
-     250
-    ],
     [
      "13:13",
      0.2226,
@@ -4106,6 +4724,38 @@
      0.24,
      0.24,
      0.24,
+     596
+    ],
+    [
+     "13:31",
+     0.2355,
+     0.2355,
+     0.2355,
+     0.2355,
+     2090
+    ],
+    [
+     "13:35",
+     0.24,
+     0.2401,
+     0.24,
+     0.2401,
+     472
+    ],
+    [
+     "13:37",
+     0.2377,
+     0.2377,
+     0.2377,
+     0.2377,
+     1245
+    ],
+    [
+     "13:38",
+     0.2377,
+     0.2377,
+     0.2377,
+     0.2377,
      0
     ]
    ],
@@ -4227,7 +4877,7 @@
    ],
    "meta": {
     "src": "yahoo-gratis",
-    "edad_s": 129,
+    "edad_s": 71,
     "bolsa": "NasdaqCM",
     "nombre": "Traws Pharma, Inc."
    },
@@ -4236,14 +4886,13 @@
     "veto SEC: venta de acciones (424B / 8-K 3.02) en 10 días → VETO",
     "dilución alta según la SEC",
     "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)",
-    "sin operaciones hace 129 s: poco líquida para entrar",
     "spread 4.13% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
    ],
    "sin_dato_por": [],
    "cautela": [
     "SSR activo (no se puede vender en corto a la baja)"
    ],
-   "lectura": "NO APTA: veto SEC: venta de acciones (424B / 8-K 3.02) en 10 días → VETO (y 4 motivo(s) más).",
+   "lectura": "NO APTA: veto SEC: venta de acciones (424B / 8-K 3.02) en 10 días → VETO (y 3 motivo(s) más).",
    "stocktwits": {
     "fuente": "StockTwits",
     "mensajes_1h": 0,
@@ -4265,219 +4914,209 @@
    }
   },
   {
-   "ticker": "AIIO",
-   "price": 6.24,
-   "chg": 34.19,
-   "volM": 0.072,
-   "rvol": 1.27,
-   "floatM": 0.042,
-   "dayHigh": 6.35,
-   "dayLow": 4.65,
-   "dayHigh_regular": 6.35,
-   "dayLow_regular": 5.15,
+   "ticker": "PTHS",
+   "price": 8.535,
+   "chg": 33.78,
+   "volM": 0.045,
+   "rvol": 0.83,
+   "floatM": 1.535,
+   "dayHigh": 8.72,
+   "dayLow": 6.9031,
+   "dayHigh_regular": 8.72,
+   "dayLow_regular": 6.9031,
    "halt": false,
    "news": true,
-   "headline": "Robo.ai Reports October Revenue Above $100 Million and Maintains $600 Million 2026 Forecast",
+   "headline": "Pelthos Therapeutics (PTHS) Stock Sees Fair Value Cut As Analysts Rework Launch And Merger Risks",
    "dil": "alta",
-   "unsure": [
-    "floatM"
-   ],
-   "rvol_hora": 1.75,
+   "unsure": [],
+   "rvol_hora": 1.36,
    "actividad": 0.0,
-   "rotaciones": 1.73,
+   "rotaciones": 0.03,
    "float_muy_bajo": true,
-   "float_confianza": "baja",
+   "float_confianza": "alta",
    "float_motivos": [
-    "emisor extranjero o sin CIK: sin portada trimestral en la SEC",
-    "2 split(s) inverso(s) en 12 meses sin portada SEC posterior (último 2026-11-06)"
+    "EE.UU., float ≤ acciones de portada SEC (3,930,709 al 2026-11-05, 10-Q)"
    ],
    "float_cruce": {
-    "yahoo_M": 0.042,
-    "tradingview_M": null,
-    "sec_portada": null,
-    "chequeo_sec": "baja",
+    "yahoo_M": 1.535,
+    "tradingview_M": 1.73,
+    "sec_portada": {
+     "valor": 3930709,
+     "fecha": "2026-11-05",
+     "form": "10-Q"
+    },
+    "chequeo_sec": "alta",
     "motivos_sec": [
-     "emisor extranjero o sin CIK: sin portada trimestral en la SEC",
-     "2 split(s) inverso(s) en 12 meses sin portada SEC posterior (último 2026-11-06)"
+     "EE.UU., float ≤ acciones de portada SEC (3,930,709 al 2026-11-05, 10-Q)"
     ],
-    "estado": "una_fuente",
+    "estado": "confirmado",
     "rango_M": [
-     0.042,
-     0.042
+     1.535,
+     1.73
     ]
    },
    "nasdaq": {
-    "precio": 6.3368,
-    "bid": 6.13,
-    "ask": 6.36,
-    "hora": "Nov 23, 2026 1:30 PM ET"
+    "precio": 8.535,
+    "bid": 8.13,
+    "ask": 8.9,
+    "hora": "Nov 23, 2026 1:39 PM ET"
    },
    "precio_cuadra": true,
-   "acciones_portada_sec": null,
-   "split_inverso_12m": [
-    {
-     "fecha": "2026-04-06",
-     "ratio": 0.05
-    },
-    {
-     "fecha": "2026-11-06",
-     "ratio": 0.04
-    }
-   ],
-   "hod_dist_pct": -1.73,
-   "vwap": 5.9264,
-   "sobre_vwap_pct": 5.29,
-   "surge5m": -0.21,
+   "acciones_portada_sec": {
+    "valor": 3930709,
+    "fecha": "2026-11-05",
+    "form": "10-Q"
+   },
+   "split_inverso_12m": [],
+   "hod_dist_pct": -2.12,
+   "vwap": 7.7997,
+   "sobre_vwap_pct": 9.43,
+   "surge5m": 2.46,
    "velas15": [
     [
-     "12:10",
-     5.92,
-     6.0,
-     5.92,
-     6.0,
-     3131
-    ],
-    [
-     "12:13",
-     6.19,
-     6.19,
-     6.19,
-     6.19,
-     431
-    ],
-    [
      "12:14",
-     6.13,
-     6.13,
-     6.13,
-     6.13,
-     493
+     7.97,
+     8.02,
+     7.91,
+     7.91,
+     720
     ],
     [
-     "12:21",
-     6.1421,
-     6.2,
-     6.1421,
-     6.2,
-     3336
+     "12:16",
+     7.975,
+     8.04,
+     7.92,
+     7.92,
+     846
     ],
     [
-     "12:24",
-     6.23,
-     6.23,
-     6.23,
-     6.23,
-     598
-    ],
-    [
-     "12:26",
-     6.19,
-     6.19,
-     6.185,
-     6.185,
-     1325
-    ],
-    [
-     "12:42",
-     6.095,
-     6.095,
-     6.095,
-     6.095,
-     172
+     "12:28",
+     8.25,
+     8.36,
+     8.06,
+     8.19,
+     1382
     ],
     [
      "12:44",
-     6.075,
-     6.1,
-     6.075,
-     6.1,
-     976
+     8.16,
+     8.16,
+     8.16,
+     8.16,
+     189
     ],
     [
-     "12:51",
-     6.19,
-     6.19,
-     6.19,
-     6.19,
-     1299
+     "12:45",
+     8.3499,
+     8.3499,
+     8.3499,
+     8.3499,
+     662
     ],
     [
-     "13:05",
-     6.3499,
-     6.3499,
-     6.3499,
-     6.3499,
-     396
+     "12:56",
+     8.261,
+     8.261,
+     8.261,
+     8.261,
+     1074
+    ],
+    [
+     "12:57",
+     8.225,
+     8.225,
+     8.225,
+     8.225,
+     2848
+    ],
+    [
+     "13:01",
+     8.42,
+     8.5,
+     8.42,
+     8.5,
+     1857
+    ],
+    [
+     "13:04",
+     8.4,
+     8.4,
+     8.4,
+     8.4,
+     705
+    ],
+    [
+     "13:06",
+     8.33,
+     8.33,
+     8.33,
+     8.33,
+     247
     ],
     [
      "13:07",
-     6.35,
-     6.35,
-     6.35,
-     6.35,
-     1256
+     8.51,
+     8.51,
+     8.51,
+     8.51,
+     448
     ],
     [
      "13:21",
-     6.13,
-     6.1301,
-     6.13,
-     6.1301,
-     670
+     8.5988,
+     8.5988,
+     8.5988,
+     8.5988,
+     0
     ],
     [
-     "13:24",
-     6.1484,
-     6.1484,
-     6.1484,
-     6.1484,
-     123
+     "13:28",
+     8.535,
+     8.72,
+     8.3501,
+     8.3501,
+     635
     ],
     [
-     "13:27",
-     6.24,
-     6.24,
-     6.24,
-     6.24,
-     304
+     "13:33",
+     8.535,
+     8.535,
+     8.535,
+     8.535,
+     313
     ],
     [
-     "13:30",
-     6.3368,
-     6.3368,
-     6.3368,
-     6.3368,
+     "13:34",
+     8.535,
+     8.535,
+     8.535,
+     8.535,
      0
     ]
    ],
    "ssr": false,
    "ssr_motivo": null,
-   "short_pct_float": 0.74,
+   "short_pct_float": 10.32,
    "short_fecha": "2026-10-29",
-   "pais": "United Arab Emirates",
+   "pais": "United States",
    "pais_riesgo": false,
-   "split_reciente": [
-    {
-     "fecha": "2026-11-06",
-     "ratio": 0.04
-    }
-   ],
+   "split_reciente": [],
    "halts_hoy": [],
    "noticias": [
     {
-     "titulo": "Robo.ai Reports October Revenue Above $100 Million and Maintains $600 Million 2026 Forecast",
-     "fecha": "2026-11-09T11:57:20Z",
-     "fuente": "InvestorsHub"
+     "titulo": "Pelthos Therapeutics (PTHS) Stock Sees Fair Value Cut As Analysts Rework Launch And Merger Risks",
+     "fecha": "2026-11-16T15:15:51Z",
+     "fuente": "Simply Wall St."
     },
     {
-     "titulo": "Robo.ai Reports Over $280 Million in Revenue and Targets $600 Million for 2026",
-     "fecha": "2026-11-06T13:11:34Z",
-     "fuente": "InvestorsHub"
+     "titulo": "Pelthos Therapeutics Inc. Q3 2026 Earnings Call Summary",
+     "fecha": "2026-11-13T01:35:24Z",
+     "fuente": "Moby"
     },
     {
-     "titulo": "Robo.ai September Revenue Exceeds $100 Million as 2026 Outlook Reaches About $600 Million",
-     "fecha": "2026-10-06T14:37:47Z",
-     "fuente": "InvestorsHub"
+     "titulo": "Pelthos (PTHS) Q3 2026 Earnings Call Transcript",
+     "fecha": "2026-11-13T00:29:12Z",
+     "fuente": "Motley Fool"
     }
    ],
    "noticias_eval": {
@@ -4491,70 +5130,58 @@
    },
    "niveles": {
     "cierre_ayer": {
-     "precio": 4.65,
+     "precio": 6.38,
      "fuente": "Yahoo (cierre anterior oficial)"
     },
     "pm_max": {
-     "precio": 5.07,
-     "fuente": "Nasdaq"
+     "precio": null,
+     "motivo": "sin operaciones de premarket en Nasdaq ni en Yahoo"
     },
     "pm_min": {
-     "precio": 4.65,
-     "fuente": "Nasdaq"
+     "precio": null,
+     "motivo": "sin operaciones de premarket en Nasdaq ni en Yahoo"
     },
     "ayer_max": {
-     "precio": 5.04,
+     "precio": 7.21,
      "fuente": "vela diaria de Yahoo del 2026-11-20"
     },
     "ayer_min": {
-     "precio": 4.53,
+     "precio": 6.38,
      "fuente": "vela diaria de Yahoo del 2026-11-20"
     }
    },
-   "premarket": {
-    "max": 5.07,
-    "min": 4.65,
-    "vol": 2666,
-    "fuente": "nasdaq"
-   },
-   "spread_pct": 3.68,
+   "premarket": null,
+   "spread_pct": 9.04,
    "sec": {
     "dil_motivo": [
      "venta de acciones en 90 días",
      "registro S-1/S-3/F-1/F-3 en 12 meses",
-     "autonomía de caja 3.3 trimestres (sustituto de going concern; dato al 2025-12-31)",
-     "emisor extranjero: información limitada (no presenta 8-K)"
+     "autonomía de caja 2.0 trimestres (sustituto de going concern; dato al 2026-09-30)"
     ],
     "veto_venta": false,
     "veto_quiebra": false,
-    "extranjero": true,
-    "runway_q": 3.3,
-    "caja_periodo": "2025-12-31",
+    "extranjero": false,
+    "runway_q": 2.0,
+    "caja_periodo": "2026-09-30",
     "filings_recientes": [
      {
-      "form": "424B3",
-      "fecha": "2026-11-09",
-      "items": ""
+      "form": "8-K",
+      "fecha": "2026-11-12",
+      "items": "2.02,9.01"
      },
      {
-      "form": "424B3",
-      "fecha": "2026-11-04",
-      "items": ""
-     },
-     {
-      "form": "424B3",
-      "fecha": "2026-10-27",
-      "items": ""
+      "form": "8-K",
+      "fecha": "2026-10-30",
+      "items": "1.01,2.03,3.02,3.03,5.02,5.03,5.07,7.01,9.01"
      }
     ],
     "estado": "ok",
-    "dil_puntaje": "5/7",
+    "dil_puntaje": "4/7",
     "dil_factores_si": [
      "caja para menos de 4 trimestres",
      "shelf S-3/F-3 vigente",
      "venta de acciones en 6 meses",
-     "deuda convertible",
-     "split inverso en 12 meses"
+     "deuda convertible"
     ]
    },
    "sec_hoy": [],
@@ -4569,40 +5196,37 @@
    ],
    "meta": {
     "src": "yahoo-gratis",
-    "edad_s": 232,
-    "bolsa": "NasdaqCM",
-    "nombre": "Robo.ai Inc."
+    "edad_s": 319,
+    "bolsa": "NYSE American",
+    "nombre": "Pelthos Therapeutics Inc."
    },
    "apto": false,
    "no_apto_por": [
-    "float bajo el mínimo de 1 M de la Mesa (Yahoo 0.042 M / TradingView None M)",
     "dilución alta según la SEC",
     "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)",
-    "sin operaciones hace 232 s: poco líquida para entrar",
-    "spread 3.68% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
+    "sin operaciones hace 319 s: poco líquida para entrar",
+    "spread 9.04% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
    ],
    "sin_dato_por": [],
-   "cautela": [
-    "split en los últimos 30 días"
-   ],
-   "lectura": "NO APTA: float bajo el mínimo de 1 M de la Mesa (Yahoo 0.042 M / TradingView None M) (y 4 motivo(s) más).",
+   "cautela": [],
+   "lectura": "NO APTA: dilución alta según la SEC (y 3 motivo(s) más).",
    "stocktwits": {
     "fuente": "StockTwits",
-    "mensajes_1h": 1,
+    "mensajes_1h": 0,
     "muestra": 30,
-    "ritmo_normal_h": 0.1,
-    "horas_cubiertas": 290.6,
-    "cambio": 9.69,
+    "ritmo_normal_h": 0.01,
+    "horas_cubiertas": 2453.6,
+    "cambio": 0.0,
     "saturado": false,
-    "alcistas": 20,
-    "bajistas": 1,
-    "hora_utc": "2026-11-23T18:20:06+00:00"
+    "alcistas": 3,
+    "bajistas": 0,
+    "hora_utc": "2026-11-23T18:31:50+00:00"
    },
    "short_finra": {
-    "short": 1637027,
-    "anterior": 1507121,
+    "short": 158465,
+    "anterior": 142250,
     "fecha": "2026-10-30",
-    "dias_cubrir": 1.87,
+    "dias_cubrir": 2,
     "fuente": "FINRA (interés en corto consolidado)"
    }
   },
@@ -4624,7 +5248,7 @@
    "unsure": [
     "floatM"
    ],
-   "rvol_hora": 3.77,
+   "rvol_hora": 3.43,
    "actividad": 0.0,
    "rotaciones": 0.05,
    "float_muy_bajo": false,
@@ -4658,7 +5282,7 @@
     "precio": 0.6268,
     "bid": 0.5651,
     "ask": 0.633,
-    "hora": "Nov 23, 2026 1:31 PM ET"
+    "hora": "Nov 23, 2026 1:40 PM ET"
    },
    "precio_cuadra": true,
    "acciones_portada_sec": {
@@ -4889,7 +5513,7 @@
    ],
    "meta": {
     "src": "yahoo-gratis",
-    "edad_s": 407,
+    "edad_s": 948,
     "bolsa": "NasdaqCM",
     "nombre": "PRF Technologies Ltd."
    },
@@ -4897,7 +5521,7 @@
    "no_apto_por": [
     "dilución alta según la SEC",
     "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)",
-    "sin operaciones hace 407 s: poco líquida para entrar",
+    "sin operaciones hace 948 s: poco líquida para entrar",
     "spread 11.33% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
    ],
    "sin_dato_por": [],
@@ -4927,324 +5551,266 @@
    }
   },
   {
-   "ticker": "IMNN",
-   "price": 0.6978,
-   "chg": 30.31,
-   "volM": 1.985,
-   "rvol": 13.19,
-   "floatM": 6.022,
-   "dayHigh": 0.7799,
-   "dayLow": 0.51,
-   "dayHigh_regular": 0.7799,
-   "dayLow_regular": 0.5708,
+   "ticker": "HUHU",
+   "price": 0.1892,
+   "chg": 29.68,
+   "volM": 78.796,
+   "rvol": 27.29,
+   "floatM": 8.246,
+   "dayHigh": 0.2259,
+   "dayLow": 0.1377,
+   "dayHigh_regular": 0.1982,
+   "dayLow_regular": 0.1484,
    "halt": false,
    "news": true,
-   "headline": "IMUNON annouces withdrawal of form S-1 registration statement",
-   "dil": "alta",
+   "headline": "HUHUTECH (HUHU) Wins Semiconductor Contract in Japan",
+   "dil": "baja",
    "unsure": [],
-   "rvol_hora": 7.81,
+   "rvol_hora": 6.98,
    "actividad": 0.0,
-   "rotaciones": 0.33,
+   "rotaciones": 9.56,
    "float_muy_bajo": false,
-   "float_confianza": "alta",
+   "float_confianza": "baja",
    "float_motivos": [
-    "EE.UU., float ≤ acciones de portada SEC (6,487,286 al 2026-11-12, 10-Q)"
+    "emisor extranjero o sin CIK: sin portada trimestral en la SEC"
    ],
    "float_cruce": {
-    "yahoo_M": 6.022,
-    "tradingview_M": 5.56,
+    "yahoo_M": 8.246,
+    "tradingview_M": 7.306,
     "sec_portada": {
-     "valor": 6487286,
-     "fecha": "2026-11-12",
-     "form": "10-Q"
+     "valor": 24103749,
+     "fecha": "2025-12-31",
+     "form": "20-F"
     },
-    "chequeo_sec": "alta",
+    "chequeo_sec": "baja",
     "motivos_sec": [
-     "EE.UU., float ≤ acciones de portada SEC (6,487,286 al 2026-11-12, 10-Q)"
+     "emisor extranjero o sin CIK: sin portada trimestral en la SEC"
     ],
     "estado": "confirmado",
     "rango_M": [
-     5.56,
-     6.022
+     7.306,
+     8.246
     ]
    },
    "nasdaq": {
-    "precio": 0.6978,
-    "bid": 0.6834,
-    "ask": 0.7,
-    "hora": "Nov 23, 2026 1:31 PM ET"
+    "precio": 0.1906,
+    "bid": 0.1899,
+    "ask": 0.2,
+    "hora": "Nov 23, 2026 1:40 PM ET"
    },
    "precio_cuadra": true,
    "acciones_portada_sec": {
-    "valor": 6487286,
-    "fecha": "2026-11-12",
-    "form": "10-Q"
+    "valor": 24103749,
+    "fecha": "2025-12-31",
+    "form": "20-F"
    },
    "split_inverso_12m": [],
-   "hod_dist_pct": -10.53,
-   "vwap": 0.7129,
-   "sobre_vwap_pct": -2.12,
-   "surge5m": 3.0,
+   "hod_dist_pct": -16.25,
+   "vwap": 0.1537,
+   "sobre_vwap_pct": 23.06,
+   "surge5m": -0.84,
    "velas15": [
     [
-     "13:12",
-     0.7152,
-     0.7152,
-     0.7152,
-     0.7152,
-     1643
-    ],
-    [
-     "13:13",
-     0.7126,
-     0.7126,
-     0.7126,
-     0.7126,
-     201
-    ],
-    [
-     "13:14",
-     0.715,
-     0.715,
-     0.71,
-     0.71,
-     18109
-    ],
-    [
-     "13:15",
-     0.7101,
-     0.72,
-     0.7101,
-     0.72,
-     6729
-    ],
-    [
-     "13:16",
-     0.72,
-     0.72,
-     0.72,
-     0.72,
-     215
-    ],
-    [
-     "13:17",
-     0.7152,
-     0.7152,
-     0.7152,
-     0.7152,
-     3266
-    ],
-    [
-     "13:18",
-     0.71,
-     0.71,
-     0.67,
-     0.67,
-     68853
-    ],
-    [
-     "13:19",
-     0.6713,
-     0.6713,
-     0.6501,
-     0.6501,
-     32117
-    ],
-    [
-     "13:20",
-     0.6572,
-     0.6572,
-     0.6572,
-     0.6572,
-     5022
-    ],
-    [
-     "13:21",
-     0.6606,
-     0.6775,
-     0.6602,
-     0.6775,
-     6196
-    ],
-    [
-     "13:22",
-     0.6825,
-     0.6862,
-     0.6825,
-     0.6862,
-     1143
-    ],
-    [
-     "13:23",
-     0.6877,
-     0.7,
-     0.6808,
-     0.6808,
-     26780
-    ],
-    [
-     "13:24",
-     0.6904,
-     0.6904,
-     0.6904,
-     0.6904,
-     1856
+     "13:25",
+     0.1887,
+     0.1887,
+     0.18,
+     0.184,
+     113083
     ],
     [
      "13:26",
-     0.6808,
-     0.6808,
-     0.6808,
-     0.6808,
-     227
+     0.1842,
+     0.1874,
+     0.1801,
+     0.1851,
+     43741
     ],
     [
      "13:27",
-     0.6978,
-     0.6978,
-     0.6978,
-     0.6978,
+     0.1846,
+     0.1866,
+     0.1834,
+     0.1835,
+     32355
+    ],
+    [
+     "13:28",
+     0.1827,
+     0.1827,
+     0.181,
+     0.1821,
+     64474
+    ],
+    [
+     "13:29",
+     0.1826,
+     0.185,
+     0.1821,
+     0.1835,
+     28483
+    ],
+    [
+     "13:30",
+     0.185,
+     0.1884,
+     0.182,
+     0.1848,
+     67348
+    ],
+    [
+     "13:31",
+     0.1863,
+     0.1863,
+     0.1858,
+     0.186,
+     18269
+    ],
+    [
+     "13:32",
+     0.1871,
+     0.1883,
+     0.1861,
+     0.1874,
+     8958
+    ],
+    [
+     "13:33",
+     0.186,
+     0.1887,
+     0.186,
+     0.1887,
+     8197
+    ],
+    [
+     "13:34",
+     0.1887,
+     0.19,
+     0.1867,
+     0.1899,
+     63047
+    ],
+    [
+     "13:35",
+     0.1894,
+     0.1898,
+     0.188,
+     0.1896,
+     21716
+    ],
+    [
+     "13:36",
+     0.1899,
+     0.193,
+     0.1899,
+     0.191,
+     134888
+    ],
+    [
+     "13:37",
+     0.193,
+     0.193,
+     0.1912,
+     0.1918,
+     25294
+    ],
+    [
+     "13:38",
+     0.1915,
+     0.1918,
+     0.188,
+     0.1882,
+     67809
+    ],
+    [
+     "13:39",
+     0.1883,
+     0.1883,
+     0.1883,
+     0.1883,
      0
     ]
    ],
-   "ssr": false,
-   "ssr_motivo": null,
-   "short_pct_float": 3.58,
+   "ssr": true,
+   "ssr_motivo": "arrastrado de ayer",
+   "short_pct_float": 0.51,
    "short_fecha": "2026-10-29",
-   "pais": "United States",
-   "pais_riesgo": false,
+   "pais": "China",
+   "pais_riesgo": true,
    "split_reciente": [],
    "halts_hoy": [],
    "noticias": [
     {
-     "titulo": "Imunon, Inc. Q3 2026 Earnings Call Summary",
-     "fecha": "2026-11-13T01:44:55Z",
-     "fuente": "Moby"
+     "titulo": "HUHUTECH (HUHU) Wins Semiconductor Contract in Japan",
+     "fecha": "2026-07-01T11:03:46Z",
+     "fuente": "Insider Monkey"
     },
     {
-     "titulo": "Imunon (IMNN) Q3 2026 Earnings Call Transcript",
-     "fecha": "2026-11-12T23:00:45Z",
-     "fuente": "Motley Fool"
+     "titulo": "EXCLUSIVE: HUHUTECH Launches HB-800 Vacuum Furnace for Semiconductor Market",
+     "fecha": "2026-06-08T12:01:08Z",
+     "fuente": "Benzinga"
     },
     {
-     "titulo": "Imunon (IMNN) Q2 2026 Earnings Call Transcript",
-     "fecha": "2026-08-12T02:12:56Z",
-     "fuente": "Motley Fool"
+     "titulo": "HUHUTECH International Group Inc. (NASDAQ:HUHU) insiders have significant skin in the game with 80% ownership",
+     "fecha": "2025-12-18T13:09:46Z",
+     "fuente": "Simply Wall St."
     }
    ],
    "noticias_eval": {
-    "estado": "confirmada",
+    "estado": "no_encontrada",
     "fuentes": [
      "google",
      "nasdaq",
      "yahoo"
     ],
-    "validas": [
-     {
-      "titulo": "IMUNON annouces withdrawal of form S-1 registration statement",
-      "fuente": "TradingView",
-      "fecha": "2026-11-23T15:00:56+00:00",
-      "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxQVG9XVmtkVEZlSF9DYURiTUVtNllZcVFNTGM4TVJpRlpuOHlFNFRkWE9iek02ZUNEQ09lSzFpdXJIUnk5Mk5UZTd6UG80LVFPWlJMSjh4NWRxOGhhVUxqYlU0YUhYbnZaYXdTaXU0VlhBVjg1c19jYXVFM3drNlFQTGhRM0tOYTh2NHctUnQwME83VU1Ga2NDcmVBOEdsbW9zdmZaYkQzdVJDTzhSUFFiNWdpbkFsc1ZENC1UaWU2VkdDZw?oc=5",
-      "origen": "google"
-     },
-     {
-      "titulo": "Imunon Withdraws Offering Registration, Reports Positive Phase 2 Data",
-      "fuente": "TipRanks",
-      "fecha": "2026-11-23T14:48:02+00:00",
-      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNN1VBSXVSbS1OS29VNG5BTWthRXdJQUpwTjNaYnFHVGctbWR5R2NIdWRSczVWLTQ4OXJXbG9Ta0RETkd5dU1Nb0otd2IzTTRwLVc4OGRSQjlMZnY4bzQ1QW13VUt5b0Iwc08wRUJVM0lSd0NOZ1ItbDV1UlZ2aDFQOXhMYWVqdXVpWVNYU2dtV2hVRk1HcE9mbl80Vk1OTTVmaFBvTTAwdzV0REs0aDVKMm9jakRVRlBsQ24zWg?oc=5",
-      "origen": "google"
-     },
-     {
-      "titulo": "Imunon Withdraws S-1 Offering Registration, Cites 45.1-Month Median Survival in Phase 2",
-      "fuente": "TradingView",
-      "fecha": "2026-11-23T14:33:00+00:00",
-      "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPMXJEakRYMHp1SklBRnBVNVluTXlUVllqR0VQQW4yV0Ixa3pfR2FHb19JVU9LM3hzT01icU5mdjNxTklidkR2NzdVQmhkWmhkVHlQMU9fekNNNkZva3pMUzg4SmJUN04wd1hld0V3amtBdGoxS2VJSUJSWnczSk9OckhZTG1SYjEzRk54VjJwWWowQXZPZ00tMW9Kd00zbW9YSXpyNXNwY0xXcVpHSWxZRDZHRXRnQTBRWGpadGs1QnpNbW9JQnZySjk0S3ZOWnNrMDhBMVJxMnl5VEx3QXpjU2ZB?oc=5",
-      "origen": "google"
-     }
-    ]
+    "validas": []
    },
    "niveles": {
     "cierre_ayer": {
-     "precio": 0.5355,
+     "precio": 0.1459,
      "fuente": "Yahoo (cierre anterior oficial)"
     },
     "pm_max": {
-     "precio": 0.7004,
+     "precio": 0.2259,
      "fuente": "Nasdaq"
     },
     "pm_min": {
-     "precio": 0.51,
+     "precio": 0.1377,
      "fuente": "Nasdaq"
     },
     "ayer_max": {
-     "precio": 0.58,
+     "precio": 0.209,
      "fuente": "vela diaria de Yahoo del 2026-11-20"
     },
     "ayer_min": {
-     "precio": 0.53,
+     "precio": 0.143,
      "fuente": "vela diaria de Yahoo del 2026-11-20"
     }
    },
    "premarket": {
-    "max": 0.7004,
-    "min": 0.51,
-    "vol": 56567,
+    "max": 0.2259,
+    "min": 0.1377,
+    "vol": 68323557,
     "fuente": "nasdaq"
    },
-   "spread_pct": 2.4,
+   "spread_pct": 5.18,
    "sec": {
     "dil_motivo": [
-     "venta de acciones en 90 días",
-     "registro S-1/S-3/F-1/F-3 en 12 meses",
-     "autonomía de caja 1.2 trimestres (sustituto de going concern; dato al 2026-09-30)"
+     "emisor extranjero: información limitada (no presenta 8-K)"
     ],
     "veto_venta": false,
     "veto_quiebra": false,
-    "extranjero": false,
-    "runway_q": 1.2,
-    "caja_periodo": "2026-09-30",
-    "filings_recientes": [
-     {
-      "form": "8-K",
-      "fecha": "2026-11-23",
-      "items": "7.01,8.01,9.01"
-     },
-     {
-      "form": "8-K",
-      "fecha": "2026-11-12",
-      "items": "2.02,9.01"
-     },
-     {
-      "form": "S-1/A",
-      "fecha": "2026-10-28",
-      "items": ""
-     },
-     {
-      "form": "S-1",
-      "fecha": "2026-10-27",
-      "items": ""
-     },
-     {
-      "form": "8-K",
-      "fecha": "2026-10-27",
-      "items": "8.01,9.01"
-     }
-    ],
+    "extranjero": true,
+    "runway_q": null,
+    "caja_periodo": "2025-12-31",
+    "filings_recientes": [],
     "estado": "ok",
-    "dil_puntaje": "3/7",
+    "dil_puntaje": "1/7",
     "dil_factores_si": [
-     "caja para menos de 4 trimestres",
-     "shelf S-3/F-3 vigente",
-     "venta de acciones en 6 meses"
+     "shelf S-3/F-3 vigente"
     ]
    },
-   "sec_hoy": [
-    {
-     "form": "8-K",
-     "hora": "2026-11-23T09:27:33-05:00",
-     "titulo": "8-K - Imunon, Inc. (0000749647) (Filer)"
-    }
-   ],
+   "sec_hoy": [],
    "veto": false,
    "en_filtro_mesa": false,
    "calc": [
@@ -5256,45 +5822,413 @@
    ],
    "meta": {
     "src": "yahoo-gratis",
-    "edad_s": 218,
+    "edad_s": 58,
     "bolsa": "NasdaqCM",
-    "nombre": "Imunon, Inc."
+    "nombre": "HUHUTECH International Group Inc."
    },
    "apto": false,
    "no_apto_por": [
-    "dilución alta según la SEC",
     "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)",
-    "sin operaciones hace 218 s: poco líquida para entrar"
+    "spread 5.18% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
    ],
    "sin_dato_por": [],
-   "cautela": [],
-   "lectura": "NO APTA: dilución alta según la SEC (y 2 motivo(s) más).",
+   "cautela": [
+    "SSR activo (no se puede vender en corto a la baja)",
+    "país de riesgo (China)"
+   ],
+   "lectura": "NO APTA: fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M) (y 1 motivo(s) más).",
    "stocktwits": {
     "fuente": "StockTwits",
-    "mensajes_1h": 12,
+    "mensajes_1h": 3,
     "muestra": 30,
-    "ritmo_normal_h": 16.68,
-    "horas_cubiertas": 1.8,
-    "cambio": 0.72,
+    "ritmo_normal_h": 0.21,
+    "horas_cubiertas": 141.3,
+    "cambio": 14.13,
     "saturado": false,
-    "alcistas": 27,
-    "bajistas": 0,
-    "hora_utc": "2026-11-23T18:20:06+00:00"
+    "alcistas": 19,
+    "bajistas": 1,
+    "hora_utc": "2026-11-23T18:40:12+00:00"
    },
    "short_finra": {
-    "short": 215645,
-    "anterior": 62366,
+    "short": 136544,
+    "anterior": 31398,
     "fecha": "2026-10-30",
-    "dias_cubrir": 1.49,
+    "dias_cubrir": 1,
+    "fuente": "FINRA (interés en corto consolidado)"
+   }
+  },
+  {
+   "ticker": "MEDS",
+   "price": 1.735,
+   "chg": 29.48,
+   "volM": 53.948,
+   "rvol": 6.4,
+   "floatM": 4.112,
+   "dayHigh": 2.465,
+   "dayLow": 1.6,
+   "dayHigh_regular": 1.96,
+   "dayLow_regular": 1.62,
+   "halt": false,
+   "news": true,
+   "headline": "BC-Most Active Stocks",
+   "dil": "alta",
+   "unsure": [
+    "floatM"
+   ],
+   "rvol_hora": 8.04,
+   "actividad": 0.0,
+   "rotaciones": 13.12,
+   "float_muy_bajo": false,
+   "float_confianza": "media",
+   "float_motivos": [
+    "2 424B después de la portada: puede haber más acciones"
+   ],
+   "float_cruce": {
+    "yahoo_M": 4.112,
+    "tradingview_M": 2.88,
+    "sec_portada": {
+     "valor": 5724857,
+     "fecha": "2026-11-13",
+     "form": "10-Q"
+    },
+    "chequeo_sec": "media",
+    "motivos_sec": [
+     "2 424B después de la portada: puede haber más acciones"
+    ],
+    "estado": "en_disputa",
+    "rango_M": [
+     2.88,
+     4.112
+    ]
+   },
+   "nasdaq": {
+    "precio": 1.74,
+    "bid": 1.73,
+    "ask": 1.75,
+    "hora": "Nov 23, 2026 1:40 PM ET"
+   },
+   "precio_cuadra": true,
+   "acciones_portada_sec": {
+    "valor": 5724857,
+    "fecha": "2026-11-13",
+    "form": "10-Q"
+   },
+   "split_inverso_12m": [
+    {
+     "fecha": "2026-05-26",
+     "ratio": 0.02
+    }
+   ],
+   "hod_dist_pct": -29.61,
+   "vwap": 1.8639,
+   "sobre_vwap_pct": -6.91,
+   "surge5m": 1.09,
+   "velas15": [
+    [
+     "13:26",
+     1.73,
+     1.7398,
+     1.7299,
+     1.735,
+     15261
+    ],
+    [
+     "13:27",
+     1.735,
+     1.74,
+     1.73,
+     1.7341,
+     4720
+    ],
+    [
+     "13:28",
+     1.73,
+     1.74,
+     1.73,
+     1.7339,
+     4356
+    ],
+    [
+     "13:29",
+     1.735,
+     1.74,
+     1.73,
+     1.7399,
+     16233
+    ],
+    [
+     "13:30",
+     1.74,
+     1.75,
+     1.73,
+     1.735,
+     27961
+    ],
+    [
+     "13:31",
+     1.7306,
+     1.74,
+     1.73,
+     1.7301,
+     5478
+    ],
+    [
+     "13:32",
+     1.73,
+     1.735,
+     1.73,
+     1.735,
+     4585
+    ],
+    [
+     "13:33",
+     1.73,
+     1.73,
+     1.72,
+     1.7203,
+     21956
+    ],
+    [
+     "13:34",
+     1.725,
+     1.7286,
+     1.7206,
+     1.7206,
+     1225
+    ],
+    [
+     "13:35",
+     1.7246,
+     1.7298,
+     1.7201,
+     1.7212,
+     2473
+    ],
+    [
+     "13:36",
+     1.725,
+     1.74,
+     1.725,
+     1.735,
+     12070
+    ],
+    [
+     "13:37",
+     1.7395,
+     1.7399,
+     1.7303,
+     1.735,
+     9426
+    ],
+    [
+     "13:38",
+     1.7306,
+     1.74,
+     1.7306,
+     1.735,
+     4400
+    ],
+    [
+     "13:39",
+     1.7312,
+     1.74,
+     1.73,
+     1.7301,
+     2648
+    ],
+    [
+     "13:40",
+     1.74,
+     1.74,
+     1.74,
+     1.74,
+     0
+    ]
+   ],
+   "ssr": false,
+   "ssr_motivo": null,
+   "short_pct_float": 9.03,
+   "short_fecha": "2026-10-29",
+   "pais": "United States",
+   "pais_riesgo": false,
+   "split_reciente": [],
+   "halts_hoy": [],
+   "noticias": [
+    {
+     "titulo": "BC-Most Active Stocks",
+     "fecha": "2026-11-23T15:30:20Z",
+     "fuente": "Associated Press"
+    },
+    {
+     "titulo": "DataMeds AI Signs Preliminary Agreement With Florida Health Insurer for GLP-1 Patient Management App",
+     "fecha": "2026-11-05T11:49:58Z",
+     "fuente": "InvestorsHub"
+    },
+    {
+     "titulo": "DataMEDS AI Secures Supply Agreement for Six Compounded Peptides Following FDA Advisory Committee Recommendations",
+     "fecha": "2026-11-02T11:42:19Z",
+     "fuente": "InvestorsHub"
+    }
+   ],
+   "noticias_eval": {
+    "estado": "no_encontrada",
+    "fuentes": [
+     "google",
+     "nasdaq",
+     "yahoo"
+    ],
+    "validas": []
+   },
+   "niveles": {
+    "cierre_ayer": {
+     "precio": 1.34,
+     "fuente": "Yahoo (cierre anterior oficial)"
+    },
+    "pm_max": {
+     "precio": 2.465,
+     "fuente": "Nasdaq"
+    },
+    "pm_min": {
+     "precio": 1.6,
+     "fuente": "Nasdaq"
+    },
+    "ayer_max": {
+     "precio": 1.43,
+     "fuente": "vela diaria de Yahoo del 2026-11-20"
+    },
+    "ayer_min": {
+     "precio": 0.855,
+     "fuente": "vela diaria de Yahoo del 2026-11-20"
+    }
+   },
+   "premarket": {
+    "max": 2.465,
+    "min": 1.6,
+    "vol": 35638811,
+    "fuente": "nasdaq"
+   },
+   "spread_pct": 1.15,
+   "sec": {
+    "dil_motivo": [
+     "venta de acciones (424B / 8-K 3.02) en 10 días → VETO",
+     "registro S-1/S-3/F-1/F-3 en 12 meses",
+     "autonomía de caja 0.2 trimestres (sustituto de going concern; dato al 2026-09-30)"
+    ],
+    "veto_venta": true,
+    "veto_quiebra": false,
+    "extranjero": false,
+    "runway_q": 0.2,
+    "caja_periodo": "2026-09-30",
+    "filings_recientes": [
+     {
+      "form": "8-K",
+      "fecha": "2026-11-20",
+      "items": "8.01"
+     },
+     {
+      "form": "424B5",
+      "fecha": "2026-11-17",
+      "items": ""
+     },
+     {
+      "form": "8-K",
+      "fecha": "2026-11-17",
+      "items": "8.01,9.01"
+     },
+     {
+      "form": "424B5",
+      "fecha": "2026-11-16",
+      "items": ""
+     },
+     {
+      "form": "8-K",
+      "fecha": "2026-11-16",
+      "items": "1.01,9.01"
+     },
+     {
+      "form": "8-K",
+      "fecha": "2026-11-13",
+      "items": "2.02,9.01"
+     },
+     {
+      "form": "S-1/A",
+      "fecha": "2026-11-10",
+      "items": ""
+     },
+     {
+      "form": "8-K",
+      "fecha": "2026-11-05",
+      "items": "1.02,7.01,9.01"
+     },
+     {
+      "form": "8-K",
+      "fecha": "2026-10-26",
+      "items": "1.01,7.01,9.01"
+     }
+    ],
+    "estado": "ok",
+    "dil_puntaje": "6/7",
+    "dil_factores_si": [
+     "caja para menos de 4 trimestres",
+     "shelf S-3/F-3 vigente",
+     "venta de acciones en 6 meses",
+     "deuda convertible",
+     "aviso de la bolsa (8-K 3.01)",
+     "split inverso en 12 meses"
+    ]
+   },
+   "sec_hoy": [],
+   "veto": true,
+   "en_filtro_mesa": true,
+   "calc": [
+    "vwap",
+    "surge5m",
+    "actividad",
+    "rvol_hora",
+    "ssr"
+   ],
+   "meta": {
+    "src": "yahoo-gratis",
+    "edad_s": 79,
+    "bolsa": "NasdaqCM",
+    "nombre": "DataMEDS AI, Inc."
+   },
+   "apto": false,
+   "no_apto_por": [
+    "veto SEC: venta de acciones (424B / 8-K 3.02) en 10 días → VETO",
+    "dilución alta según la SEC"
+   ],
+   "sin_dato_por": [],
+   "cautela": [
+    "float en disputa (Yahoo 4.112 M / TradingView 2.88 M), pero ambas cumplen las reglas"
+   ],
+   "lectura": "NO APTA: veto SEC: venta de acciones (424B / 8-K 3.02) en 10 días → VETO (y 1 motivo(s) más).",
+   "stocktwits": {
+    "fuente": "StockTwits",
+    "mensajes_1h": 19,
+    "muestra": 30,
+    "ritmo_normal_h": 22.68,
+    "horas_cubiertas": 1.3,
+    "cambio": 0.84,
+    "saturado": false,
+    "alcistas": 19,
+    "bajistas": 1,
+    "hora_utc": "2026-11-23T18:31:50+00:00"
+   },
+   "short_finra": {
+    "short": 371417,
+    "anterior": 476294,
+    "fecha": "2026-10-30",
+    "dias_cubrir": 1,
     "fuente": "FINRA (interés en corto consolidado)"
    }
   },
   {
    "ticker": "SRTM",
-   "price": 0.9801,
-   "chg": 30.11,
-   "volM": 0.476,
-   "rvol": 1.14,
+   "price": 0.9601,
+   "chg": 27.45,
+   "volM": 0.479,
+   "rvol": 1.15,
    "floatM": 0.061,
    "dayHigh": 1.05,
    "dayLow": 0.7451,
@@ -5309,7 +6243,7 @@
    ],
    "rvol_hora": 0.06,
    "actividad": 0.0,
-   "rotaciones": 7.76,
+   "rotaciones": 7.8,
    "float_muy_bajo": true,
    "float_confianza": "baja",
    "float_motivos": [
@@ -5334,10 +6268,10 @@
     ]
    },
    "nasdaq": {
-    "precio": 1.0055,
-    "bid": 0.9801,
+    "precio": 0.9601,
+    "bid": 0.9513,
     "ask": 1.01,
-    "hora": "Nov 23, 2026 1:31 PM ET"
+    "hora": "Nov 23, 2026 1:39 PM ET"
    },
    "precio_cuadra": true,
    "acciones_portada_sec": {
@@ -5359,27 +6293,11 @@
      "ratio": 0.16666666666666666
     }
    ],
-   "hod_dist_pct": -6.66,
-   "vwap": 0.9435,
-   "sobre_vwap_pct": 3.88,
-   "surge5m": 4.72,
+   "hod_dist_pct": -8.56,
+   "vwap": 0.9436,
+   "sobre_vwap_pct": 1.75,
+   "surge5m": -2.03,
    "velas15": [
-    [
-     "12:53",
-     0.9512,
-     0.9806,
-     0.9512,
-     0.9806,
-     2289
-    ],
-    [
-     "12:54",
-     0.9512,
-     0.9512,
-     0.9512,
-     0.9512,
-     500
-    ],
     [
      "12:55",
      0.9512,
@@ -5482,6 +6400,22 @@
      1.0055,
      1.0055,
      1.0055,
+     1557
+    ],
+    [
+     "13:38",
+     0.9701,
+     0.9701,
+     0.9601,
+     0.9601,
+     200
+    ],
+    [
+     "13:39",
+     0.9601,
+     0.9601,
+     0.9601,
+     0.9601,
      0
     ]
    ],
@@ -5536,7 +6470,7 @@
     "vol": 79776,
     "fuente": "nasdaq"
    },
-   "spread_pct": 3.0,
+   "spread_pct": 5.99,
    "sec": {
     "dil_motivo": [
      "venta de acciones en 90 días",
@@ -5593,7 +6527,7 @@
    ],
    "meta": {
     "src": "yahoo-gratis",
-    "edad_s": 267,
+    "edad_s": 66,
     "bolsa": "NasdaqCM",
     "nombre": "Stratum Holdings Corp."
    },
@@ -5602,7 +6536,7 @@
     "float bajo el mínimo de 1 M de la Mesa (Yahoo 0.061 M / TradingView 0.435 M)",
     "dilución alta según la SEC",
     "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)",
-    "sin operaciones hace 267 s: poco líquida para entrar"
+    "spread 5.99% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
    ],
    "sin_dato_por": [],
    "cautela": [
@@ -5614,12 +6548,12 @@
     "mensajes_1h": 0,
     "muestra": 30,
     "ritmo_normal_h": 0.4,
-    "horas_cubiertas": 74.2,
+    "horas_cubiertas": 74.6,
     "cambio": 0.0,
     "saturado": false,
     "alcistas": 4,
     "bajistas": 0,
-    "hora_utc": "2026-11-23T18:20:06+00:00"
+    "hora_utc": "2026-11-23T18:40:12+00:00"
    },
    "short_finra": {
     "short": 40070,
@@ -5630,694 +6564,10 @@
    }
   },
   {
-   "ticker": "MEDS",
-   "price": 1.7383,
-   "chg": 29.72,
-   "volM": 53.851,
-   "rvol": 6.38,
-   "floatM": 4.112,
-   "dayHigh": 2.465,
-   "dayLow": 1.6,
-   "dayHigh_regular": 1.96,
-   "dayLow_regular": 1.62,
-   "halt": false,
-   "news": true,
-   "headline": "BC-Most Active Stocks",
-   "dil": "alta",
-   "unsure": [
-    "floatM"
-   ],
-   "rvol_hora": 8.08,
-   "actividad": 0.0,
-   "rotaciones": 13.1,
-   "float_muy_bajo": false,
-   "float_confianza": "media",
-   "float_motivos": [
-    "2 424B después de la portada: puede haber más acciones"
-   ],
-   "float_cruce": {
-    "yahoo_M": 4.112,
-    "tradingview_M": 2.88,
-    "sec_portada": {
-     "valor": 5724857,
-     "fecha": "2026-11-13",
-     "form": "10-Q"
-    },
-    "chequeo_sec": "media",
-    "motivos_sec": [
-     "2 424B después de la portada: puede haber más acciones"
-    ],
-    "estado": "en_disputa",
-    "rango_M": [
-     2.88,
-     4.112
-    ]
-   },
-   "nasdaq": {
-    "precio": 1.735,
-    "bid": 1.73,
-    "ask": 1.74,
-    "hora": "Nov 23, 2026 1:31 PM ET"
-   },
-   "precio_cuadra": true,
-   "acciones_portada_sec": {
-    "valor": 5724857,
-    "fecha": "2026-11-13",
-    "form": "10-Q"
-   },
-   "split_inverso_12m": [
-    {
-     "fecha": "2026-05-26",
-     "ratio": 0.02
-    }
-   ],
-   "hod_dist_pct": -29.48,
-   "vwap": 1.864,
-   "sobre_vwap_pct": -6.74,
-   "surge5m": 0.0,
-   "velas15": [
-    [
-     "13:17",
-     1.7702,
-     1.775,
-     1.76,
-     1.765,
-     20552
-    ],
-    [
-     "13:18",
-     1.7654,
-     1.78,
-     1.7605,
-     1.7706,
-     23919
-    ],
-    [
-     "13:19",
-     1.775,
-     1.7776,
-     1.765,
-     1.7682,
-     8844
-    ],
-    [
-     "13:20",
-     1.765,
-     1.77,
-     1.73,
-     1.7302,
-     99356
-    ],
-    [
-     "13:21",
-     1.7354,
-     1.7399,
-     1.7301,
-     1.732,
-     17266
-    ],
-    [
-     "13:22",
-     1.74,
-     1.74,
-     1.73,
-     1.7389,
-     6621
-    ],
-    [
-     "13:23",
-     1.7389,
-     1.7399,
-     1.7303,
-     1.735,
-     3441
-    ],
-    [
-     "13:24",
-     1.735,
-     1.7395,
-     1.71,
-     1.7299,
-     25287
-    ],
-    [
-     "13:25",
-     1.7295,
-     1.73,
-     1.72,
-     1.7217,
-     38773
-    ],
-    [
-     "13:26",
-     1.73,
-     1.7398,
-     1.7299,
-     1.735,
-     15261
-    ],
-    [
-     "13:27",
-     1.735,
-     1.74,
-     1.73,
-     1.7341,
-     4720
-    ],
-    [
-     "13:28",
-     1.73,
-     1.74,
-     1.73,
-     1.7339,
-     4356
-    ],
-    [
-     "13:29",
-     1.735,
-     1.74,
-     1.73,
-     1.7399,
-     16233
-    ],
-    [
-     "13:30",
-     1.74,
-     1.75,
-     1.73,
-     1.735,
-     27961
-    ],
-    [
-     "13:31",
-     1.735,
-     1.735,
-     1.735,
-     1.735,
-     0
-    ]
-   ],
-   "ssr": false,
-   "ssr_motivo": null,
-   "short_pct_float": 9.03,
-   "short_fecha": "2026-10-29",
-   "pais": "United States",
-   "pais_riesgo": false,
-   "split_reciente": [],
-   "halts_hoy": [],
-   "noticias": [
-    {
-     "titulo": "BC-Most Active Stocks",
-     "fecha": "2026-11-23T15:30:20Z",
-     "fuente": "Associated Press"
-    },
-    {
-     "titulo": "DataMeds AI Signs Preliminary Agreement With Florida Health Insurer for GLP-1 Patient Management App",
-     "fecha": "2026-11-05T11:49:58Z",
-     "fuente": "InvestorsHub"
-    },
-    {
-     "titulo": "DataMEDS AI Secures Supply Agreement for Six Compounded Peptides Following FDA Advisory Committee Recommendations",
-     "fecha": "2026-11-02T11:42:19Z",
-     "fuente": "InvestorsHub"
-    }
-   ],
-   "noticias_eval": {
-    "estado": "no_encontrada",
-    "fuentes": [
-     "google",
-     "nasdaq",
-     "yahoo"
-    ],
-    "validas": []
-   },
-   "niveles": {
-    "cierre_ayer": {
-     "precio": 1.34,
-     "fuente": "Yahoo (cierre anterior oficial)"
-    },
-    "pm_max": {
-     "precio": 2.465,
-     "fuente": "Nasdaq"
-    },
-    "pm_min": {
-     "precio": 1.6,
-     "fuente": "Nasdaq"
-    },
-    "ayer_max": {
-     "precio": 1.43,
-     "fuente": "vela diaria de Yahoo del 2026-11-20"
-    },
-    "ayer_min": {
-     "precio": 0.855,
-     "fuente": "vela diaria de Yahoo del 2026-11-20"
-    }
-   },
-   "premarket": {
-    "max": 2.465,
-    "min": 1.6,
-    "vol": 35638811,
-    "fuente": "nasdaq"
-   },
-   "spread_pct": 0.58,
-   "sec": {
-    "dil_motivo": [
-     "venta de acciones (424B / 8-K 3.02) en 10 días → VETO",
-     "registro S-1/S-3/F-1/F-3 en 12 meses",
-     "autonomía de caja 0.2 trimestres (sustituto de going concern; dato al 2026-09-30)"
-    ],
-    "veto_venta": true,
-    "veto_quiebra": false,
-    "extranjero": false,
-    "runway_q": 0.2,
-    "caja_periodo": "2026-09-30",
-    "filings_recientes": [
-     {
-      "form": "8-K",
-      "fecha": "2026-11-20",
-      "items": "8.01"
-     },
-     {
-      "form": "424B5",
-      "fecha": "2026-11-17",
-      "items": ""
-     },
-     {
-      "form": "8-K",
-      "fecha": "2026-11-17",
-      "items": "8.01,9.01"
-     },
-     {
-      "form": "424B5",
-      "fecha": "2026-11-16",
-      "items": ""
-     },
-     {
-      "form": "8-K",
-      "fecha": "2026-11-16",
-      "items": "1.01,9.01"
-     },
-     {
-      "form": "8-K",
-      "fecha": "2026-11-13",
-      "items": "2.02,9.01"
-     },
-     {
-      "form": "S-1/A",
-      "fecha": "2026-11-10",
-      "items": ""
-     },
-     {
-      "form": "8-K",
-      "fecha": "2026-11-05",
-      "items": "1.02,7.01,9.01"
-     },
-     {
-      "form": "8-K",
-      "fecha": "2026-10-26",
-      "items": "1.01,7.01,9.01"
-     }
-    ],
-    "estado": "ok",
-    "dil_puntaje": "6/7",
-    "dil_factores_si": [
-     "caja para menos de 4 trimestres",
-     "shelf S-3/F-3 vigente",
-     "venta de acciones en 6 meses",
-     "deuda convertible",
-     "aviso de la bolsa (8-K 3.01)",
-     "split inverso en 12 meses"
-    ]
-   },
-   "sec_hoy": [],
-   "veto": true,
-   "en_filtro_mesa": true,
-   "calc": [
-    "vwap",
-    "surge5m",
-    "actividad",
-    "rvol_hora",
-    "ssr"
-   ],
-   "meta": {
-    "src": "yahoo-gratis",
-    "edad_s": 123,
-    "bolsa": "NasdaqCM",
-    "nombre": "DataMEDS AI, Inc."
-   },
-   "apto": false,
-   "no_apto_por": [
-    "veto SEC: venta de acciones (424B / 8-K 3.02) en 10 días → VETO",
-    "dilución alta según la SEC",
-    "sin operaciones hace 123 s: poco líquida para entrar"
-   ],
-   "sin_dato_por": [],
-   "cautela": [
-    "float en disputa (Yahoo 4.112 M / TradingView 2.88 M), pero ambas cumplen las reglas"
-   ],
-   "lectura": "NO APTA: veto SEC: venta de acciones (424B / 8-K 3.02) en 10 días → VETO (y 2 motivo(s) más).",
-   "stocktwits": {
-    "fuente": "StockTwits",
-    "mensajes_1h": 19,
-    "muestra": 30,
-    "ritmo_normal_h": 22.68,
-    "horas_cubiertas": 1.3,
-    "cambio": 0.84,
-    "saturado": false,
-    "alcistas": 19,
-    "bajistas": 1,
-    "hora_utc": "2026-11-23T18:31:50+00:00"
-   },
-   "short_finra": {
-    "short": 371417,
-    "anterior": 476294,
-    "fecha": "2026-10-30",
-    "dias_cubrir": 1,
-    "fuente": "FINRA (interés en corto consolidado)"
-   }
-  },
-  {
-   "ticker": "PTHS",
-   "price": 8.3501,
-   "chg": 29.19,
-   "volM": 0.045,
-   "rvol": 0.82,
-   "floatM": 1.535,
-   "dayHigh": 8.72,
-   "dayLow": 6.9031,
-   "dayHigh_regular": 8.72,
-   "dayLow_regular": 6.9031,
-   "halt": false,
-   "news": true,
-   "headline": "Pelthos Therapeutics (PTHS) Stock Sees Fair Value Cut As Analysts Rework Launch And Merger Risks",
-   "dil": "alta",
-   "unsure": [],
-   "rvol_hora": 1.39,
-   "actividad": 0.0,
-   "rotaciones": 0.03,
-   "float_muy_bajo": true,
-   "float_confianza": "alta",
-   "float_motivos": [
-    "EE.UU., float ≤ acciones de portada SEC (3,930,709 al 2026-11-05, 10-Q)"
-   ],
-   "float_cruce": {
-    "yahoo_M": 1.535,
-    "tradingview_M": 1.73,
-    "sec_portada": {
-     "valor": 3930709,
-     "fecha": "2026-11-05",
-     "form": "10-Q"
-    },
-    "chequeo_sec": "alta",
-    "motivos_sec": [
-     "EE.UU., float ≤ acciones de portada SEC (3,930,709 al 2026-11-05, 10-Q)"
-    ],
-    "estado": "confirmado",
-    "rango_M": [
-     1.535,
-     1.73
-    ]
-   },
-   "nasdaq": {
-    "precio": 8.3501,
-    "bid": 8.13,
-    "ask": 8.9,
-    "hora": "Nov 23, 2026 1:31 PM ET"
-   },
-   "precio_cuadra": true,
-   "acciones_portada_sec": {
-    "valor": 3930709,
-    "fecha": "2026-11-05",
-    "form": "10-Q"
-   },
-   "split_inverso_12m": [],
-   "hod_dist_pct": -4.24,
-   "vwap": 7.7854,
-   "sobre_vwap_pct": 7.25,
-   "surge5m": -1.76,
-   "velas15": [
-    [
-     "12:10",
-     8.0651,
-     8.0651,
-     8.0651,
-     8.0651,
-     839
-    ],
-    [
-     "12:13",
-     7.86,
-     7.89,
-     7.86,
-     7.89,
-     528
-    ],
-    [
-     "12:14",
-     7.97,
-     8.02,
-     7.91,
-     7.91,
-     720
-    ],
-    [
-     "12:16",
-     7.975,
-     8.04,
-     7.92,
-     7.92,
-     846
-    ],
-    [
-     "12:28",
-     8.25,
-     8.36,
-     8.06,
-     8.19,
-     1382
-    ],
-    [
-     "12:44",
-     8.16,
-     8.16,
-     8.16,
-     8.16,
-     189
-    ],
-    [
-     "12:45",
-     8.3499,
-     8.3499,
-     8.3499,
-     8.3499,
-     662
-    ],
-    [
-     "12:56",
-     8.261,
-     8.261,
-     8.261,
-     8.261,
-     1074
-    ],
-    [
-     "12:57",
-     8.225,
-     8.225,
-     8.225,
-     8.225,
-     2848
-    ],
-    [
-     "13:01",
-     8.42,
-     8.5,
-     8.42,
-     8.5,
-     1857
-    ],
-    [
-     "13:04",
-     8.4,
-     8.4,
-     8.4,
-     8.4,
-     705
-    ],
-    [
-     "13:06",
-     8.33,
-     8.33,
-     8.33,
-     8.33,
-     247
-    ],
-    [
-     "13:07",
-     8.51,
-     8.51,
-     8.51,
-     8.51,
-     0
-    ],
-    [
-     "13:21",
-     8.5988,
-     8.5988,
-     8.5988,
-     8.5988,
-     441
-    ],
-    [
-     "13:28",
-     8.3501,
-     8.3501,
-     8.3501,
-     8.3501,
-     0
-    ]
-   ],
-   "ssr": false,
-   "ssr_motivo": null,
-   "short_pct_float": 10.32,
-   "short_fecha": "2026-10-29",
-   "pais": "United States",
-   "pais_riesgo": false,
-   "split_reciente": [],
-   "halts_hoy": [],
-   "noticias": [
-    {
-     "titulo": "Pelthos Therapeutics (PTHS) Stock Sees Fair Value Cut As Analysts Rework Launch And Merger Risks",
-     "fecha": "2026-11-16T15:15:51Z",
-     "fuente": "Simply Wall St."
-    },
-    {
-     "titulo": "Pelthos Therapeutics Inc. Q3 2026 Earnings Call Summary",
-     "fecha": "2026-11-13T01:35:24Z",
-     "fuente": "Moby"
-    },
-    {
-     "titulo": "Pelthos (PTHS) Q3 2026 Earnings Call Transcript",
-     "fecha": "2026-11-13T00:29:12Z",
-     "fuente": "Motley Fool"
-    }
-   ],
-   "noticias_eval": {
-    "estado": "no_encontrada",
-    "fuentes": [
-     "google",
-     "nasdaq",
-     "yahoo"
-    ],
-    "validas": []
-   },
-   "niveles": {
-    "cierre_ayer": {
-     "precio": 6.38,
-     "fuente": "Yahoo (cierre anterior oficial)"
-    },
-    "pm_max": {
-     "precio": null,
-     "motivo": "sin operaciones de premarket en Nasdaq ni en Yahoo"
-    },
-    "pm_min": {
-     "precio": null,
-     "motivo": "sin operaciones de premarket en Nasdaq ni en Yahoo"
-    },
-    "ayer_max": {
-     "precio": 7.21,
-     "fuente": "vela diaria de Yahoo del 2026-11-20"
-    },
-    "ayer_min": {
-     "precio": 6.38,
-     "fuente": "vela diaria de Yahoo del 2026-11-20"
-    }
-   },
-   "premarket": null,
-   "spread_pct": 9.04,
-   "sec": {
-    "dil_motivo": [
-     "venta de acciones en 90 días",
-     "registro S-1/S-3/F-1/F-3 en 12 meses",
-     "autonomía de caja 2.0 trimestres (sustituto de going concern; dato al 2026-09-30)"
-    ],
-    "veto_venta": false,
-    "veto_quiebra": false,
-    "extranjero": false,
-    "runway_q": 2.0,
-    "caja_periodo": "2026-09-30",
-    "filings_recientes": [
-     {
-      "form": "8-K",
-      "fecha": "2026-11-12",
-      "items": "2.02,9.01"
-     },
-     {
-      "form": "8-K",
-      "fecha": "2026-10-30",
-      "items": "1.01,2.03,3.02,3.03,5.02,5.03,5.07,7.01,9.01"
-     }
-    ],
-    "estado": "ok",
-    "dil_puntaje": "4/7",
-    "dil_factores_si": [
-     "caja para menos de 4 trimestres",
-     "shelf S-3/F-3 vigente",
-     "venta de acciones en 6 meses",
-     "deuda convertible"
-    ]
-   },
-   "sec_hoy": [],
-   "veto": false,
-   "en_filtro_mesa": false,
-   "calc": [
-    "vwap",
-    "surge5m",
-    "actividad",
-    "rvol_hora",
-    "ssr"
-   ],
-   "meta": {
-    "src": "yahoo-gratis",
-    "edad_s": 181,
-    "bolsa": "NYSE American",
-    "nombre": "Pelthos Therapeutics Inc."
-   },
-   "apto": false,
-   "no_apto_por": [
-    "dilución alta según la SEC",
-    "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)",
-    "sin operaciones hace 181 s: poco líquida para entrar",
-    "spread 9.04% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
-   ],
-   "sin_dato_por": [],
-   "cautela": [],
-   "lectura": "NO APTA: dilución alta según la SEC (y 3 motivo(s) más).",
-   "stocktwits": {
-    "fuente": "StockTwits",
-    "mensajes_1h": 0,
-    "muestra": 30,
-    "ritmo_normal_h": 0.01,
-    "horas_cubiertas": 2453.6,
-    "cambio": 0.0,
-    "saturado": false,
-    "alcistas": 3,
-    "bajistas": 0,
-    "hora_utc": "2026-11-23T18:31:50+00:00"
-   },
-   "short_finra": {
-    "short": 158465,
-    "anterior": 142250,
-    "fecha": "2026-10-30",
-    "dias_cubrir": 2,
-    "fuente": "FINRA (interés en corto consolidado)"
-   }
-  },
-  {
    "ticker": "AVZO",
-   "price": 4.0495,
-   "chg": 28.96,
-   "volM": 0.113,
+   "price": 3.99,
+   "chg": 27.07,
+   "volM": 0.116,
    "rvol": null,
    "floatM": null,
    "dayHigh": 4.85,
@@ -6356,51 +6606,19 @@
     ]
    },
    "nasdaq": {
-    "precio": 4.04,
-    "bid": 4.0,
+    "precio": 4.0,
+    "bid": 3.98,
     "ask": 4.04,
-    "hora": "Nov 23, 2026 1:31 PM ET"
+    "hora": "Nov 23, 2026 1:40 PM ET"
    },
    "precio_cuadra": true,
    "acciones_portada_sec": null,
    "split_inverso_12m": [],
-   "hod_dist_pct": -16.51,
-   "vwap": 4.24,
-   "sobre_vwap_pct": -4.49,
-   "surge5m": 1.25,
+   "hod_dist_pct": -17.73,
+   "vwap": 4.2369,
+   "sobre_vwap_pct": -5.83,
+   "surge5m": -1.23,
    "velas15": [
-    [
-     "12:44",
-     3.99,
-     3.99,
-     3.99,
-     3.99,
-     509
-    ],
-    [
-     "12:48",
-     3.9995,
-     3.9995,
-     3.9995,
-     3.9995,
-     101
-    ],
-    [
-     "12:49",
-     3.935,
-     3.935,
-     3.935,
-     3.935,
-     363
-    ],
-    [
-     "12:51",
-     3.99,
-     3.99,
-     3.99,
-     3.99,
-     102
-    ],
     [
      "12:54",
      3.99,
@@ -6487,6 +6705,38 @@
      4.04,
      4.04,
      4.04,
+     279
+    ],
+    [
+     "13:32",
+     4.01,
+     4.04,
+     4.01,
+     4.04,
+     536
+    ],
+    [
+     "13:33",
+     4.0387,
+     4.0387,
+     4.0387,
+     4.0387,
+     100
+    ],
+    [
+     "13:34",
+     4.05,
+     4.05,
+     4.04,
+     4.05,
+     803
+    ],
+    [
+     "13:39",
+     4.0,
+     4.0,
+     4.0,
+     4.0,
      0
     ]
    ],
@@ -6543,7 +6793,7 @@
     }
    },
    "premarket": null,
-   "spread_pct": 1.0,
+   "spread_pct": 1.5,
    "sec": {
     "dil_motivo": [
      "no declara a la SEC (o ticker no resuelto)"
@@ -6569,21 +6819,20 @@
    ],
    "meta": {
     "src": "yahoo-gratis",
-    "edad_s": 187,
+    "edad_s": 71,
     "bolsa": "NasdaqGM",
     "nombre": null
    },
    "apto": false,
    "no_apto_por": [
-    "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)",
-    "sin operaciones hace 187 s: poco líquida para entrar"
+    "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)"
    ],
    "sin_dato_por": [],
    "cautela": [
     "float de una sola fuente (Yahoo None M / TradingView 2.067 M; Yahoo no informa float)",
     "rvol por hora no calculable"
    ],
-   "lectura": "NO APTA: fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M) (y 1 motivo(s) más).",
+   "lectura": "NO APTA: fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)",
    "stocktwits": {
     "fuente": "StockTwits",
     "error": "HTTPError: HTTP Error 404: Not Found"
@@ -6594,189 +6843,189 @@
    }
   },
   {
-   "ticker": "SOAR",
-   "price": 0.211,
-   "chg": 27.74,
-   "volM": 140.242,
-   "rvol": 3.12,
-   "floatM": 38.406,
-   "dayHigh": 0.2722,
-   "dayLow": 0.1679,
-   "dayHigh_regular": 0.2393,
-   "dayLow_regular": 0.1931,
+   "ticker": "IMNN",
+   "price": 0.653,
+   "chg": 20.87,
+   "volM": 1.994,
+   "rvol": 13.25,
+   "floatM": 6.022,
+   "dayHigh": 0.7799,
+   "dayLow": 0.51,
+   "dayHigh_regular": 0.7799,
+   "dayLow_regular": 0.5708,
    "halt": false,
    "news": true,
-   "headline": "SOAR AI Reports Third Quarter 2026 Results with $41.2 Million in Cash and $1.2 Billion Under Contract; Revenue Up 245%",
-   "dil": "media",
+   "headline": "IMUNON annouces withdrawal of form S-1 registration statement",
+   "dil": "alta",
    "unsure": [],
-   "rvol_hora": 161.55,
+   "rvol_hora": 7.79,
    "actividad": 0.0,
-   "rotaciones": 3.65,
+   "rotaciones": 0.33,
    "float_muy_bajo": false,
    "float_confianza": "alta",
    "float_motivos": [
-    "EE.UU., float ≤ acciones de portada SEC (57,430,018 al 2026-11-13, 10-Q)"
+    "EE.UU., float ≤ acciones de portada SEC (6,487,286 al 2026-11-12, 10-Q)"
    ],
    "float_cruce": {
-    "yahoo_M": 38.406,
-    "tradingview_M": 40.544,
+    "yahoo_M": 6.022,
+    "tradingview_M": 5.56,
     "sec_portada": {
-     "valor": 57430018,
-     "fecha": "2026-11-13",
+     "valor": 6487286,
+     "fecha": "2026-11-12",
      "form": "10-Q"
     },
     "chequeo_sec": "alta",
     "motivos_sec": [
-     "EE.UU., float ≤ acciones de portada SEC (57,430,018 al 2026-11-13, 10-Q)"
+     "EE.UU., float ≤ acciones de portada SEC (6,487,286 al 2026-11-12, 10-Q)"
     ],
     "estado": "confirmado",
     "rango_M": [
-     38.406,
-     40.544
+     5.56,
+     6.022
     ]
    },
    "nasdaq": {
-    "precio": 0.2114,
-    "bid": 0.203,
-    "ask": 0.2259,
-    "hora": "Nov 23, 2026 1:31 PM ET"
+    "precio": 0.6803,
+    "bid": 0.6667,
+    "ask": 0.7004,
+    "hora": "Nov 23, 2026 1:40 PM ET"
    },
-   "precio_cuadra": true,
+   "precio_cuadra": false,
    "acciones_portada_sec": {
-    "valor": 57430018,
-    "fecha": "2026-11-13",
+    "valor": 6487286,
+    "fecha": "2026-11-12",
     "form": "10-Q"
    },
    "split_inverso_12m": [],
-   "hod_dist_pct": -22.48,
-   "vwap": 0.204,
-   "sobre_vwap_pct": 3.43,
-   "surge5m": -0.14,
+   "hod_dist_pct": -16.27,
+   "vwap": 0.7128,
+   "sobre_vwap_pct": -8.39,
+   "surge5m": -2.7,
    "velas15": [
     [
-     "13:17",
-     0.2081,
-     0.2087,
-     0.2081,
-     0.2087,
-     8338
-    ],
-    [
      "13:18",
-     0.2092,
-     0.2093,
-     0.208,
-     0.208,
-     38524
+     0.71,
+     0.71,
+     0.67,
+     0.67,
+     68853
     ],
     [
      "13:19",
-     0.2087,
-     0.2099,
-     0.208,
-     0.2094,
-     61435
+     0.6713,
+     0.6713,
+     0.6501,
+     0.6501,
+     32117
     ],
     [
      "13:20",
-     0.21,
-     0.2119,
-     0.21,
-     0.2118,
-     125007
+     0.6572,
+     0.6572,
+     0.6572,
+     0.6572,
+     5022
     ],
     [
      "13:21",
-     0.2108,
-     0.2117,
-     0.2103,
-     0.2114,
-     66979
+     0.6606,
+     0.6775,
+     0.6602,
+     0.6775,
+     6196
     ],
     [
      "13:22",
-     0.2114,
-     0.2119,
-     0.2111,
-     0.2119,
-     33674
+     0.6825,
+     0.6862,
+     0.6825,
+     0.6862,
+     1143
     ],
     [
      "13:23",
-     0.2114,
-     0.2126,
-     0.2114,
-     0.2116,
-     43667
+     0.6877,
+     0.7,
+     0.6808,
+     0.6808,
+     26780
     ],
     [
      "13:24",
-     0.2117,
-     0.2117,
-     0.2096,
-     0.2099,
-     26837
-    ],
-    [
-     "13:25",
-     0.2106,
-     0.211,
-     0.2101,
-     0.211,
-     22362
+     0.6904,
+     0.6904,
+     0.6904,
+     0.6904,
+     1856
     ],
     [
      "13:26",
-     0.2105,
-     0.211,
-     0.2105,
-     0.2109,
-     16370
+     0.6808,
+     0.6808,
+     0.6808,
+     0.6808,
+     227
     ],
     [
      "13:27",
-     0.2108,
-     0.2109,
-     0.2105,
-     0.2107,
-     41653
+     0.6978,
+     0.6978,
+     0.6978,
+     0.6978,
+     119
     ],
     [
-     "13:28",
-     0.2111,
-     0.2114,
-     0.2107,
-     0.211,
-     25630
+     "13:32",
+     0.7,
+     0.7,
+     0.6992,
+     0.6992,
+     3130
     ],
     [
-     "13:29",
-     0.2117,
-     0.2118,
-     0.211,
-     0.2111,
-     9563
+     "13:33",
+     0.7005,
+     0.7005,
+     0.7005,
+     0.7005,
+     1207
     ],
     [
-     "13:30",
-     0.2113,
-     0.2113,
-     0.21,
-     0.2105,
-     38589
+     "13:36",
+     0.686,
+     0.6896,
+     0.6771,
+     0.6896,
+     3920
     ],
     [
-     "13:31",
-     0.2106,
-     0.2106,
-     0.2106,
-     0.2106,
+     "13:37",
+     0.6861,
+     0.6861,
+     0.6861,
+     0.6861,
+     452
+    ],
+    [
+     "13:38",
+     0.6806,
+     0.6806,
+     0.653,
+     0.653,
+     602
+    ],
+    [
+     "13:39",
+     0.6803,
+     0.6803,
+     0.6803,
+     0.6803,
      0
     ]
    ],
-   "ssr": true,
-   "ssr_motivo": "arrastrado de ayer",
-   "short_pct_float": 6.68,
+   "ssr": false,
+   "ssr_motivo": null,
+   "short_pct_float": 3.58,
    "short_fecha": "2026-10-29",
    "pais": "United States",
    "pais_riesgo": false,
@@ -6784,103 +7033,132 @@
    "halts_hoy": [],
    "noticias": [
     {
-     "titulo": "SOAR AI Details Expansion Roadmap and Phased Financing Plans",
-     "fecha": "2026-10-23T16:44:00Z",
-     "fuente": "Zacks"
+     "titulo": "Imunon, Inc. Q3 2026 Earnings Call Summary",
+     "fecha": "2026-11-13T01:44:55Z",
+     "fuente": "Moby"
     },
     {
-     "titulo": "Soar AI Secures $1B Equity Line for Data Center Projects",
-     "fecha": "2026-10-13T16:31:37Z",
-     "fuente": "CRE Daily"
+     "titulo": "Imunon (IMNN) Q3 2026 Earnings Call Transcript",
+     "fecha": "2026-11-12T23:00:45Z",
+     "fuente": "Motley Fool"
     },
     {
-     "titulo": "Volato Surges 85% in Three Months: Should You Buy the Stock?",
-     "fecha": "2026-10-13T16:30:00Z",
-     "fuente": "Zacks"
+     "titulo": "Imunon (IMNN) Q2 2026 Earnings Call Transcript",
+     "fecha": "2026-08-12T02:12:56Z",
+     "fuente": "Motley Fool"
     }
    ],
    "noticias_eval": {
     "estado": "confirmada",
     "fuentes": [
+     "google",
      "nasdaq",
      "yahoo"
     ],
     "validas": [
      {
-      "titulo": "SOAR AI Reports Third Quarter 2026 Results with $41.2 Million in Cash and $1.2 Billion Under Contract; Revenue Up 245%",
-      "fuente": "Fintel",
-      "fecha": "2026-11-23T13:31:47.928869+00:00",
-      "url": "https://www.nasdaq.com/articles/soar-ai-reports-third-quarter-2026-results-412-million-cash-and-12-billion-under-contract",
-      "origen": "nasdaq"
+      "titulo": "IMUNON annouces withdrawal of form S-1 registration statement",
+      "fuente": "TradingView",
+      "fecha": "2026-11-23T15:00:56+00:00",
+      "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxQVG9XVmtkVEZlSF9DYURiTUVtNllZcVFNTGM4TVJpRlpuOHlFNFRkWE9iek02ZUNEQ09lSzFpdXJIUnk5Mk5UZTd6UG80LVFPWlJMSjh4NWRxOGhhVUxqYlU0YUhYbnZaYXdTaXU0VlhBVjg1c19jYXVFM3drNlFQTGhRM0tOYTh2NHctUnQwME83VU1Ga2NDcmVBOEdsbW9zdmZaYkQzdVJDTzhSUFFiNWdpbkFsc1ZENC1UaWU2VkdDZw?oc=5",
+      "origen": "google"
+     },
+     {
+      "titulo": "Imunon Withdraws Offering Registration, Reports Positive Phase 2 Data",
+      "fuente": "TipRanks",
+      "fecha": "2026-11-23T14:48:02+00:00",
+      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNN1VBSXVSbS1OS29VNG5BTWthRXdJQUpwTjNaYnFHVGctbWR5R2NIdWRSczVWLTQ4OXJXbG9Ta0RETkd5dU1Nb0otd2IzTTRwLVc4OGRSQjlMZnY4bzQ1QW13VUt5b0Iwc08wRUJVM0lSd0NOZ1ItbDV1UlZ2aDFQOXhMYWVqdXVpWVNYU2dtV2hVRk1HcE9mbl80Vk1OTTVmaFBvTTAwdzV0REs0aDVKMm9jakRVRlBsQ24zWg?oc=5",
+      "origen": "google"
+     },
+     {
+      "titulo": "Imunon Withdraws S-1 Offering Registration, Cites 45.1-Month Median Survival in Phase 2",
+      "fuente": "TradingView",
+      "fecha": "2026-11-23T14:33:00+00:00",
+      "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPMXJEakRYMHp1SklBRnBVNVluTXlUVllqR0VQQW4yV0Ixa3pfR2FHb19JVU9LM3hzT01icU5mdjNxTklidkR2NzdVQmhkWmhkVHlQMU9fekNNNkZva3pMUzg4SmJUN04wd1hld0V3amtBdGoxS2VJSUJSWnczSk9OckhZTG1SYjEzRk54VjJwWWowQXZPZ00tMW9Kd00zbW9YSXpyNXNwY0xXcVpHSWxZRDZHRXRnQTBRWGpadGs1QnpNbW9JQnZySjk0S3ZOWnNrMDhBMVJxMnl5VEx3QXpjU2ZB?oc=5",
+      "origen": "google"
      }
     ]
    },
    "niveles": {
     "cierre_ayer": {
-     "precio": 0.165,
+     "precio": 0.5355,
      "fuente": "Yahoo (cierre anterior oficial)"
     },
     "pm_max": {
-     "precio": 0.2722,
+     "precio": 0.7004,
      "fuente": "Nasdaq"
     },
     "pm_min": {
-     "precio": 0.1679,
+     "precio": 0.51,
      "fuente": "Nasdaq"
     },
     "ayer_max": {
-     "precio": 0.203,
+     "precio": 0.58,
      "fuente": "vela diaria de Yahoo del 2026-11-20"
     },
     "ayer_min": {
-     "precio": 0.162,
+     "precio": 0.53,
      "fuente": "vela diaria de Yahoo del 2026-11-20"
     }
    },
    "premarket": {
-    "max": 0.2722,
-    "min": 0.1679,
-    "vol": 94942310,
+    "max": 0.7004,
+    "min": 0.51,
+    "vol": 56567,
     "fuente": "nasdaq"
    },
-   "spread_pct": 10.68,
+   "spread_pct": 4.93,
    "sec": {
     "dil_motivo": [
      "venta de acciones en 90 días",
-     "registro S-1/S-3/F-1/F-3 en 12 meses"
+     "registro S-1/S-3/F-1/F-3 en 12 meses",
+     "autonomía de caja 1.2 trimestres (sustituto de going concern; dato al 2026-09-30)"
     ],
     "veto_venta": false,
     "veto_quiebra": false,
     "extranjero": false,
-    "runway_q": null,
-    "caja_periodo": "2025-12-31",
+    "runway_q": 1.2,
+    "caja_periodo": "2026-09-30",
     "filings_recientes": [
      {
       "form": "8-K",
       "fecha": "2026-11-23",
+      "items": "7.01,8.01,9.01"
+     },
+     {
+      "form": "8-K",
+      "fecha": "2026-11-12",
       "items": "2.02,9.01"
+     },
+     {
+      "form": "S-1/A",
+      "fecha": "2026-10-28",
+      "items": ""
+     },
+     {
+      "form": "S-1",
+      "fecha": "2026-10-27",
+      "items": ""
+     },
+     {
+      "form": "8-K",
+      "fecha": "2026-10-27",
+      "items": "8.01,9.01"
      }
     ],
     "estado": "ok",
-    "dil_puntaje": "5/7",
+    "dil_puntaje": "3/7",
     "dil_factores_si": [
+     "caja para menos de 4 trimestres",
      "shelf S-3/F-3 vigente",
-     "venta de acciones en 6 meses",
-     "warrants ≥ 20% de las acciones",
-     "deuda convertible",
-     "aviso de la bolsa (8-K 3.01)"
+     "venta de acciones en 6 meses"
     ]
    },
    "sec_hoy": [
     {
-     "form": "8-K/A",
-     "hora": "2026-11-23T10:40:11-05:00",
-     "titulo": "8-K/A - SOAR AI, Inc. (0001853070) (Filer)"
-    },
-    {
      "form": "8-K",
-     "hora": "2026-11-23T07:05:18-05:00",
-     "titulo": "8-K - SOAR AI, Inc. (0001853070) (Filer)"
+     "hora": "2026-11-23T09:27:33-05:00",
+     "titulo": "8-K - Imunon, Inc. (0000749647) (Filer)"
     }
    ],
    "veto": false,
@@ -6894,357 +7172,42 @@
    ],
    "meta": {
     "src": "yahoo-gratis",
-    "edad_s": 147,
-    "bolsa": "NYSE American",
-    "nombre": "SOAR AI, Inc."
-   },
-   "apto": false,
-   "no_apto_por": [
-    "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)",
-    "sin operaciones hace 147 s: poco líquida para entrar",
-    "spread 10.68% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
-   ],
-   "sin_dato_por": [],
-   "cautela": [
-    "dilución media",
-    "SSR activo (no se puede vender en corto a la baja)"
-   ],
-   "lectura": "NO APTA: fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M) (y 2 motivo(s) más).",
-   "stocktwits": {
-    "fuente": "StockTwits",
-    "mensajes_1h": 10,
-    "muestra": 30,
-    "ritmo_normal_h": 16.74,
-    "horas_cubiertas": 1.8,
-    "cambio": 0.6,
-    "saturado": false,
-    "alcistas": 25,
-    "bajistas": 0,
-    "hora_utc": "2026-11-23T18:31:50+00:00"
-   },
-   "short_finra": {
-    "short": 2565811,
-    "anterior": 4263456,
-    "fecha": "2026-10-30",
-    "dias_cubrir": 1,
-    "fuente": "FINRA (interés en corto consolidado)"
-   }
-  },
-  {
-   "ticker": "JUNS",
-   "price": 1.5699,
-   "chg": 27.12,
-   "volM": 0.383,
-   "rvol": 5.48,
-   "floatM": 0.564,
-   "dayHigh": 1.8999,
-   "dayLow": 1.23,
-   "dayHigh_regular": 1.8999,
-   "dayLow_regular": 1.23,
-   "halt": false,
-   "news": true,
-   "headline": "Sector Update: Healthcare Stocks Mixed Late Afternoon",
-   "dil": "alta",
-   "unsure": [],
-   "rvol_hora": 50.2,
-   "actividad": 0.0,
-   "rotaciones": 0.68,
-   "float_muy_bajo": true,
-   "float_confianza": "alta",
-   "float_motivos": [
-    "EE.UU., float ≤ acciones de portada SEC (1,318,521 al 2026-11-16, 10-Q)"
-   ],
-   "float_cruce": {
-    "yahoo_M": 0.564,
-    "tradingview_M": 0.909,
-    "sec_portada": {
-     "valor": 1318521,
-     "fecha": "2026-11-16",
-     "form": "10-Q"
-    },
-    "chequeo_sec": "alta",
-    "motivos_sec": [
-     "EE.UU., float ≤ acciones de portada SEC (1,318,521 al 2026-11-16, 10-Q)"
-    ],
-    "estado": "confirmado",
-    "rango_M": [
-     0.564,
-     0.909
-    ]
-   },
-   "nasdaq": {
-    "precio": 1.5699,
-    "bid": 1.52,
-    "ask": 1.62,
-    "hora": "Nov 23, 2026 1:31 PM ET"
-   },
-   "precio_cuadra": true,
-   "acciones_portada_sec": {
-    "valor": 1318521,
-    "fecha": "2026-11-16",
-    "form": "10-Q"
-   },
-   "split_inverso_12m": [
-    {
-     "fecha": "2026-08-07",
-     "ratio": 0.013333333333333334
-    }
-   ],
-   "hod_dist_pct": -17.37,
-   "vwap": 1.6682,
-   "sobre_vwap_pct": -5.89,
-   "surge5m": 1.94,
-   "velas15": [
-    [
-     "13:04",
-     1.59,
-     1.59,
-     1.585,
-     1.585,
-     4937
-    ],
-    [
-     "13:06",
-     1.63,
-     1.63,
-     1.63,
-     1.63,
-     808
-    ],
-    [
-     "13:09",
-     1.6,
-     1.6,
-     1.59,
-     1.59,
-     765
-    ],
-    [
-     "13:10",
-     1.5901,
-     1.5901,
-     1.59,
-     1.59,
-     1344
-    ],
-    [
-     "13:12",
-     1.58,
-     1.58,
-     1.58,
-     1.58,
-     669
-    ],
-    [
-     "13:14",
-     1.55,
-     1.56,
-     1.5401,
-     1.56,
-     1668
-    ],
-    [
-     "13:15",
-     1.55,
-     1.5501,
-     1.55,
-     1.5501,
-     4333
-    ],
-    [
-     "13:17",
-     1.54,
-     1.54,
-     1.53,
-     1.53,
-     799
-    ],
-    [
-     "13:18",
-     1.5101,
-     1.57,
-     1.45,
-     1.455,
-     10709
-    ],
-    [
-     "13:19",
-     1.54,
-     1.54,
-     1.54,
-     1.54,
-     496
-    ],
-    [
-     "13:20",
-     1.56,
-     1.57,
-     1.56,
-     1.57,
-     891
-    ],
-    [
-     "13:22",
-     1.57,
-     1.57,
-     1.57,
-     1.57,
-     293
-    ],
-    [
-     "13:24",
-     1.5663,
-     1.5663,
-     1.5663,
-     1.5663,
-     124
-    ],
-    [
-     "13:25",
-     1.56,
-     1.56,
-     1.56,
-     1.56,
-     626
-    ],
-    [
-     "13:28",
-     1.5699,
-     1.5699,
-     1.5699,
-     1.5699,
-     0
-    ]
-   ],
-   "ssr": true,
-   "ssr_motivo": "arrastrado de ayer",
-   "short_pct_float": 4.45,
-   "short_fecha": "2026-10-29",
-   "pais": "United States",
-   "pais_riesgo": false,
-   "split_reciente": [],
-   "halts_hoy": [],
-   "noticias": [
-    {
-     "titulo": "Sector Update: Healthcare Stocks Mixed Late Afternoon",
-     "fecha": "2026-10-06T19:51:38Z",
-     "fuente": "MT Newswires"
-    },
-    {
-     "titulo": "Sector Update: Healthcare Stocks Mixed Tuesday Afternoon",
-     "fecha": "2026-10-06T17:46:34Z",
-     "fuente": "MT Newswires"
-    },
-    {
-     "titulo": "Weekly Roundup on the Cannabis Sector & Psychedelic Sector",
-     "fecha": "2026-08-31T14:12:11Z",
-     "fuente": "Market Exclusive"
-    }
-   ],
-   "noticias_eval": {
-    "estado": "no_encontrada",
-    "fuentes": [
-     "nasdaq",
-     "yahoo"
-    ],
-    "validas": []
-   },
-   "niveles": {
-    "cierre_ayer": {
-     "precio": 1.235,
-     "fuente": "Yahoo (cierre anterior oficial)"
-    },
-    "pm_max": {
-     "precio": null,
-     "motivo": "sin operaciones de premarket en Nasdaq ni en Yahoo"
-    },
-    "pm_min": {
-     "precio": null,
-     "motivo": "sin operaciones de premarket en Nasdaq ni en Yahoo"
-    },
-    "ayer_max": {
-     "precio": 1.46,
-     "fuente": "vela diaria de Yahoo del 2026-11-20"
-    },
-    "ayer_min": {
-     "precio": 1.2,
-     "fuente": "vela diaria de Yahoo del 2026-11-20"
-    }
-   },
-   "premarket": null,
-   "spread_pct": 6.37,
-   "sec": {
-    "dil_motivo": [
-     "registro S-1/S-3/F-1/F-3 en 12 meses",
-     "autonomía de caja 0.1 trimestres (sustituto de going concern; dato al 2026-09-30)"
-    ],
-    "veto_venta": false,
-    "veto_quiebra": false,
-    "extranjero": false,
-    "runway_q": 0.1,
-    "caja_periodo": "2026-09-30",
-    "filings_recientes": [],
-    "estado": "ok",
-    "dil_puntaje": "6/7",
-    "dil_factores_si": [
-     "caja para menos de 4 trimestres",
-     "shelf S-3/F-3 vigente",
-     "venta de acciones en 6 meses",
-     "deuda convertible",
-     "aviso de la bolsa (8-K 3.01)",
-     "split inverso en 12 meses"
-    ]
-   },
-   "sec_hoy": [],
-   "veto": false,
-   "en_filtro_mesa": false,
-   "calc": [
-    "vwap",
-    "surge5m",
-    "actividad",
-    "rvol_hora",
-    "ssr"
-   ],
-   "meta": {
-    "src": "yahoo-gratis",
-    "edad_s": 194,
+    "edad_s": 73,
     "bolsa": "NasdaqCM",
-    "nombre": "Jupiter Neurosciences, Inc."
+    "nombre": "Imunon, Inc."
    },
    "apto": false,
    "no_apto_por": [
-    "float bajo el mínimo de 1 M de la Mesa (Yahoo 0.564 M / TradingView 0.909 M)",
     "dilución alta según la SEC",
     "fuera del filtro de la Mesa (1–20 USD, volumen ≥ 0,5 M)",
-    "sin operaciones hace 194 s: poco líquida para entrar",
-    "spread 6.37% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
+    "spread 4.93% en Nasdaq (> 3.0%): entrar y salir cuesta demasiado"
    ],
    "sin_dato_por": [],
    "cautela": [
-    "SSR activo (no se puede vender en corto a la baja)"
+    "precio de Yahoo y Nasdaq difieren más de 3% (Yahoo 0.653, Nasdaq 0.6803)"
    ],
-   "lectura": "NO APTA: float bajo el mínimo de 1 M de la Mesa (Yahoo 0.564 M / TradingView 0.909 M) (y 4 motivo(s) más).",
+   "lectura": "NO APTA: dilución alta según la SEC (y 2 motivo(s) más).",
    "stocktwits": {
     "fuente": "StockTwits",
-    "mensajes_1h": 15,
+    "mensajes_1h": 7,
     "muestra": 30,
-    "ritmo_normal_h": 23.5,
-    "horas_cubiertas": 1.3,
-    "cambio": 0.64,
+    "ritmo_normal_h": 14.26,
+    "horas_cubiertas": 2.1,
+    "cambio": 0.49,
     "saturado": false,
-    "alcistas": 17,
+    "alcistas": 28,
     "bajistas": 0,
-    "hora_utc": "2026-11-23T18:31:50+00:00"
+    "hora_utc": "2026-11-23T18:40:12+00:00"
    },
    "short_finra": {
-    "short": 25107,
-    "anterior": 38578,
+    "short": 215645,
+    "anterior": 62366,
     "fecha": "2026-10-30",
-    "dias_cubrir": 1.39,
+    "dias_cubrir": 1.49,
     "fuente": "FINRA (interés en corto consolidado)"
    }
   }
  ],
  "errores": [],
- "duracion_s": 171.0
+ "duracion_s": 73.5
 }
